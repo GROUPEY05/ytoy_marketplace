@@ -39,5 +39,11 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+//pour la transmission de sms 
+    'twilio' => [
+    'sid' => env('TWILIO_SID'),
+    'token' => env('TWILIO_TOKEN'),
+    'phone' => env('TWILIO_PHONE'),
+],
 
 ];

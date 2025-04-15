@@ -38,7 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'utilisateurs',
+        ],
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'utilisateurs',
         ],
     ],
 
@@ -60,14 +64,14 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'utilisateurs' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', App\Models\Utilisateur::class),
         ],
 
-        // 'users' => [
+        // 'utilisateurs' => [
         //     'driver' => 'database',
-        //     'table' => 'users',
+        //     'table' => 'utilisateurs',
         // ],
     ],
 

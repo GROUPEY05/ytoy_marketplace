@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Models\Utilisateur;
+use App\Http\Controllers\Controller;
 use App\Models\Acheteur;
 use App\Models\Vendeur;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -44,25 +47,33 @@ class AuthController extends Controller
             'actif' => true,
         ]);
 
-         // Envoyer email de vérification
-         $this->sendEmailVerification($utilisateur);
+        // Envoyer email de vérification
+        $this->sendEmailVerification($utilisateur);
 
-         // Génération du token
+        // Génération du token
         $token = $utilisateur->createToken('auth_token')->plainTextToken;
 
 
 
-       
+
 
 
         if ($request->role === 'acheteur') {
-            Acheteur::create([
-                'utilisateur_id' => $utilisateur->id,
-                'adresse_livraison' => $request->adresse_livraison ?? $request->adresse,
+            $utilisateur->update(['actif' => true]);
+            $acheteur = $utilisateur->acheteur()->create([
+                'adresse_livraison' => $request->adresse_livraison,
+                'preferences' => $request->preferences,
+
             ]);
+            // Acheteur::create([
+            //    // 'utilisateur_id' => $utilisateur->id,
+            //     'adresse_livraison' => $request->adresse_livraison ?? $request->adresse,
+            // ]);
+
+
         } elseif ($request->role === 'vendeur') {
             $utilisateur->update(['actif' => false]); // Vendeur inactif jusqu'à vérification
-            
+
             $vendeur = $utilisateur->vendeur()->create([
                 'nom_boutique' => $request->nom_boutique,
                 'description' => $request->description,
@@ -99,7 +110,14 @@ class AuthController extends Controller
         }
 
         $utilisateur = Utilisateur::where('email', $request->email)->firstOrFail();
-        
+
+        // Vérifie si l'utilisateur existe et si le mot de passe est correct
+        if (!Hash::check($request->mot_de_passe, $utilisateur->mot_de_passe)) {
+            throw ValidationException::withMessages([
+                'email' => ['Les identifiants fournis sont incorrects.'],
+            ]);
+        }
+
         if (!$utilisateur->actif) {
             return response()->json([
                 'message' => 'Ce compte n\'est pas actif'
@@ -137,7 +155,7 @@ class AuthController extends Controller
         $user->email_verified = true;
         $user->email_verified_at = now();
         $user->save();
-        
+
         return response()->json(['message' => 'Email vérifié avec succès']);
     }
 
@@ -211,6 +229,25 @@ class AuthController extends Controller
             default:
                 return '/';
         }
+    }
+
+
+    public function activerUtilisateur($id)
+    {
+        $utilisateur = Utilisateur::findOrFail($id);
+        $utilisateur->actif = true;
+        $utilisateur->save();
+
+        return response()->json(['message' => 'Utilisateur activé avec succès.']);
+    }
+
+    public function desactiverUtilisateur($id)
+    {
+        $utilisateur = Utilisateur::findOrFail($id);
+        $utilisateur->actif = false;
+        $utilisateur->save();
+
+        return response()->json(['message' => 'Utilisateur désactivé avec succès.']);
     }
 }
 

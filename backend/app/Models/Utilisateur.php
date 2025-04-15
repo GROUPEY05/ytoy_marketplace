@@ -6,8 +6,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;         
 use Laravel\Sanctum\HasApiTokens; //pour l'authentification avec sanctum
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Contracts\Auth\MustVerifyEmail;//pour une verification plus approfondie de l'email
 
-class Utilisateur extends Authenticatable
+class Utilisateur extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, Notifiable;
 
@@ -22,6 +23,7 @@ class Utilisateur extends Authenticatable
         'telephone', 
         'adresse', 
         'role', 
+        'mot_de_passe',
         'actif'
     ];
 
