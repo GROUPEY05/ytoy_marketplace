@@ -72,14 +72,87 @@ class AuthController extends Controller
 
 
         } elseif ($request->role === 'vendeur') {
-            $utilisateur->update(['actif' => false]); // Vendeur inactif jusqu'à vérification
+            $utilisateur->update(['actif' => true]); // Vendeur inactif jusqu'à vérification
 
             $vendeur = $utilisateur->vendeur()->create([
                 'nom_boutique' => $request->nom_boutique,
                 'description' => $request->description,
-                'verifie' => false,
+                'verifie' => true,
             ]);
         }
+
+        $token = $utilisateur->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'utilisateur' => $utilisateur,
+            'token' => $token
+        ], 201);
+    }
+
+    public function registervendeur(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|unique:utilisateurs',
+            'mot_de_passe' => 'required|min:8|confirmed',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:15',
+            'adresse' => 'required|string|max:255',
+            'role' => 'required|in:acheteur,vendeur,administrateur',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $utilisateur = Utilisateur::create([
+            'email' => $request->email,
+            'mot_de_passe' => Hash::make($request->mot_de_passe),
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'telephone' => $request->telephone,
+            'adresse' => $request->adresse,
+            'role' => $request->role,
+            'date_inscription' => now(),
+            'actif' => true,
+        ]);
+
+        // Envoyer email de vérification
+        $this->sendEmailVerification($utilisateur);
+
+        // Génération du token
+        $token = $utilisateur->createToken('auth_token')->plainTextToken;
+
+
+
+
+
+
+        if ($request->role === 'vendeur') {
+            $utilisateur->update(['actif' => true]); // Vendeur inactif jusqu'à vérification
+
+            $vendeur = $utilisateur->vendeur()->create([
+                'nom_boutique' => $request->nom_boutique,
+                'ville' => $request->ville,
+                'description' => $request->description,
+                'verifie' => true,
+                'telephone' => $request->telephone,
+            ]);
+        } elseif ($request->role === 'acheteur') {
+                $utilisateur->update(['actif' => true]);
+                $acheteur = $utilisateur->acheteur()->create([
+                    'adresse_livraison' => $request->adresse_livraison,
+                    'preferences' => $request->preferences,
+    
+                ]);
+                // Acheteur::create([
+                //    // 'utilisateur_id' => $utilisateur->id,
+                //     'adresse_livraison' => $request->adresse_livraison ?? $request->adresse,
+                // ]);
+    
+    
+            } 
+       
 
         $token = $utilisateur->createToken('auth_token')->plainTextToken;
 
@@ -220,12 +293,12 @@ class AuthController extends Controller
     private function getRedirectPath($role)
     {
         switch ($role) {
-            case 'admin':
+            case 'administrateur':
                 return '/admin/dashboard';
             case 'vendeur':
                 return '/vendeur/dashboard';
-            case 'client':
-                return '/client/dashboard';
+            case 'acheteur':
+                return '/dashboard';
             default:
                 return '/';
         }
@@ -249,8 +322,30 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Utilisateur désactivé avec succès.']);
     }
+
+    public function approuverVendeur($id)
+    {
+        $vendeur = Vendeur::findOrFail($id);
+        $vendeur->verifie = true;
+        $vendeur->date_verification = now();
+        $vendeur->save();
+
+        // Activer le compte utilisateur associé
+        $vendeur->utilisateur->update(['actif' => true]);
+
+        return response()->json(['message' => 'Vendeur approuvé avec succès.']);
+    }
+
+    public function rejeterVendeur($id)
+    {
+        $vendeur = Vendeur::findOrFail($id);
+        $vendeur->verifie = false;
+        $vendeur->date_verification = now();
+        $vendeur->save();
+
+        // Désactiver le compte utilisateur associé
+        $vendeur->utilisateur->update(['actif' => false]);
+
+        return response()->json(['message' => 'Vendeur rejeté avec succès.']);
+    }
 }
-
-
-
-

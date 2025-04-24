@@ -14,6 +14,7 @@ class Vendeur extends Model
     
     protected $fillable = [
         'nom_boutique',
+        'ville',
         'description',
         'verifie',
         'date_verification'

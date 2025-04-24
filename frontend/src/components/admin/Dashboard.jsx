@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-hot-toast';
+import authService from '../../services/api';
+
 
 const AdminDashboard = () => {
   const { currentUser } = useAuth();
@@ -46,13 +49,35 @@ const AdminDashboard = () => {
     }, 1000);
   }, []);
 
-  const handleVendorApproval = (vendorId, approved) => {
-    // Dans une application réelle, appelez votre API ici
-    console.log(`Vendeur ${vendorId} ${approved ? 'approuvé' : 'rejeté'}`);
-    
-    // Mise à jour de l'interface
-    setPendingVendors(pendingVendors.filter(vendor => vendor.id !== vendorId));
+  const handleVendorApproval = async (vendorId, approved) => {
+    try {
+        // Utiliser authService au lieu de apiClient
+        const response = await authService[approved ? 'approveVendor' : 'rejectVendor'](vendorId);
+        
+        // Mise à jour de l'interface
+        setPendingVendors(pendingVendors.filter(vendor => vendor.id !== vendorId));
+        
+        // Afficher un message de succès
+        toast.success(response.data.message || 'Opération réussie');
+    } catch (error) {
+        console.error('Erreur lors de l\'approbation du vendeur:', error);
+        toast.error('Une erreur est survenue lors de l\'approbation du vendeur');
+    }
   };
+  
+  const fetchPendingVendors = async () => {
+    try {
+        // Utiliser authService au lieu de apiClient
+        const response = await authService.getPendingVendors();
+        setPendingVendors(response.data);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des vendeurs:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchPendingVendors();
+  }, []);
 
   return (
     <div className="container-fluid">

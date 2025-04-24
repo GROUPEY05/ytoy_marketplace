@@ -37,7 +37,7 @@ const VendeurDashboard = () => {
   }, []);
 
   return (
-    <div className="container-fluid mt-4">
+    <div className="container-fluid2 mt-4">
       <div className="row">
         {/* Sidebar */}
         <div className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">

@@ -3,15 +3,15 @@ import axios from 'axios';
 
 // Configuration de l'URL de base pour les requêtes API
 const API_URL = 'http://localhost:8000/api';
-axios.defaults.baseURL = API_URL;
-axios.defaults.withCredentials = true;
 
 // Création d'une instance Axios avec configuration par défaut
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
+  withCredentials: true // Pour gérer les cookies CSRF
 });
 
 // Intercepteur pour ajouter le token d'authentification à chaque requête
@@ -44,6 +44,20 @@ const authService = {
     }
   },
 
+  // Inscription d'un nouvel vendeur
+  registervendeur: async (userData) => {
+    try {
+      const response = await apiClient.post('/registervendeur', userData);
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.utilisateur));
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Erreur lors de l\'inscription' };
+    }
+  },
+
   // Connexion d'un utilisateur
   login: async (credentials) => {
     try {
@@ -51,6 +65,7 @@ const authService = {
       if (response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
         localStorage.setItem('user', JSON.stringify(response.data.utilisateur));
+        localStorage.setItem('userRole', response.data.utilisateur.role);
       }
       return response.data;
     } catch (error) {
@@ -64,6 +79,7 @@ const authService = {
       await apiClient.post('/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('userRole');
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
     }
@@ -106,13 +122,85 @@ const authService = {
 
   // Récupérer l'utilisateur courant depuis le localStorage
   getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    const User = localStorage.getItem('User');
+    return User? JSON.parse(User) : null;
   },
 
   // Récupérer le token depuis le localStorage
   getToken: () => {
     return localStorage.getItem('token');
+  },
+
+  // ====== FONCTIONNALITÉS ADMIN ======
+  
+  // Dashboard
+  getDashboardData: () => {
+    return apiClient.get('/admin/dashboard');
+  },
+  
+  // Utilisateurs
+  getUsers: (page = 1) => {
+    return apiClient.get(`/admin/utilisateurs?page=${page}`);
+  },
+  
+  getUserById: (userId) => {
+    return apiClient.get(`/admin/utilisateurs/${userId}`);
+  },
+  
+  updateUser: (userId, data) => {
+    return apiClient.put(`/admin/utilisateurs/${userId}`, data);
+  },
+  
+  banUser: (userId) => {
+    return apiClient.post(`/admin/utilisateurs/${userId}/ban`);
+  },
+  
+  deleteUser: (userId) => {
+    return apiClient.delete(`/admin/utilisateurs/${userId}`);
+  },
+  
+  // Vendeurs
+  getPendingVendors: () => {
+    return apiClient.get('/admin/vendeurs/en-attente');
+  },
+  
+  approveVendor: (vendorId) => {
+    return apiClient.post(`/admin/vendeurs/${vendorId}/approuver`);
+  },
+  
+  rejectVendor: (vendorId) => {
+    return apiClient.post(`/admin/vendeurs/${vendorId}/rejeter`);
+  },
+  
+  // Avis
+  getReviews: (page = 1) => {
+    return apiClient.get(`/admin/reviews?page=${page}`);
+  },
+  
+  approveReview: (reviewId) => {
+    return apiClient.post(`/admin/reviews/${reviewId}/approve`);
+  },
+  
+  deleteReview: (reviewId) => {
+    return apiClient.delete(`/admin/reviews/${reviewId}`);
+  },
+  
+  // Commandes
+  getOrders: (page = 1) => {
+    return apiClient.get(`/admin/commandes?page=${page}`);
+  },
+  
+  getOrderDetails: (orderId) => {
+    return apiClient.get(`/admin/commandes/${orderId}`);
+  },
+  
+  updateOrderStatus: (orderId, status) => {
+    return apiClient.put(`/admin/commandes/${orderId}`, { status });
+  },
+  
+  // Statistiques
+  getStatistics: (period = 'month') => {
+    return apiClient.get(`/admin/statistics?period=${period}`);
   }
 };
 

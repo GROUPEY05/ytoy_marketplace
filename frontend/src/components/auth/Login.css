@@ -1,0 +1,47 @@
+/* src/components/HeroSection.css */
+
+.container-fluid{
+    height: 100vh;
+    background-image: url('../../../public/image/img_connecction.jpg'); /* Chemin vers l'image de fond */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Effet sombre (overlay noir transparent) */
+  .container-fluid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* intensité de l'obscurcissement */
+    z-index: -1;
+  }
+  .btn-orange {
+    background-color: #ff8800;
+    color: white;
+    border: none;
+  }
+  
+  .btn-orange:hover {
+    background-color: #e67300;
+    color: white;
+  }
+
+  
+.btn-orange:disabled {
+  background-color: #fd7e14 !important;
+  border-color: #fd7e14 !important;
+  color: white !important;
+  opacity: 1; /* Empêche l'effet grisé */
+}
+
+  .form-check-input:checked {
+    background-color: black;
+    border-color: black;
+  }
+  

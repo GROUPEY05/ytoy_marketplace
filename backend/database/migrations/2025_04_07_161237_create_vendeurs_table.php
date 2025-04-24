@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('vendeurs', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->primary();
             $table->string('nom_boutique');
+           
             $table->text('description')->nullable();
             $table->boolean('verifie')->default(false);
             $table->timestamp('date_verification')->nullable();
