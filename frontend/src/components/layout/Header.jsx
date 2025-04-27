@@ -32,7 +32,7 @@ const Header = () => {
             </a>
           
             <a
-              href='/a_propos'
+              href='/about'
               style={{
                 fontSize: '16px',
                 textDecoration: 'none',

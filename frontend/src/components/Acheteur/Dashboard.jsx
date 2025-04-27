@@ -1,13 +1,27 @@
-// src/components/Dashboard.jsx
+// src/components/ Acheteur/Dashboard.jsx
 //dashboard acheteur
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleLogout = async () => {
+    try {
+      setLoading(true)
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+      alert('Erreur lors de la déconnexion. Veuillez réessayer.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   // Exemple de données d'ordre - à remplacer par vos appels API réels
   useEffect(() => {
@@ -54,6 +68,15 @@ const Dashboard = () => {
                 <Link to="/addresses" className="list-group-item list-group-item-action">
                   <i className="bi bi-geo-alt me-2"></i>Mes adresses
                 </Link>
+                <div className='nav-item mt-4'>
+                  <button
+                    onClick={handleLogout}
+                    className='nav-link text-danger border-0 bg-transparent d-flex align-items-center'
+                  >
+                    <i className='bi bi-box-arrow-right me-2'></i>
+                    Déconnexion
+                  </button>
+                </div>
               </div>
             </div>
           </div>

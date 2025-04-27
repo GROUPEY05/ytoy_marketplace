@@ -19,16 +19,25 @@ import RegisterVendeur from './components/auth/RegisterVendeur';
 
 // Composants principaux
 import Home from './components/Home';
-import Dashboard from './components/Dashboard';
+//acheteur
+import Dashboard from './components/Acheteur/Dashboard';
+//vendeur
 import VendeurDashboard from './components/vendeur/Dashboard';
+import ProductForm from './components/vendeur/AddProduct';
+//admin 
 import AdminDashboard from './components/admin/Dashboard';
+import CategorieAdmin from './components/admin/CategoryAdmin';
+import OrderDetail from './components/admin/OrderDetail';
+import OrderList from './components/admin/OrderList';
+//autre
 import NotFound from './components/NotFound';
 import Unauthorized from './components/Unauthorized';
 import Cart from './components/Cart';
 
 // Nouveaux composants à ajouter
 import Products from './components/products/Products';
-import ProductDetail from './components/products/ProductDetail';
+import About from './components/About';
+
 import Checkout from './components/checkout/Checkout';
 
 const App = () => {
@@ -47,17 +56,18 @@ const App = () => {
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/products" element={<Products />} />
-            <Route path="/products/:id" element={<ProductDetail />} />
-
+           
+            <Route path="/about" element={<About />} />
             {/* Routes protégées pour tous les utilisateurs authentifiés */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/acheteur/dashboard" element={<Dashboard />} />
               <Route path="/checkout" element={<Checkout />} />
             </Route>
 
             {/* Routes spécifiques aux vendeurs */}
             <Route element={<ProtectedRoute requiredRole="vendeur" />}>
               <Route path="/vendeur/dashboard" element={<VendeurDashboard />} />
+              <Route path="/vendeur/addproduct" element={<ProductForm />} />
               {/* Autres routes vendeur */}
             </Route>
 
@@ -65,6 +75,9 @@ const App = () => {
             <Route element={<ProtectedRoute requiredRole="administrateur" />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               {/* Autres routes admin */}
+              <Route path="/admin/category" element={<CategorieAdmin />} />
+              <Route path="/admin/commandes/:orderId" element={<OrderDetail />} />
+              <Route path="/admin/commandes" element={<OrderList />} />
             </Route>
 
             {/* Route 404 */}

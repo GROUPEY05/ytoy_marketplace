@@ -5,7 +5,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Utilisateur;
 use Illuminate\Http\Request;
 

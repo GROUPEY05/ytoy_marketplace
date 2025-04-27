@@ -1,19 +1,19 @@
-// src/components/ui/Card.jsx
-import React from 'react';
+import React from "react";
 
-const Card = ({ children, className = '', hoverable = false, padding = true }) => {
+// Composant Card
+export function Card({ children, className = "", ...props }) {
   return (
-    <div 
-      className={`
-        bg-white rounded-lg shadow-md overflow-hidden
-        ${hoverable ? 'transition-shadow hover:shadow-lg' : ''}
-        ${padding ? 'p-4' : ''}
-        ${className}
-      `}
-    >
+    <div className={`rounded-lg shadow-md p-4 bg-white ${className}`} {...props}>
       {children}
     </div>
   );
-};
+}
 
-export default Card;
+// Composant CardContent
+export function CardContent({ children, className = "", ...props }) {
+  return (
+    <div className={`p-2 ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}

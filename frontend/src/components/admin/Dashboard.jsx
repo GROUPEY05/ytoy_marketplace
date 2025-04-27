@@ -1,13 +1,15 @@
 // src/components/admin/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-hot-toast';
 import authService from '../../services/api';
+import { orderService } from '../../services/orderService';
 
 
 const AdminDashboard = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth()
+  const navigate = useNavigate()
   const [stats, setStats] = useState({
     users: 0,
     vendors: 0,
@@ -18,6 +20,19 @@ const AdminDashboard = () => {
   const [pendingVendors, setPendingVendors] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const handleLogout = async () => {
+    try {
+      setLoading(true)
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+      alert('Erreur lors de la déconnexion. Veuillez réessayer.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
 
   // Simuler le chargement des données
   useEffect(() => {
@@ -47,6 +62,20 @@ const AdminDashboard = () => {
       
       setLoading(false);
     }, 1000);
+  }, []);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const orders = await orderService.getOrders('admin'); // 👈 ici 'admin' 
+        console.log(orders);
+        setOrders(orders);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des commandes:', error);
+      }
+    };
+  
+    fetchOrders();
   }, []);
 
   const handleVendorApproval = async (vendorId, approved) => {
@@ -120,7 +149,7 @@ const AdminDashboard = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/admin/categories" className="nav-link text-white">
+                <Link to="/admin/category" className="nav-link text-white">
                   <i className="bi bi-list-check me-2"></i>
                   Catégories
                 </Link>
@@ -143,6 +172,15 @@ const AdminDashboard = () => {
                   Paramètres
                 </Link>
               </li>
+              <div className='nav-item mt-4'>
+                <button
+                  onClick={handleLogout}
+                  className='nav-link text-danger border-0 bg-transparent d-flex align-items-center'
+                >
+                  <i className='bi bi-box-arrow-right me-2'></i>
+                  Déconnexion
+                </button>
+              </div>
             </ul>
 
             <hr className="text-white" />

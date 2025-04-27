@@ -1,18 +1,22 @@
 // src/components/Home.jsx
-import React from 'react'
-import { Link } from 'react-router-dom'
+
 import { useAuth } from '../contexts/AuthContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './Home.css'
 
+
+
 import { FaCheck } from "react-icons/fa";
-import { MdMenu } from "react-icons/md";
+
 import Header from './layout/Header'
 import Footer from './layout/Footer'
+import MenuCategories from './layout/MenuCategories'
 
 const Home = () => {
   const { isAuthenticated, currentUser } = useAuth()
+
+  
 
   return (
     <>
@@ -20,7 +24,7 @@ const Home = () => {
       <div className='container  mt-3'>
         <div className='d-flex gap-3'>
           {/* menu */}
-          <div className='dropdown'>
+          {/* <div className='dropdown'>
             <button
               className='btn btn-white '
               type='button'
@@ -61,7 +65,8 @@ const Home = () => {
                 </button>
               </li>
             </ul>
-          </div>
+          </div> */}
+          <MenuCategories />
           <div className='mt-2'>
             <p style={{ color: '#FF6F00', fontSize: '18px' }}>
               {' '}
@@ -1303,4 +1308,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home 

@@ -6,6 +6,8 @@ import { useAuth } from '../../contexts/AuthContext';
 const ProtectedRoute = ({ requiredRole }) => {
   const { currentUser, isAuthenticated, loading } = useAuth();
 
+
+  
   console.log('Protected Route - Current User:', currentUser);
   console.log('Protected Route - Is Authenticated:', isAuthenticated);
   console.log('Protected Route - Required Role:', requiredRole);

@@ -32,6 +32,11 @@ const Login = () => {
     try {
       const response = await authService.login(credentials);
       console.log('Login Response:', response);
+
+      // Stocker le jeton d'authentification dans le localStorage
+    if (response.token) {
+      localStorage.setItem('authToken', response.token);  // Vous stockez ici le jeton d'authentification
+    }
       
       // Utiliser le chemin de redirection fourni par le serveur
       if (response.redirect_to) {
@@ -45,7 +50,7 @@ const Login = () => {
         } else if (userRole === 'vendeur') {
           navigate('/vendeur/dashboard');
         } else if (userRole === 'acheteur') {
-          navigate('/dashboard');
+          navigate('acheteur/dashboard');
         } else {
           navigate('/');
         }

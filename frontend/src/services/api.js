@@ -14,6 +14,8 @@ const apiClient = axios.create({
   withCredentials: true // Pour gérer les cookies CSRF
 });
 
+
+
 // Intercepteur pour ajouter le token d'authentification à chaque requête
 apiClient.interceptors.request.use(
   (config) => {
@@ -30,6 +32,8 @@ apiClient.interceptors.request.use(
 
 // Service d'authentification
 const authService = {
+
+  
   // Inscription d'un nouvel utilisateur
   register: async (userData) => {
     try {
@@ -75,15 +79,27 @@ const authService = {
 
   // Déconnexion
   logout: async () => {
+    const token = localStorage.getItem('token');
+
     try {
-      await apiClient.post('/logout');
+      const response = await apiClient.post('/logout', {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      // Nettoyage localStorage après réponse réussie
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('userRole');
+
+      return response.data;
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error('Erreur de déconnexion:', error);
+      throw error.response?.data || { message: 'Erreur lors de la déconnexion' };
     }
   },
+  
 
   // Vérification d'email
   verifyEmail: async (userId, token) => {
@@ -122,8 +138,8 @@ const authService = {
 
   // Récupérer l'utilisateur courant depuis le localStorage
   getCurrentUser: () => {
-    const User = localStorage.getItem('User');
-    return User? JSON.parse(User) : null;
+    const Utilisateur = localStorage.getItem('Utilisateur');
+    return Utilisateur ? JSON.parse(Utilisateur) : null;
   },
 
   // Récupérer le token depuis le localStorage
@@ -143,20 +159,20 @@ const authService = {
     return apiClient.get(`/admin/utilisateurs?page=${page}`);
   },
   
-  getUserById: (userId) => {
-    return apiClient.get(`/admin/utilisateurs/${userId}`);
+  getUserById: (utilisateurId) => {
+    return apiClient.get(`/admin/utilisateurs/${utilisateurId}`);
   },
   
-  updateUser: (userId, data) => {
-    return apiClient.put(`/admin/utilisateurs/${userId}`, data);
+  updateUser: (utilisateurId, data) => {
+    return apiClient.put(`/admin/utilisateurs/${utilisateurId}`, data);
   },
   
-  banUser: (userId) => {
-    return apiClient.post(`/admin/utilisateurs/${userId}/ban`);
+  banUser: (utilisateurId) => {
+    return apiClient.post(`/admin/utilisateurs/${utilisateurId}/ban`);
   },
   
-  deleteUser: (userId) => {
-    return apiClient.delete(`/admin/utilisateurs/${userId}`);
+  deleteUser: (utilisateurId) => {
+    return apiClient.delete(`/admin/utilisateurs/${utilisateurId}`);
   },
   
   // Vendeurs
@@ -203,5 +219,5 @@ const authService = {
     return apiClient.get(`/admin/statistics?period=${period}`);
   }
 };
-
+export { apiClient }; // pour les appels simples sans wrapper
 export default authService;

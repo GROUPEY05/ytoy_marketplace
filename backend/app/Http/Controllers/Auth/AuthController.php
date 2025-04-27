@@ -348,4 +348,14 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Vendeur rejeté avec succès.']);
     }
+
+    public function getVendeursEnAttente()
+    {
+        try {
+            $vendeurs = Utilisateur::where('role', 'vendeur')->where('status', 'en_attente')->get();
+            return response()->json($vendeurs);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erreur serveur', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

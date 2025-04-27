@@ -19,12 +19,17 @@ class Produit extends Model
     
     public function vendeur()
     {
-        return $this->belongsTo(Vendeur::class);
+        return $this->belongsTo(Utilisateur::class, 'vendeur_id');
     }
     
     public function categorie()
     {
         return $this->belongsTo(Categorie::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
     
     public function images()
@@ -46,4 +51,5 @@ class Produit extends Model
     {
         return $this->quantite_stock >= $quantite;
     }
+    
 }

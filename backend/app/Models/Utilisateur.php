@@ -33,6 +33,11 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
     public function getAuthPassword()
     {
         return $this->mot_de_passe;
@@ -66,5 +71,15 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
     public function isAdmin()
     {
         return $this->role === 'administrateur';
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'utilisateur_id');
+    }
+    
+    public function produits()
+    {
+        return $this->hasMany(Produit::class, 'vendeur_id');
     }
 }
