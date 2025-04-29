@@ -108,7 +108,7 @@ const VendeurDashboard = () => {
                 </Link>
               </li>
               <li className='nav-item'>
-                <Link to='/vendeur/managementproduct' className='nav-link'>
+                <Link to='/vendeur/products' className='nav-link'>
                   <i className='bi bi-box me-2'></i>
                   Produits
                 </Link>
@@ -195,7 +195,7 @@ const VendeurDashboard = () => {
               <button type='button' className='btn btn-sm btn-primary'>
                 <i className='bi bi-plus'></i>{' '}
                 <a
-                  href='/vendeur/AddProduct'
+                  href='/vendeur/products/add'
                   style={{ textDecoration: 'none', color: 'white' }}
                 >
                   Ajouter un produit

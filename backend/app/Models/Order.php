@@ -13,14 +13,20 @@ class Order extends Model
     use HasFactory;
     
     protected $fillable = [
-        'utilisateur_id',
+        'user_id',
         'status',
-        'total_amount',
+        'total',
+        'shipping_address',
+        'payment_method'
+    ];
+
+    protected $casts = [
+        'total' => 'decimal:2'
     ];
     
-    public function utilisateur()
+    public function user()
     {
-        return $this->belongsTo(Utilisateur::class, 'utilisateur_id');
+        return $this->belongsTo(User::class);
     }
     
     public function items()

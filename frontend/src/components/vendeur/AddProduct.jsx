@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap'
+import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { apiClient } from '../../services/api'
 
-
-const ProductForm = ({ produitId = null }) => {
+const ProductForm = () => {
+  const { productId } = useParams();
+  const navigate = useNavigate();
   const [produit, setProduit] = useState({
     nom: '',
     description: '',
@@ -23,24 +26,7 @@ const ProductForm = ({ produitId = null }) => {
 
   
 
-  // if (!token) {
-  //   console.error("Token not found!");
-  //   // Redirige éventuellement vers la page login
-  // } else {
-  //   axios
-  //     .post('http://localhost:8000/api/vendor/produits', formData, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // Inclure le token dans l'en-tête Authorization
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     })
-  //     .then(response => {
-  //       console.log(response.data)
-  //     })
-  //     .catch(error => {
-  //       console.error('Request failed', error.response)
-  //     })
-  // }
+
 
   // Fetch les catégories au chargement du formulaire
   useEffect(() => {
@@ -62,39 +48,46 @@ const ProductForm = ({ produitId = null }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         // Récupération des catégories
-        const categoriesResponse = await axios.get(
-          'http://localhost:8000/api/categories'
-        )
-        setCategories(categoriesResponse.data)
+        const categoriesResponse = await apiClient.get('/api/categories');
+        setCategories(categoriesResponse.data);
 
         // Si on est en mode édition, récupérer les détails du produit
-        if (produitId) {
-          const produitResponse = await axios.get(
-            `http://localhost:8000/api/vendor/produits/${produitId}`
-          )
-          setProduit(produitResponse.data)
+        if (productId) {
+          const produitResponse = await apiClient.get(`/api/vendor/produits/${productId}`);
+          const produitData = produitResponse.data;
+          
+          setProduit({
+            nom: produitData.nom,
+            description: produitData.description,
+            prix: produitData.prix,
+            categorie_id: produitData.categorie_id,
+            quantite_stock: produitData.quantite_stock
+          });
 
-          if (produitResponse.data.images) {
+          if (produitData.images) {
             setImagePreview(
-              produitResponse.data.images.map(img => ({
+              produitData.images.map(img => ({
                 url: img.url,
                 id: img.id
               }))
-            )
+            );
           }
         }
       } catch (error) {
-        console.error('Erreur lors du chargement des données:', error)
+        console.error('Erreur lors du chargement des données:', error);
         setMessage({
           text: 'Erreur lors du chargement des données',
           type: 'danger'
-        })
+        });
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [produitId])
+    fetchData();
+  }, [productId])
 
   const handleNomChange = (e) => {
     setProduit({ ...produit, nom: e.target.value })
@@ -115,18 +108,89 @@ const ProductForm = ({ produitId = null }) => {
     setProduit({ ...produit, categorie_id: e.target.value })
   }
 
-  const handleImageChange = e => {
+  const MAX_FILE_SIZE = 2048 * 1024; // 2048 Ko en bytes
+
+  const compressImage = async (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Calculer les nouvelles dimensions tout en gardant le ratio
+          if (width > 1920) {
+            height = Math.round((height * 1920) / width);
+            width = 1920;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            'image/jpeg',
+            0.8 // Qualité de compression (0.8 = 80%)
+          );
+        };
+      };
+    });
+  };
+
+  const handleImageChange = async (e) => {
     if (e.target.files) {
-      const filesArray = Array.from(e.target.files)
+      const filesArray = Array.from(e.target.files);
+      const validFiles = [];
+      const validPreviews = [];
+      
+      for (const file of filesArray) {
+        if (file.size > MAX_FILE_SIZE) {
+          // Si l'image est trop grande, on la compresse
+          try {
+            const compressedFile = await compressImage(file);
+            if (compressedFile.size <= MAX_FILE_SIZE) {
+              validFiles.push(compressedFile);
+              validPreviews.push({
+                url: URL.createObjectURL(compressedFile),
+                file: compressedFile
+              });
+            } else {
+              setMessage({
+                text: `L'image ${file.name} est trop grande même après compression. La taille maximale est de 2 Mo.`,
+                type: 'warning'
+              });
+            }
+          } catch (error) {
+            console.error('Erreur lors de la compression:', error);
+            setMessage({
+              text: `Erreur lors de la compression de l'image ${file.name}`,
+              type: 'danger'
+            });
+          }
+        } else {
+          validFiles.push(file);
+          validPreviews.push({
+            url: URL.createObjectURL(file),
+            file: file
+          });
+        }
+      }
 
-      // Prévisualisation des images
-      const newImagePreview = filesArray.map(file => ({
-        url: URL.createObjectURL(file),
-        file: file
-      }))
-
-      setImageFiles([...imageFiles, ...filesArray])
-      setImagePreview([...imagePreview, ...newImagePreview])
+      setImageFiles([...imageFiles, ...validFiles]);
+      setImagePreview([...imagePreview, ...validPreviews]);
     }
   }
 
@@ -146,17 +210,9 @@ const ProductForm = ({ produitId = null }) => {
   }
 
   const handleSubmit = async e => {
-    e.preventDefault()
-  setIsLoading(true)
-  setMessage({ text: '', type: '' })
-
-  const token = localStorage.getItem('token') 
-
-  if (!token) {
-    setMessage({ text: 'Token non trouvé. Veuillez vous reconnecter.', type: 'danger' })
-    setIsLoading(false)
-    return
-  }
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ text: '', type: '' });
 
     try {
       const formData = new FormData()
@@ -180,54 +236,40 @@ const ProductForm = ({ produitId = null }) => {
         })
       }
 
-      let response
-      if (produitId) {
+      let response;
+      if (productId) {
         // Mise à jour
-        formData.append('_method', 'PUT')
-        response = await axios.post(
-          `http://localhost:8000/api/vendor/produits/${produitId}`,
+        response = await apiClient.post(
+          `/api/vendor/produits/${productId}`,
           formData,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Remplacez yourToken par le jeton récupéré
               'Content-Type': 'multipart/form-data'
             }
           }
-        )
+        );
       } else {
         // Création
-        response = await axios.post(
-          'http://localhost:8000/api/vendor/produits',
+        response = await apiClient.post(
+          '/api/vendor/produits',
           formData,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Remplacez yourToken par le jeton récupéré
               'Content-Type': 'multipart/form-data'
             }
           }
-        )
+        );
       }
 
       setMessage({
         text: produitId
-          ? 'Produit mis à jour avec succès!'
+          ? 'Produit modifié avec succès!'
           : 'Produit ajouté avec succès!',
         type: 'success'
       })
-
-      if (!produitId) {
-        // En mode création, réinitialiser le formulaire
-        setProduit({
-          nom: '',
-          description: '',
-          prix: '',
-          categorie_id: '',
-          quantite_stock: '',
-          images: []
-        })
-        setImageFiles([])
-        setImagePreview([])
-      }
+      
+      // Rediriger vers la liste des produits du vendeur
+      navigate('/vendeur/products');
     } catch (error) {
       console.error('Erreur détaillée:', error.response?.data);
       console.error('Status:', error.response?.status);
@@ -260,7 +302,7 @@ const ProductForm = ({ produitId = null }) => {
       <Card className='shadow-sm'>
         <Card.Header className='bg-dark text-white'>
           <h2>
-            {produitId ? 'Modifier le produit' : 'Ajouter un nouveau produit'}
+            {productId ? 'Modifier le produit' : 'Ajouter un nouveau produit'}
           </h2>
         </Card.Header>
         <Card.Body>

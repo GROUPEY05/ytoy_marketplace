@@ -33,12 +33,14 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/registervendeur', [AuthController::class, 'registervendeur']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/verify-email/{userId}/{token}', [AuthController::class, 'verifyEmail']);
+
+// Routes publiques - Produits et Catégories
+Route::get('/produits', [ProduitController::class, 'index']);
+Route::get('/produits/{id}', [ProduitController::class, 'show']);
+Route::get('/produits/featured', [ProduitController::class, 'getFeatured']);
 Route::get('/categories', [CategoriePublicController::class, 'index']);
 Route::get('/categories/{id}', [CategoriePublicController::class, 'show']);
-// Route pour récupérer les produits d'une catégorie spécifique
 Route::get('/categories/{id}/produits', [CategoriePublicController::class, 'getProduits']);
-// Route pour récupérer les produits en vedette/récents
-Route::get('/produits/featured', [ProduitController::class, 'getFeatured']);
 
 // Routes protégées (auth + actif)
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -95,10 +97,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     
     // Routes de vendeur
-    Route::prefix('vendeur')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json(['data' => 'Dashboard Vendeur']);
-        });
+    Route::prefix('vendor')->middleware(['auth:sanctum', 'role:vendeur'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+        
+        // Gestion des produits
+        Route::get('/produits', [ProduitController::class, 'vendorProducts']);
+        Route::post('/produits', [ProduitController::class, 'store']);
+        Route::post('/produits/{id}', [ProduitController::class, 'update']);
+        Route::delete('/produits/{id}', [ProduitController::class, 'destroy']);
+        
+        // Gestion des commandes du vendeur
+        Route::get('/orders', [VendorOrderController::class, 'index']);
+        Route::get('/orders/{id}', [VendorOrderController::class, 'show']);
+        Route::put('/orders/{id}/status', [VendorOrderController::class, 'updateStatus']);
     });
     
     // Routes complètes pour les vendeurs (intégrées depuis le second morceau)
@@ -129,11 +140,24 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
     
     // Routes de acheteur
-    Route::prefix('acheteur')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json(['data' => 'Dashboard Acheteur']);
+    // Routes acheteur
+    Route::middleware(['auth:sanctum', 'role:acheteur'])->group(function () {
+        Route::prefix('cart')->group(function () {
+            Route::get('/', [CartController::class, 'index']);
+            Route::post('/add', [CartController::class, 'add']);
+            Route::put('/update', [CartController::class, 'update']);
+            Route::delete('/remove/{id}', [CartController::class, 'remove']);
         });
 
-        Route::apiResource('orders', AcheteurOrderController::class)->only(['index', 'show', 'store']);
+        Route::prefix('orders')->group(function () {
+            Route::get('/', [OrderController::class, 'index']);
+            Route::post('/create', [OrderController::class, 'store']);
+            Route::get('/{id}', [OrderController::class, 'show']);
+        });
+
+        Route::prefix('acheteur')->group(function () {
+            Route::get('/dashboard', [DashboardController::class, 'index']);
+            Route::apiResource('orders', AcheteurOrderController::class)->only(['index', 'show', 'store']);
+        });
     });
 });

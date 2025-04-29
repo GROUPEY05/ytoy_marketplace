@@ -74,9 +74,19 @@ const Register = () => {
       <div className=''>
         <div className=''>
           <div className='card border-0 rounded-lg'>
-            <div className='card-header bg-primary text-white text-center'>
-              <h3 className='mb-0'>Inscription</h3>
+          <div className='d-flex justify-content-between align-items-center mb-4'>
+            <h4 className='  ms-4 mb-0' style={{ color: '#1B5FA3', paddingRight: '60px' }}>
+              {' '}
+              <strong> INSCRIPTION </strong>
+            </h4>
+            <div style={{ paddingRight: '60px' }}>
+              <img
+                src='http://localhost:5173/image/logo_ytoy.png'
+                alt='Logo'
+                style={{ maxWidth: '100px' }}
+              />
             </div>
+          </div>
             <div className='card-body'>
               {errors.general && (
                 <div className='alert alert-danger' role='alert'>
@@ -261,9 +271,9 @@ const Register = () => {
 
                 {formData.role === 'acheteur' && (
                   <div className='acheteur-fields'>
-                    <div className='card mb-4 border-primary'>
+                    <div className='card mb-4 ' style={{ borderColor:'#FF6F00'}}>
                       <div className='card-header bg-light'>
-                        <h5 className='mb-0 text-primary'>
+                        <h5 className='mb-0 ' style={{ color:'#FF6F00'}}>
                           Informations acheteur
                         </h5>
                       </div>
@@ -380,7 +390,7 @@ const Register = () => {
               <div className='small'>
                 <p className='mb-0'>
                   Vous avez déjà un compte?
-                  <a href='/login' className='text-decoration-none ms-1'>
+                  <a href='/login' className='text-decoration-none ms-1' style={{ color:'#FF6F00'}}>
                     Connectez-vous
                   </a>
                 </p>

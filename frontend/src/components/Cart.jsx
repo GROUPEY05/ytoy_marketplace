@@ -1,112 +1,152 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form, ListGroup, Alert } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { Container, Row, Col, Card, Button, Form, ListGroup, Alert, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import './Cart.css';
+import { AuthContext } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { currentUser, isAuthenticated } = useAuth();
+  const { user } = useContext(AuthContext);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [couponCode, setCouponCode] = useState('');
-  const [discountApplied, setDiscountApplied] = useState(false);
+  const [message, setMessage] = useState('');
   
   // Calculer les totaux
-  const subtotal = cartItems.reduce((sum, item) => sum + item.prix * item.quantite, 0);
-  const shipping = subtotal > 0 ? 5.99 : 0;
-  const discount = discountApplied ? subtotal * 0.1 : 0;
-  const total = subtotal + shipping - discount;
+  const subtotal = cartItems.reduce((sum, item) => sum + item.produit.prix * item.quantite, 0);
+  const shipping = 1000; // Frais de livraison fixes en FCFA
+  const total = subtotal + shipping;
+
+  const fetchCartItems = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:8000/api/cart', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      setCartItems(response.data.items);
+      setError('');
+    } catch (error) {
+      console.error('Erreur lors de la récupération du panier:', error);
+      setError('Impossible de charger votre panier. Veuillez réessayer.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Récupérer les articles du panier depuis localStorage ou API
-    const fetchCartItems = () => {
-      try {
-        // Option 1: Récupérer depuis localStorage
-        const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItems(savedCart);
-        
-        // Option 2: Si vous avez une API pour le panier utilisateur
-        // if (isAuthenticated) {
-        //   const response = await authService.getCart();
-        //   setCartItems(response.data);
-        // }
-      } catch (error) {
-        console.error('Erreur lors de la récupération du panier:', error);
-        setError('Impossible de charger votre panier. Veuillez réessayer.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (user) {
+      fetchCartItems();
+    }
+  }, [user]);
 
-    fetchCartItems();
-  }, [isAuthenticated]);
-
-  const updateQuantity = (productId, newQuantity) => {
+  const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return;
     
-    const updatedCart = cartItems.map(item => 
-      item.id === productId ? { ...item, quantite: newQuantity } : item
-    );
-    
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    
-    // Si vous avez une API
-    // if (isAuthenticated) {
-    //   authService.updateCartItem(productId, newQuantity);
-    // }
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`http://localhost:8000/api/cart/update/${itemId}`, {
+        quantite: newQuantity
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Mettre à jour l'affichage local
+      const updatedCart = cartItems.map(item =>
+        item.id === itemId ? { ...item, quantite: newQuantity } : item
+      );
+      setCartItems(updatedCart);
+
+      // Mettre à jour le compteur du panier
+      const cartCountEvent = new CustomEvent('cartUpdated', {
+        detail: { count: updatedCart.reduce((sum, item) => sum + item.quantite, 0) }
+      });
+      window.dispatchEvent(cartCountEvent);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la quantité:', error);
+      setError('Erreur lors de la mise à jour de la quantité');
+    }
   };
 
-  const removeItem = (productId) => {
-    const updatedCart = cartItems.filter(item => item.id !== productId);
-    setCartItems(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    
-    // Si vous avez une API
-    // if (isAuthenticated) {
-    //   authService.removeFromCart(productId);
-    // }
+  const removeItem = async (itemId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:8000/api/cart/remove/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Mettre à jour l'affichage local
+      const updatedCart = cartItems.filter(item => item.id !== itemId);
+      setCartItems(updatedCart);
+
+      // Mettre à jour le compteur du panier
+      const cartCountEvent = new CustomEvent('cartUpdated', {
+        detail: { count: updatedCart.reduce((sum, item) => sum + item.quantite, 0) }
+      });
+      window.dispatchEvent(cartCountEvent);
+
+      setMessage('Article supprimé du panier');
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      setError('Erreur lors de la suppression de l\'article');
+    }
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-    localStorage.setItem('cart', JSON.stringify([]));
-    
-    // Si vous avez une API
-    // if (isAuthenticated) {
-    //   authService.clearCart();
-    // }
-  };
+  const clearCart = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete('http://localhost:8000/api/cart/clear', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-  const applyCoupon = () => {
-    // Simuler la validation d'un code promo
-    if (couponCode === 'PROMO10') {
-      setDiscountApplied(true);
-      setError('');
-    } else {
-      setError('Code promo invalide');
-      setDiscountApplied(false);
+      setCartItems([]);
+      
+      // Mettre à jour le compteur du panier
+      const cartCountEvent = new CustomEvent('cartUpdated', {
+        detail: { count: 0 }
+      });
+      window.dispatchEvent(cartCountEvent);
+
+      setMessage('Panier vidé');
+    } catch (error) {
+      console.error('Erreur lors de la suppression du panier:', error);
+      setError('Erreur lors de la suppression du panier');
     }
   };
 
   const proceedToCheckout = () => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/cart', message: 'Veuillez vous connecter pour finaliser votre commande' } });
+    if (!user) {
+      navigate('/login', { state: { from: '/cart' } });
       return;
     }
-    
-    // Redirection vers la page de paiement
     navigate('/checkout');
   };
 
+  if (!user) {
+    navigate('/login', { state: { from: '/cart' } });
+    return null;
+  }
+
   if (loading) {
     return (
-      <Container className="py-5 text-center">
-        <div className="spinner-border text-primary" role="status">
+      <Container className="my-5 text-center">
+        <Spinner animation="border" role="status">
           <span className="visually-hidden">Chargement...</span>
-        </div>
+        </Spinner>
       </Container>
     );
   }

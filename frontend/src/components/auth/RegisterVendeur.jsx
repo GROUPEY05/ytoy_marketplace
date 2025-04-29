@@ -701,7 +701,7 @@ const RegisterVendeur = () => {
             <div className='small'>
               <p className='mb-0'>
                 Vous avez déjà un compte?
-                <a href='/login' className='text-decoration-none ms-1'>
+                <a href='/login' className='text-decoration-none ms-1' style={{ color:'#FF6F00'}}>
                   Connectez-vous
                 </a>
               </p>

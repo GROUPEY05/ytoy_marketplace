@@ -20,9 +20,7 @@ class ProduitController extends Controller
     public function index(Request $request)
     {
         $query = Produit::where('vendeur_id', Auth::id())
-            ->with(['categorie', 'images' => function ($query) {
-                $query->select('id', 'produit_id', 'url')->limit(1);
-            }]);
+            ->with(['categorie', 'images']);
 
         // Recherche
         if ($request->has('search') && !empty($request->search)) {
@@ -47,10 +45,16 @@ class ProduitController extends Controller
         $perPage = $request->per_page ?? 10;
         $produits = $query->paginate($perPage);
 
-        // Ajouter l'URL de la miniature pour faciliter l'affichage côté client
+        // Transformer les données pour inclure les URLs complètes des images
         $produits->getCollection()->transform(function ($produit) {
-            $produit->thumbnail = $produit->images->first()->url ?? null;
-            unset($produit->images);
+            $produit->images->transform(function ($image) {
+                // S'assurer que l'URL commence par /storage/
+                if (!str_starts_with($image->url, '/storage/')) {
+                    $image->url = '/storage/' . $image->url;
+                }
+                \Log::info('Image URL after transformation:', ['url' => $image->url]);
+                return $image;
+            });
             return $produit;
         });
 
@@ -160,16 +164,19 @@ class ProduitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Validation
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'description' => 'required|string',
-            'prix' => 'required|numeric|min:0',
-            'categorie_id' => 'required|exists:categories,id',
-            'quantite_stock' => 'required|integer|min:0',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'images_to_delete.*' => 'nullable|exists:produit_images,id',
-        ]);
+        // Règles de validation pour chaque champ
+        $rules = [
+            'nom' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'prix' => 'sometimes|numeric|min:0',
+            'categorie_id' => 'sometimes|exists:categories,id',
+            'quantite_stock' => 'sometimes|integer|min:0',
+            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images_to_delete.*' => 'sometimes|exists:produit_images,id',
+        ];
+
+        // Ne valider que les champs présents dans la requête
+        $validated = $request->validate($rules);
 
         // Vérifier que le produit appartient bien au vendeur
         $produit = Produit::where('vendeur_id', Auth::id())->findOrFail($id);
@@ -177,14 +184,12 @@ class ProduitController extends Controller
         try {
             DB::beginTransaction();
 
-            // Mettre à jour le produit
-            $produit->nom = $validated['nom'];
-            $produit->description = $validated['description'];
-            $produit->prix = $validated['prix'];
-            $produit->categorie_id = $validated['categorie_id'];
-            $produit->quantite_stock = $validated['quantite_stock'];
-            $produit->date_ajout = now();
-            $produit->actif = true;
+            // Mettre à jour uniquement les champs présents dans la requête
+            foreach ($validated as $field => $value) {
+                if ($field !== 'images' && $field !== 'images_to_delete') {
+                    $produit->$field = $value;
+                }
+            }
             $produit->save();
 
             // Supprimer les images si demandé

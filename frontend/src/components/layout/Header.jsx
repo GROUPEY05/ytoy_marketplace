@@ -1,6 +1,8 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { AuthContext } from '../../contexts/AuthContext';
+import axios from 'axios';
 <link
   rel='stylesheet'
   href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css'
@@ -8,6 +10,49 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 
 const Header = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cartCount, setCartCount] = useState(0);
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+
+  const fetchCartCount = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token && user) {
+        const response = await axios.get('http://localhost:8000/api/cart/count', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setCartCount(response.data.count);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération du nombre d\'articles:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+
+    // Écouter les mises à jour du panier
+    const handleCartUpdate = (event) => {
+      setCartCount(event.detail.count);
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
+  }, [user]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
   return (
     <>
       <header className='  d-flex  ' style={{boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', position: 'sticky', top: '0', zIndex: '1000', backgroundColor: 'white'}}>
@@ -43,47 +88,79 @@ const Header = () => {
             </a>
           </div>
               {/* searchbar et bouton rechercher */}
-          <form class='d-flex gap-2' role='search'>
+          <form className='d-flex gap-2' role='search' onSubmit={handleSearch}>
             <div
               className='d-flex'
               style={{ position: 'relative', width: '300px' }}
             >
               <input
-                class='form-control me-2'
+                className='form-control me-2'
                 type='search'
                 placeholder='cherchez ici....'
                 aria-label='Search'
                 style={{ width: '100%' }}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
               <div
-                className='position-absolute top-50   '
+                className='position-absolute top-50'
                 style={{
                   right: '50px',
                   cursor: 'pointer',
                   transform: 'translateY(-50%)'
                 }}
               >
-                <i class='bi bi-search'></i>
+                <i className='bi bi-search'></i>
               </div>
             </div>
-            <button class='btn  btn-success' type='submit' style={{backgroundColor: '#FF6F00', border:'none'}}>
+            <button className='btn btn-success' type='submit' style={{backgroundColor: '#FF6F00', border:'none'}}>
               Rechercher
             </button>
           </form>
 
-          {/* Icônes Panier et Connexion */}
-          <div className='d-flex  gap-5 align-items-center mt-3 mt-lg-0'>
-            <a href="/cart"  className='cart-icon me-3 position-relative'>
-              <i className='bi bi-cart-fill' style={{ fontSize: '24px', color:'#000000' }}></i>
-              <span className='position-absolute top-0 start-100 translate-middle badge rounded-pill ' style={{backgroundColor: '#FF6F00'}}>
-                0
-              </span>
-            </a>
+          {/* Icônes Panier et Connexion/Déconnexion */}
+          <div className='d-flex gap-5 align-items-center mt-3 mt-lg-0'>
+            {user && (
+              <Link to="/cart" className='cart-icon me-3 position-relative'>
+                <i className='bi bi-cart-fill' style={{ fontSize: '24px', color:'#000000' }}></i>
+                <span className='position-absolute top-0 start-100 translate-middle badge rounded-pill' style={{backgroundColor: '#FF6F00'}}>
+                  {cartCount}
+                </span>
+              </Link>
+            )}
 
-            <button class='btn  btn-success' type='submit' style={{backgroundColor: '#FF6F00', border:'none'}}>
-              <a href="/login" style={{color: '#ffffff', textDecoration: 'none'}}> Se connecter</a>
-              
-            </button>
+            {!user ? (
+              <Link to="/login" className='btn btn-success' style={{backgroundColor: '#FF6F00', border:'none', color: '#ffffff', textDecoration: 'none'}}>
+                Se connecter
+              </Link>
+            ) : (
+              <div className='d-flex gap-3'>
+                {user.role === 'vendeur' && (
+                  <Link to="/vendeur/dashboard" className='btn btn-outline-primary'>
+                    Dashboard Vendeur
+                  </Link>
+                )}
+                {user.role === 'administrateur' && (
+                  <Link to="/admin/dashboard" className='btn btn-outline-primary'>
+                    Dashboard Admin
+                  </Link>
+                )}
+                {user.role === 'acheteur' && (
+                  <Link to="/acheteur/dashboard" className='btn btn-outline-primary'>
+                    Mes commandes
+                  </Link>
+                )}
+                <button 
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    window.location.href = '/';
+                  }} 
+                  className='btn btn-danger'
+                >
+                  Déconnexion
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
