@@ -22,7 +22,7 @@ const Home = () => {
     <>
       <Header />
       <div className='container  mt-3'>
-        <div className='d-flex gap-3'>
+        <div className='d-flex  gap-3'>
           {/* menu */}
           {/* <div className='dropdown'>
             <button
@@ -68,19 +68,18 @@ const Home = () => {
           </div> */}
           <MenuCategories />
           <div className='mt-2'>
-            <p style={{ color: '#FF6F00', fontSize: '18px' }}>
+            <p style={{ color: '#FF6F00', fontSize: '15px' }}>
               {' '}
               <strong> Toutes les Catégories </strong>
             </p>
           </div>
             {/* promotion */}
-          <div className='justify-content-center mt-2' >
-            <a href="/promotions" style={{ color: '#FF6F00', fontSize: '18px', textDecoration: 'none', marginLeft: '350px' }}> <strong>Promotions </strong></a>
+          <div className='justify-content-center  mt-2' >
+            <a href="/promotions" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '300px' }}> <strong>Promotions </strong></a>
           </div>
           {/* devenir vendeur */}
           <div className='justify-content-end mt-2'>
-            <a href="/RegisterVendeur" style={{ color: '#FF6F00', fontSize: '18px', textDecoration: 'none', marginLeft: '425px' }}> <strong>Devenir Vendeur </strong></a>
-
+            <a href="/RegisterVendeur" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '300px' }}> <strong>Devenir Vendeur </strong></a>
           </div>
         </div>
       </div>
@@ -220,9 +219,9 @@ const Home = () => {
       </div>
       {/* card offres */}
       <div  className= "mt-5" style={{background:' rgba(217, 217, 217, 0.4)',}} > <br />
-        <h3  style={{marginLeft:'70px'}}> <strong>Nos Offres</strong></h3><br />
+        <div  className='container h3' > <strong>Nos Offres</strong></div><br />
           {/* bloc1 */}
-        <div className=' container d-flex gap-2 '>
+        <div className='container d-flex justify-content-between'>
           {/* card1 bloc1 */}
           <div className='my-card' style={{marginLeft:'10px', backgroundColor:'#FFFFFF' }} >
             <h4 className='mt-3 text-center' style={{marginLeft:'10px'}}><strong>Cuisine et maison</strong></h4>
@@ -251,7 +250,7 @@ const Home = () => {
           </div>
 
           {/* card2 bloc1 */}
-          <div className='my-card' style={{ marginLeft:'250px', backgroundColor:'#FFFFFF' }}>
+          <div className='my-card' style={{ backgroundColor:'#FFFFFF' }}>
             <h4 className='mt-3 text-center'><strong>Bureau</strong></h4>  
             <div className='d-flex gap-3 p-4 justify-content-center'>
               <div>
@@ -276,7 +275,7 @@ const Home = () => {
             </div>
           </div>
           {/* card3 bloc1 */}
-          <div className='my-card' style={{marginLeft:'220px', backgroundColor:'#FFFFFF'}}>
+          <div className='my-card' style={{backgroundColor:'#FFFFFF'}}>
             <h4  className='mt-3 text-center'><strong>Maison</strong></h4>  
             <div className='d-flex gap-3 p-4 justify-content-center'>
               <div>
@@ -304,7 +303,7 @@ const Home = () => {
 
         {/* bloc2 */}
 
-        <div className=' container d-flex gap-2 mt-5 '>
+        <div className='container justify-content-between d-flex gap-2 mt-5 '>
           {/* card1 bloc2 */}
           <div className='my-card' style={{marginLeft:'10px', backgroundColor:'#FFFFFF' }} >
             <h4 className='mt-3 text-center' style={{marginLeft:'10px'}}><strong>Accessoires</strong></h4>
@@ -333,7 +332,7 @@ const Home = () => {
           </div>
 
           {/* card2 bloc2 */}
-          <div className='my-card' style={{ marginLeft:'250px', backgroundColor:'#FFFFFF' }}>
+          <div className='my-card' style={{ backgroundColor:'#FFFFFF' }}>
             <h4 className='mt-3 text-center'><strong>Perruque</strong></h4>  
             <div className='d-flex gap-3 p-4 justify-content-center'>
               <div>
@@ -358,7 +357,7 @@ const Home = () => {
             </div>
           </div>
           {/* card3 bloc3 */}
-          <div className='my-card' style={{marginLeft:'220px', backgroundColor:'#FFFFFF'}}>
+          <div className='my-card' style={{ backgroundColor:'#FFFFFF'}}>
             <h4  className='mt-3 text-center'><strong>vêtements</strong></h4>  
             <div className='d-flex gap-3 p-4 justify-content-center'>
               <div>
@@ -513,8 +512,8 @@ const Home = () => {
       <div className=' container mt-5'>
         {/* bloc1 */}
         <div className='d-flex'>
-          <h2> <strong>Nos boutiques</strong></h2>
-          <button class='btn  btn-success ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft:'950px'}}>
+          <h3> <strong>Nos boutiques</strong></h3>
+          <button class='btn  btn-success ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft:'830px'}}>
               <a href="/boutiques" style={{color: '#ffffff', textDecoration: 'none'}}> <strong>voir plus</strong> </a>
               
             </button>
@@ -671,10 +670,10 @@ const Home = () => {
               }}
             />
             <p className='text-center mt-2'>Samsung Galaxy A56 5G - 256 Go </p>
-            <p  style={{marginLeft:'15px'}}><strong>By Hight-tech empire</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>255,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <p  style={{marginLeft:'10px'}}><strong>By Hight-tech empire</strong></p>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A',}}><strong>255,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', }}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -710,9 +709,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>MacBook - 256 Go SSD - 16 GO RAM  </p>
             <p  style={{marginLeft:'15px'}}><strong>By Hight-tech empire</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>190,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>190,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -746,11 +745,11 @@ const Home = () => {
                 
               }}
             />
-            <p className='text-center mt-2'>Imprimante Dernière Génération </p>
+            <p className='text-center mt-2'>Imprimante Dernière Génération </p><br />
             <p  style={{marginLeft:'15px'}}><strong>By Hight-tech empire</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>79,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4'  style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>79,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -786,9 +785,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>HAWUE MediaPad T5Wi-Fi Tablette  </p>
             <p  style={{marginLeft:'15px'}}><strong>By Hight-tech empire</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>60,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>60,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -835,9 +834,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Pérruque Métissé  Taille 18</p>
             <p  style={{marginLeft:'15px'}}><strong>By Beauty corporate</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>50,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>50,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -873,9 +872,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'> Vietnamienne taille 12 </p>
             <p  style={{marginLeft:'15px'}}><strong>By Beauty corporate</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>45,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>45,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -911,9 +910,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Pérruque Bob taille 12</p>
             <p  style={{marginLeft:'15px'}}><strong>By Beauty corporate</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>20,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>20,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -949,9 +948,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Perruque Pixie curly </p>
             <p  style={{marginLeft:'15px'}}><strong>By Beauty corporate</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>12,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>12,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -1112,9 +1111,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Chic Robe de soirée </p>
             <p  style={{marginLeft:'15px'}}><strong>By Dress well</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>10,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4 ' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>10,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -1162,9 +1161,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Puissant Lisseur </p>
             <p  style={{marginLeft:'15px'}}><strong>By All-shop</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>7,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>7,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -1200,9 +1199,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'> Canapé confortable  </p>
             <p  style={{marginLeft:'15px'}}><strong>By All-shop</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>20,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>20,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -1238,9 +1237,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Panier de fruit tropicaux</p>
             <p  style={{marginLeft:'15px'}}><strong>By All-shop</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>8,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>8,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 
@@ -1276,9 +1275,9 @@ const Home = () => {
             />
             <p className='text-center mt-2'>Salle a Mangé Moderne </p>
             <p  style={{marginLeft:'15px'}}><strong>By All-shop</strong></p>
-            <div className='d-flex gap-2'>
-              <p style={{color: '#F98B3A', marginLeft:'15px'}}><strong>80,000 FCFA</strong></p>
-              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px', marginLeft:'55px'}}>
+            <div className='d-flex gap-4' style={{marginLeft:'15px',  marginRight:'5px'}}>
+              <p style={{color: '#F98B3A'}}><strong>80,000 FCFA</strong></p>
+              <button style={{backgroundColor: '#F98B3A', height: '25px' , border: 'none', borderRadius: '5px', fontSize: '12px'}}>
                 <a href="/panier" style={{color: '#000000', textDecoration: 'none'}}>
                  <i className='bi bi-cart-fill' style={{ fontSize: '12px', color:'#000000' }}></i>
                    <strong> Ajouter </strong> 

@@ -47,6 +47,9 @@ class CategorieController extends Controller
 
     public function show($id)
     {
-        return Categorie::findOrFail($id);
+        $categorie = Categorie::findOrFail($id);
+        return response()->json($categorie);
     }
+
+    
 }

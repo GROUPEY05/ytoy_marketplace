@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const Header = () => {
   return (
     <>
-      <header className='  d-flex  ' style={{boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)'}}>
+      <header className='  d-flex  ' style={{boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', position: 'sticky', top: '0', zIndex: '1000', backgroundColor: 'white'}}>
         <div className='container d-flex align-items-center gap-3 justify-content-between'>
           <div>
             <img

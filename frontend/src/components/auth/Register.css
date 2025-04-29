@@ -1,0 +1,42 @@
+.all
+{
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    margin: 60px auto;
+}
+
+
+.img-container
+{
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    justify-content: start;
+    gap: 100px;
+}
+
+@media (max-width: 1024px) 
+{
+    .img-container
+    {
+        display: none;
+    }
+    
+}
+
+.content
+{
+    width: 70%;
+    margin-top: 10%;
+}
+
+.text-content
+{
+    font-size: 30px;
+}
+
+form 
+{
+    min-width: 400px;
+}

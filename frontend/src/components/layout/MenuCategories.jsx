@@ -63,7 +63,7 @@ import { MdMenu } from 'react-icons/md';
 const MenuCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   // Fonction pour récupérer les catégories
   const fetchCategories = async () => {
@@ -133,6 +133,9 @@ const MenuCategories = () => {
                   style={{ color: '#000000', textDecoration: 'none' }}
                 >
                   {category.nom}
+                  {category.produits_count > 0 && (
+                  <span className="badge bg-secondary ms-2">{category.produits_count}</span>
+                  )}
                 </a>
               </button>
             </li>

@@ -19,31 +19,34 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-dark text-white py-4">
+    <footer className=" text-white py-4" style={{ backgroundColor: '#171A1F'}}>
       <div className="container">
         {/* Section Newsletter */}
         <div className="d-flex flex-column align-items-center mb-4">
-          <h5 className="mb-2">Abonnez-vous à notre newsletter</h5>
+          <h5 className="mb-2">Abonnez-vous à notre </h5>
+          <h5 className="mb-2">newsletter</h5>
           
           <form onSubmit={handleSubmit} className="d-flex justify-content-center w-100">
-            <div className="input-group mx-auto" style={{ maxWidth: '500px' }}>
-              <div className="input-group-prepend">
-                <span className="input-group-text bg-dark border-secondary">
+            <div className="input-group mx-auto" style={{ maxWidth: '400px' }}>
+              <div className="input-group-prepend" style={{position: 'relative', zIndex: '1'}}>
+                <span className="" style={{position: 'absolute', top: "7px", left: "12px"}}>
                   <i className="fa fa-envelope text-white"></i>
                 </span>
               </div>
               <input 
-                type="email" 
-                className="form-control bg-dark text-white border-secondary" 
-                placeholder="Saisissez votre email" 
+                type='email' 
+                class='form-control bg-dark text-white border-secondary' 
+                placeholder=' Saisissez votre email' 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                style={{ borderRadius: '25px 0 0 25px' }}
               />
               <button 
                 type="submit" 
-                className="btn btn-warning text-white"
-              >
+                className="btn  text-white"
+                style={{ borderRadius: '0 25px 25px 0', backgroundColor: '#FF7312' }}
+                >
                 S'abonner
               </button>
             </div>
@@ -54,9 +57,10 @@ export default function Footer() {
         <div className="d-flex flex-wrap justify-content-between align-items-center">
           <div className="d-flex align-items-center mb-3 mb-md-0">
             <div className="bg-white rounded-circle p-2 me-2">
-              <span className="text-dark fw-bold">Ytoy</span>
+             <img className="rounded-circle" src='http://localhost:5173/image/logo_ytoy.png' alt="" style={{ maxWidth: '30px' }} />
             </div>
-            <span className="fw-bold fs-5">Marketplace</span>
+            <h5 className="">Marketplace</h5> 
+            <h5 className="">Marketplace</h5>
           </div>
           
           {/* Menu principal */}

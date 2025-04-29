@@ -34,6 +34,11 @@ Route::post('/registervendeur', [AuthController::class, 'registervendeur']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/verify-email/{userId}/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('/categories', [CategoriePublicController::class, 'index']);
+Route::get('/categories/{id}', [CategoriePublicController::class, 'show']);
+// Route pour récupérer les produits d'une catégorie spécifique
+Route::get('/categories/{id}/produits', [CategoriePublicController::class, 'getProduits']);
+// Route pour récupérer les produits en vedette/récents
+Route::get('/produits/featured', [ProduitController::class, 'getFeatured']);
 
 // Routes protégées (auth + actif)
 Route::middleware(['auth:sanctum'])->group(function () {

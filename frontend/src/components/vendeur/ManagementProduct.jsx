@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductManagement = () => {
-  const [products, setProducts] = useState([]);
+  const [produits, setProduits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [pagination, setPagination] = useState({
@@ -16,7 +16,7 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  const fetchProducts = async (page = 1, search = searchTerm) => {
+  const fetchProduits = async (page = 1, search = searchTerm) => {
     try {
       setLoading(true);
       const response = await axios.get('/api/vendor/products', {
@@ -27,7 +27,7 @@ const ProductManagement = () => {
         },
       });
       
-      setProducts(response.data.data);
+      setProduits(response.data.data);
       setPagination({
         currentPage: response.data.current_page,
         lastPage: response.data.last_page,
@@ -38,31 +38,31 @@ const ProductManagement = () => {
     } catch (err) {
       console.error('Erreur lors du chargement des produits:', err);
       setError('Impossible de charger les produits. Veuillez réessayer plus tard.');
-      setProducts([]);
+      setProduits([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchProduits();
   }, []);
 
   const handlePageChange = (page) => {
-    fetchProducts(page);
+    fetchProduits(page);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchProducts(1, searchTerm);
+    fetchProduits(1, searchTerm);
   };
 
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleDeleteClick = (productId) => {
-    setConfirmDelete(productId);
+  const handleDeleteClick = (produitId) => {
+    setConfirmDelete(produitId);
   };
 
   const confirmDeleteProduct = async () => {
@@ -70,14 +70,14 @@ const ProductManagement = () => {
     
     try {
       await axios.delete(`/api/products/${confirmDelete}`);
-      setProducts(products.filter(product => product.id !== confirmDelete));
+      setProduits(produits.filter(produit => produit.id !== confirmDelete));
       setConfirmDelete(null);
       
       // Recalculer la pagination si nécessaire
-      if (products.length === 1 && pagination.currentPage > 1) {
-        fetchProducts(pagination.currentPage - 1);
+      if (produits.length === 1 && pagination.currentPage > 1) {
+        fetchProduits(pagination.currentPage - 1);
       } else {
-        fetchProducts(pagination.currentPage);
+        fetchProduits(pagination.currentPage);
       }
     } catch (err) {
       console.error('Erreur lors de la suppression du produit:', err);
@@ -166,7 +166,7 @@ const ProductManagement = () => {
                 <span className="visually-hidden">Chargement...</span>
               </div>
             </div>
-          ) : products.length === 0 ? (
+          ) : produits.length === 0 ? (
             <div className="text-center py-5">
               <p className="mb-0">Aucun produit trouvé</p>
             </div>
@@ -184,13 +184,13 @@ const ProductManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
-                    <tr key={product.id}>
+                  {produits.map((produit) => (
+                    <tr key={produit.id}>
                       <td>
-                        {product.thumbnail ? (
+                        {produit.thumbnail ? (
                           <img
-                            src={product.thumbnail}
-                            alt={product.title}
+                            src={produit.thumbnail}
+                            alt={produit.nom}
                             style={{ width: '60px', height: '60px', objectFit: 'cover' }}
                             className="border"
                           />
@@ -203,17 +203,17 @@ const ProductManagement = () => {
                           </div>
                         )}
                       </td>
-                      <td>{product.title}</td>
-                      <td>{Number(product.price).toFixed(2)} €</td>
+                      <td>{produit.nom}</td>
+                      <td>{Number(produit.prix).toFixed(2)} €</td>
                       <td>
-                        <Badge bg={product.stock > 10 ? 'success' : product.stock > 0 ? 'warning' : 'danger'}>
-                          {product.stock}
+                        <Badge bg={produit.quantite_stock > 10 ? 'success' : produit.quantite_stock > 0 ? 'warning' : 'danger'}>
+                          {produit.quantite_stock}
                         </Badge>
                       </td>
-                      <td>{product.category?.name || '-'}</td>
+                      <td>{produit.categorie?.nom || '-'}</td>
                       <td>
                         <div className="d-flex gap-2">
-                          <Link to={`/dashboard/products/edit/${product.id}`}>
+                          <Link to={`/dashboard/products/edit/${produit.id}`}>
                             <Button 
                               variant="outline-primary"
                               size="sm"

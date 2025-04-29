@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap'
 import axios from 'axios'
 
-const ProductForm = ({ productId = null }) => {
-  const [product, setProduct] = useState({
-    title: '',
+
+const ProductForm = ({ produitId = null }) => {
+  const [produit, setProduit] = useState({
+    nom: '',
     description: '',
-    price: '',
-    category_id: '',
-    stock: '',
+    prix: '',
+    categorie_id: '', // Vérifiez que c'est bien orthographié comme dans la BD
+    quantite_stock: '', // Ce champ sera envoyé comme 'stock' mais utilisé pour 'quantite_stock'
     images: []
   })
 
@@ -17,25 +18,29 @@ const ProductForm = ({ productId = null }) => {
   const [imageFiles, setImageFiles] = useState([])
   const [imagePreview, setImagePreview] = useState([])
   const [categories, setCategories] = useState([])
-  const token = localStorage.getItem('auth_token')
+  
+  
 
-  if (!token) {
-    console.error('Token not found!')
-  } else {
-    axios
-      .post('http://localhost:8000/api/vendor/produits', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Inclure le token dans l'en-tête Authorization
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then(response => {
-        console.log(response.data)
-      })
-      .catch(error => {
-        console.error('Request failed', error.response)
-      })
-  }
+  
+
+  // if (!token) {
+  //   console.error("Token not found!");
+  //   // Redirige éventuellement vers la page login
+  // } else {
+  //   axios
+  //     .post('http://localhost:8000/api/vendor/produits', formData, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`, // Inclure le token dans l'en-tête Authorization
+  //         'Content-Type': 'multipart/form-data'
+  //       }
+  //     })
+  //     .then(response => {
+  //       console.log(response.data)
+  //     })
+  //     .catch(error => {
+  //       console.error('Request failed', error.response)
+  //     })
+  // }
 
   // Fetch les catégories au chargement du formulaire
   useEffect(() => {
@@ -64,15 +69,15 @@ const ProductForm = ({ productId = null }) => {
         setCategories(categoriesResponse.data)
 
         // Si on est en mode édition, récupérer les détails du produit
-        if (productId) {
-          const productResponse = await axios.get(
-            `http://localhost:8000/api/vendor/produits/${productId}`
+        if (produitId) {
+          const produitResponse = await axios.get(
+            `http://localhost:8000/api/vendor/produits/${produitId}`
           )
-          setProduct(productResponse.data)
+          setProduit(produitResponse.data)
 
-          if (productResponse.data.images) {
+          if (produitResponse.data.images) {
             setImagePreview(
-              productResponse.data.images.map(img => ({
+              produitResponse.data.images.map(img => ({
                 url: img.url,
                 id: img.id
               }))
@@ -89,11 +94,25 @@ const ProductForm = ({ productId = null }) => {
     }
 
     fetchData()
-  }, [productId])
+  }, [produitId])
 
-  const handleChange = e => {
-    const { name, value } = e.target
-    setProduct({ ...product, [name]: value })
+  const handleNomChange = (e) => {
+    setProduit({ ...produit, nom: e.target.value })
+  }
+
+  const handleDescriptionChange = (e) => {
+    setProduit({ ...produit, description: e.target.value })
+  }
+
+  const handleQuantiteStockChange = (e) => {
+    setProduit({ ...produit, quantite_stock: e.target.value })
+  }
+  const handlePrixChange = (e) => {
+    setProduit({ ...produit, prix: e.target.value })
+  }
+
+  const handleCategorieChange = (e) => {
+    setProduit({ ...produit, categorie_id: e.target.value })
   }
 
   const handleImageChange = e => {
@@ -116,10 +135,10 @@ const ProductForm = ({ productId = null }) => {
     if (imagePreview[indexToRemove].id) {
       // Image existante - à marquer pour suppression dans l'API
       const imagesToDelete = [
-        ...(product.imagesToDelete || []),
+        ...(produit.imagesToDelete || []),
         imagePreview[indexToRemove].id
       ]
-      setProduct({ ...product, imagesToDelete })
+      setProduit({ ...produit, imagesToDelete })
     }
 
     setImagePreview(imagePreview.filter((_, index) => index !== indexToRemove))
@@ -128,16 +147,24 @@ const ProductForm = ({ productId = null }) => {
 
   const handleSubmit = async e => {
     e.preventDefault()
-    setIsLoading(true)
-    setMessage({ text: '', type: '' })
+  setIsLoading(true)
+  setMessage({ text: '', type: '' })
+
+  const token = localStorage.getItem('token') 
+
+  if (!token) {
+    setMessage({ text: 'Token non trouvé. Veuillez vous reconnecter.', type: 'danger' })
+    setIsLoading(false)
+    return
+  }
 
     try {
       const formData = new FormData()
 
       // Ajouter les données du produit au formData
-      Object.keys(product).forEach(key => {
+      Object.keys(produit).forEach(key => {
         if (key !== 'images' && key !== 'imagesToDelete') {
-          formData.append(key, product[key])
+          formData.append(key, produit[key])
         }
       })
 
@@ -147,18 +174,18 @@ const ProductForm = ({ productId = null }) => {
       })
 
       // Gérer les suppressions d'images si nécessaire
-      if (product.imagesToDelete && product.imagesToDelete.length > 0) {
-        product.imagesToDelete.forEach(id => {
+      if (produit.imagesToDelete && produit.imagesToDelete.length > 0) {
+        produit.imagesToDelete.forEach(id => {
           formData.append('images_to_delete[]', id)
         })
       }
 
       let response
-      if (productId) {
+      if (produitId) {
         // Mise à jour
         formData.append('_method', 'PUT')
         response = await axios.post(
-          `http://localhost:8000/api/vendor/produits/${productId}`,
+          `http://localhost:8000/api/vendor/produits/${produitId}`,
           formData,
           {
             headers: {
@@ -182,34 +209,46 @@ const ProductForm = ({ productId = null }) => {
       }
 
       setMessage({
-        text: productId
+        text: produitId
           ? 'Produit mis à jour avec succès!'
           : 'Produit ajouté avec succès!',
         type: 'success'
       })
 
-      if (!productId) {
+      if (!produitId) {
         // En mode création, réinitialiser le formulaire
-        setProduct({
-          title: '',
+        setProduit({
+          nom: '',
           description: '',
-          price: '',
-          category_id: '',
-          stock: '',
+          prix: '',
+          categorie_id: '',
+          quantite_stock: '',
           images: []
         })
         setImageFiles([])
         setImagePreview([])
       }
     } catch (error) {
-      console.error('Erreur:', error)
-      setMessage({
-        text: `Erreur: ${
-          error.response?.data?.message || 'Une erreur est survenue'
-        }`,
-        type: 'danger'
-      })
-    } finally {
+      console.error('Erreur détaillée:', error.response?.data);
+      console.error('Status:', error.response?.status);
+      
+      // Afficher un message plus détaillé
+      if (error.response?.data?.errors) {
+        // Si le serveur renvoie des erreurs de validation spécifiques
+        const errorMessages = Object.values(error.response.data.errors)
+          .flat()
+          .join(', ');
+        setMessage({
+          text: `Validation échouée: ${errorMessages}`,
+          type: 'danger'
+        });
+      } else {
+        setMessage({
+          text: `Erreur: ${error.response?.data?.message || error.message}`,
+          type: 'danger'
+        });
+      }
+    }finally {
       setIsLoading(false)
       // Scroll to top to show message
       window.scrollTo(0, 0)
@@ -221,7 +260,7 @@ const ProductForm = ({ productId = null }) => {
       <Card className='shadow-sm'>
         <Card.Header className='bg-dark text-white'>
           <h2>
-            {productId ? 'Modifier le produit' : 'Ajouter un nouveau produit'}
+            {produitId ? 'Modifier le produit' : 'Ajouter un nouveau produit'}
           </h2>
         </Card.Header>
         <Card.Body>
@@ -238,9 +277,9 @@ const ProductForm = ({ productId = null }) => {
                   <Form.Label>Titre du produit</Form.Label>
                   <Form.Control
                     type='text'
-                    name='title'
-                    value={product.title}
-                    onChange={handleChange}
+                    name='nom'
+                    value={produit.nom}
+                    onChange={handleNomChange}
                     required
                   />
                 </Form.Group>
@@ -250,9 +289,9 @@ const ProductForm = ({ productId = null }) => {
                   <Form.Control
                     type='number'
                     step='1' // Pas besoin de décimales en FCFA, en général
-                    name='price'
-                    value={product.price}
-                    onChange={handleChange}
+                    name='prix'
+                    value={produit.prix}
+                    onChange={handlePrixChange}
                     required
                   />
                 </Form.Group>
@@ -261,9 +300,9 @@ const ProductForm = ({ productId = null }) => {
                   <Form.Label>Stock disponible</Form.Label>
                   <Form.Control
                     type='number'
-                    name='stock'
-                    value={product.stock}
-                    onChange={handleChange}
+                    name='quantite_stock'
+                    value={produit.quantite_stock}
+                    onChange={handleQuantiteStockChange}
                     required
                   />
                 </Form.Group>
@@ -271,9 +310,9 @@ const ProductForm = ({ productId = null }) => {
                 <Form.Group className='mb-3'>
                   <Form.Label>Catégorie</Form.Label>
                   <Form.Select
-                    name='category_id'
-                    value={product.category_id}
-                    onChange={handleChange}
+                    name='categorie_id'
+                    value={produit.categorie_id}
+                    onChange={handleCategorieChange}
                     required
                   >
                     <option value=''>Sélectionner une catégorie</option>
@@ -293,8 +332,8 @@ const ProductForm = ({ productId = null }) => {
                     as='textarea'
                     rows={5}
                     name='description'
-                    value={product.description}
-                    onChange={handleChange}
+                    value={produit.description}
+                    onChange={handleDescriptionChange}
                     required
                   />
                 </Form.Group>

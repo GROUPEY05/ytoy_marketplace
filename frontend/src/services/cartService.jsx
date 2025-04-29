@@ -12,9 +12,9 @@ const notifyCartUpdated = () => {
     },
     
     // Ajouter un produit au panier
-    addToCart: (product, quantity = 1) => {
+    addToCart: (produit, quantity = 1) => {
       const cart = cartService.getCart();
-      const existingItemIndex = cart.findIndex(item => item.id === product.id);
+      const existingItemIndex = cart.findIndex(item => item.id === produit.id);
       
       if (existingItemIndex !== -1) {
         // Si le produit existe déjà, augmenter la quantité
@@ -22,11 +22,11 @@ const notifyCartUpdated = () => {
       } else {
         // Sinon, ajouter le nouveau produit
         cart.push({
-          id: product.id,
-          nom: product.nom,
-          prix: product.prix,
-          image: product.image,
-          vendeur: product.vendeur?.nom || 'Ytoy Marketplace',
+          id: produit.id,
+          nom: produit.nom,
+          prix: produit.prix,
+          image: produit.image,
+          vendeur: produit.vendeur?.nom || 'Ytoy Marketplace',
           quantite: quantity
         });
       }
@@ -38,10 +38,10 @@ const notifyCartUpdated = () => {
     },
     
     // Mettre à jour la quantité d'un produit
-    updateQuantity: (productId, quantity) => {
+    updateQuantity: (produitId, quantity) => {
       const cart = cartService.getCart();
       const updatedCart = cart.map(item => 
-        item.id === productId ? { ...item, quantite: quantity } : item
+        item.id === produitId ? { ...item, quantite: quantity } : item
       );
       
       localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -51,9 +51,9 @@ const notifyCartUpdated = () => {
     },
     
     // Supprimer un produit du panier
-    removeFromCart: (productId) => {
+    removeFromCart: (produitId) => {
       const cart = cartService.getCart();
-      const updatedCart = cart.filter(item => item.id !== productId);
+      const updatedCart = cart.filter(item => item.id !== produitId);
       
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       notifyCartUpdated();

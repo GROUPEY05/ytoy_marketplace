@@ -108,7 +108,7 @@ const VendeurDashboard = () => {
                 </Link>
               </li>
               <li className='nav-item'>
-                <Link to='/vendeur/produits' className='nav-link'>
+                <Link to='/vendeur/managementproduct' className='nav-link'>
                   <i className='bi bi-box me-2'></i>
                   Produits
                 </Link>

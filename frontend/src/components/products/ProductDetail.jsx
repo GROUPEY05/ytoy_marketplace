@@ -18,7 +18,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth(); // ✅ Remplacement ici
-  const [product, setProduct] = useState(null);
+  const [produit, setProduit] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
@@ -27,9 +27,9 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setTimeout(() => {
-          const foundProduct = dummyProducts.find(p => p.id === parseInt(id));
-          if (foundProduct) {
-            setProduct(foundProduct);
+          const foundProduit = dummyProduits.find(p => p.id === parseInt(id));
+          if (foundProduit) {
+            setProduit(foundProduit);
           } else {
             setError('Produit non trouvé');
           }
@@ -42,18 +42,18 @@ const ProductDetail = () => {
       }
     };
 
-    fetchProduct();
+    fetchProduit();
   }, [id]);
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
-    if (value > 0 && value <= (product?.stock || 1)) {
+    if (value > 0 && value <= (produit?.stock || 1)) {
       setQuantity(value);
     }
   };
 
   const handleAddToCart = () => {
-    toast.success(`${quantity} ${product.name} ajouté(s) au panier`);
+    toast.success(`${quantity} ${produit.nom} ajouté(s) au panier`);
   };
 
   if (loading) {
@@ -83,28 +83,28 @@ const ProductDetail = () => {
         <i className="bi bi-arrow-left"></i> Retour aux produits
       </Button>
 
-      {product && (
+      {produit && (
         <Row>
           <Col md={6}>
-            <Image src={product.image} alt={product.name} fluid className="rounded" />
+            <Image src={produit.image} alt={produit.name} fluid className="rounded" />
           </Col>
           <Col md={6}>
-            <h1>{product.name}</h1>
-            <p className="fs-3 fw-bold text-primary">{product.price.toFixed(2)} €</p>
-            <p>{product.description}</p>
+            <h1>{produit.nom}</h1>
+            <p className="fs-3 fw-bold text-primary">{produit.prix.toFixed(2)} €</p>
+            <p>{produit.description}</p>
 
-            <p className={`mb-2 ${product.stock < 5 ? 'text-danger' : 'text-success'}`}>
-              {product.stock > 0 ? `En stock: ${product.stock} disponible(s)` : 'Rupture de stock'}
+            <p className={`mb-2 ${produit.stock < 5 ? 'text-danger' : 'text-success'}`}>
+              {produit.stock > 0 ? `En stock: ${produit.stock} disponible(s)` : 'Rupture de stock'}
             </p>
 
-            {product.stock > 0 && (
+            {produit.stock > 0 && (
               <div className="d-flex gap-3 align-items-center mb-4">
                 <Form.Group style={{ width: '100px' }}>
                   <Form.Label>Quantité</Form.Label>
                   <Form.Control
                     type="number"
                     min="1"
-                    max={product.stock}
+                    max={produit.stock}
                     value={quantity}
                     onChange={handleQuantityChange}
                   />

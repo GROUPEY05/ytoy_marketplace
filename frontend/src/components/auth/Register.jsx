@@ -3,8 +3,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import authService from '../../services/api'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import './Login.css'
-
+import './Register.css'
 const Register = () => {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
@@ -21,6 +20,7 @@ const Register = () => {
     adresse_livraison: '',
     preferences: ''
   })
+  
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
@@ -53,30 +53,27 @@ const Register = () => {
   }
 
   return (
-    <div className=' py-5 d-flex px-5  gap-3'>
-      <div className='col-2 '>
-        <div>
-          <br />
-          <br />
-          <p>
-            <strong>
-              <span style={{ color: '#FF6F00' }}>Inscrivez-vous</span>{' '}
-              <span style={{ color: '#1B5FA3' }}>
-                {' '}
-                pour bénéficier des meilleures offres et des
-              </span>
-              <span className='text-dark'> offres exclusives </span>
-              <span style={{ color: '#1B5FA3' }}>avec YtoyMarketplace</span>
-            </strong>
-          </p>
+    <div className='container all' style={{ overflowX: 'hidden ' }}>
+      <div className='img-container'>
+        <div className='content'>
+          <strong className='text-content'>
+            <span style={{ color: '#FF6F00' }}>Inscrivez-vous</span>{' '}
+            <span style={{ color: '#1B5FA3' }}>
+              {' '}
+              pour bénéficier des meilleures offres et des
+            </span>
+            <span className='text-dark'> offres exclusives </span>
+            <span style={{ color: '#1B5FA3' }}>avec YtoyMarketplace</span>
+          </strong>
         </div>
+
         <div style={{ width: '100%' }}>
-            <img src="http://localhost:5173/image/img_register.svg" alt="" className="img-fluid" />
+            <img src="http://localhost:5173/image/img_register.svg" alt="" className="" />
         </div>
       </div>
-      <div className='row justify-content-center w-100'>
-        <div className='col-11 col-md-9 col-lg-7 col-xl-6 '>
-          <div className='card shadow-lg border-0 rounded-lg'>
+      <div className=''>
+        <div className=''>
+          <div className='card border-0 rounded-lg'>
             <div className='card-header bg-primary text-white text-center'>
               <h3 className='mb-0'>Inscription</h3>
             </div>

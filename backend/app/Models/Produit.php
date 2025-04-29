@@ -16,12 +16,12 @@ class Produit extends Model
         'vendeur_id',
         'categorie_id'
     ];
-    
+
     public function vendeur()
     {
         return $this->belongsTo(Utilisateur::class, 'vendeur_id');
     }
-    
+
     public function categorie()
     {
         return $this->belongsTo(Categorie::class);
@@ -31,25 +31,30 @@ class Produit extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-    
+
     public function images()
     {
-        return $this->hasMany(ImageProduit::class);
+        return $this->hasMany(ProduitImage::class);
     }
-    
+
     public function avis()
     {
         return $this->hasMany(Avis::class);
     }
-    
+
     public function imagePrincipale()
     {
         return $this->hasOne(ImageProduit::class)->where('principale', true);
     }
-    
+
     public function verifierDisponibilite($quantite)
     {
         return $this->quantite_stock >= $quantite;
     }
-    
+
+    public function produits()
+    {
+        return $this->hasMany(Produit::class, 'categorie_id');
+    }
+
 }

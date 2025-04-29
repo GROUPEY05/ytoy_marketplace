@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form, InputGroup, Toast, ToastContainer } from 'react-bootstrap';
 import cartService from '../../services/cartService';
 
-const AddToCartButton = ({ product, showQuantity = true, size = "md", buttonText = "Ajouter au panier" }) => {
+const AddToCartButton = ({ produit, showQuantity = true, size = "md", buttonText = "Ajouter au panier" }) => {
   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -28,7 +28,7 @@ const AddToCartButton = ({ product, showQuantity = true, size = "md", buttonText
     setIsAdding(true);
     
     // Ajouter au panier avec la quantité spécifiée
-    cartService.addToCart(product, quantity);
+    cartService.addToCart(produit, quantity);
     
     // Afficher le toast de confirmation
     setShowToast(true);
@@ -105,13 +105,13 @@ const AddToCartButton = ({ product, showQuantity = true, size = "md", buttonText
           <Toast.Body>
             <div className="d-flex align-items-center">
               <img 
-                src={product.image || '/placeholder-product.jpg'} 
-                alt={product.nom} 
+                src={produit.image || '/placeholder-product.jpg'} 
+                alt={produit.nom} 
                 style={{ width: '50px', height: '50px', objectFit: 'contain' }}
                 className="me-2"
               />
               <div>
-                <div>{product.nom}</div>
+                <div>{produit.nom}</div>
                 <small>Quantité: {quantity}</small>
               </div>
             </div>
