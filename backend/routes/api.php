@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StatisticsController;
+use App\Http\Controllers\CartController;
 
 
 use App\Http\Controllers\Admin\CategorieController;
@@ -23,6 +24,9 @@ use App\Http\Controllers\Acheteur\OrderController as AcheteurOrderController;
 use App\Http\Controllers\Vendeur\OrderController as VendeurOrderController;
 
 
+
+
+Route::get('/produits/featured', [ProduitController::class, 'featured']);
 
 Route::get('/api/user', function () {
     return request()->user();
@@ -41,6 +45,7 @@ Route::get('/produits/featured', [ProduitController::class, 'getFeatured']);
 Route::get('/categories', [CategoriePublicController::class, 'index']);
 Route::get('/categories/{id}', [CategoriePublicController::class, 'show']);
 Route::get('/categories/{id}/produits', [CategoriePublicController::class, 'getProduits']);
+// Route::get('/produits/featured', [ProduitController::class, 'featured']);
 
 // Routes protégées (auth + actif)
 Route::middleware(['auth:sanctum'])->group(function () {

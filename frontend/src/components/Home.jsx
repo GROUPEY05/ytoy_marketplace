@@ -12,6 +12,7 @@ import { FaCheck } from "react-icons/fa";
 import Header from './layout/Header'
 import Footer from './layout/Footer'
 import MenuCategories from './layout/MenuCategories'
+import HomeProducts from './products/HomeProducts'
 
 const Home = () => {
   const { isAuthenticated, currentUser } = useAuth()
@@ -217,6 +218,151 @@ const Home = () => {
   </div>
 </div> */}
       </div>
+       {/* les boutiques */}
+      <div className=' container mt-5'>
+        {/* bloc1 */}
+        <div className='d-flex'>
+          <h3> <strong>Nos boutiques</strong></h3>
+          <button class='btn  btn-success ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft:'830px'}}>
+              <a href="/boutiques" style={{color: '#ffffff', textDecoration: 'none'}}> <strong>voir plus</strong> </a>
+              
+            </button>
+
+        </div>
+        {/* bloc2 */}
+        <div className='d-flex gap-5' style={{marginLeft:'20px'}}>
+          {/* boutique1 */} 
+          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
+          <img 
+            src="http://localhost:5173/image/perruques_metisse1.jpeg" 
+            alt="Beauty Corporate" 
+            className="card-img-top img-fluid rounded-3"
+            style={{
+              height: "150px",
+              objectFit: "cover",
+              borderRadius: "12px"
+            }}
+          />
+          <div 
+            className="position-absolute top-0 start-0 rounded-3" 
+            style={{
+              width: "272.32px",
+              height: "150px",
+              background: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "12px"
+            }}
+          >
+
+          </div>
+            <div className="overlay-text2 mt-5 ">
+                
+                <p className=''><strong>Beauty corporate</strong></p>
+                
+            </div>
+            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By jane smith</strong></a>
+
+          </div>
+          {/* boutique2 */}
+          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
+          <img 
+            src="http://localhost:5173/image/habits1.jpeg" 
+            alt="Beauty Corporate" 
+            className="card-img-top img-fluid rounded-3 "
+            style={{
+              height: "150px",
+              objectFit: "cover",
+              borderRadius: "12px"
+
+            }}
+          />
+          <div 
+            className="position-absolute top-0 start-0 rounded-3" 
+            style={{
+              width: "272.32px",
+              height: "150px",
+              background: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "12px"
+            }}
+          >
+
+          </div>
+            <div className="overlay-text3 mt-5 ">
+                
+                <p className='text-center'><strong>Dress   Well</strong></p>
+                
+            </div>
+            <a href="/boutique_john" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By john doe</strong></a>
+
+          </div>
+          {/* boutique3 */}
+          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
+          <img 
+            src="http://localhost:5173/image/high_tech1.jpeg" 
+            alt="Beauty Corporate" 
+            className="card-img-top img-fluid rounded-3"
+            style={{
+              height: "150px",
+              objectFit: "cover",
+              borderRadius: "12px"
+            }}
+          />
+          <div 
+            className="position-absolute top-0 start-0 rounded-3" 
+            style={{
+              width: "272.32px",
+              height: "150px",
+              background: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "12px"
+            }}
+          >
+
+          </div>
+            <div className="overlay-text4 mt-5 ">
+                
+                <p className=''><strong>Hight-tech empire</strong></p>
+                
+            </div>
+            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By wifried  N.</strong></a>
+
+          </div>
+          {/* boutique4 */}
+          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
+          <img 
+            src="http://localhost:5173/image/all_shop1.jpeg" 
+            alt="Beauty Corporate" 
+            className="card-img-top img-fluid rounded-3"
+            style={{
+              height: "150px",
+              objectFit: "cover",
+              borderRadius: "12px"
+            }}
+          />
+          <div 
+            className="position-absolute top-0 start-0 rounded-3" 
+            style={{
+              width: "272.32px",
+              height: "150px",
+              background: "rgba(0, 0, 0, 0.5)",
+              borderRadius: "12px"
+            }}
+          >
+
+          </div>
+            <div className="overlay-text3 mt-5 ">
+                
+                <p className=''><strong>All-shop</strong></p>
+                
+            </div>
+            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By Schékina  y.</strong></a>
+
+          </div>
+        </div>
+
+      </div>
+
+      {/* Affichage des produits */}
+      <HomeProducts />
+
       {/* card offres */}
       <div  className= "mt-5" style={{background:' rgba(217, 217, 217, 0.4)',}} > <br />
         <div  className='container h3' > <strong>Nos Offres</strong></div><br />
@@ -508,147 +654,7 @@ const Home = () => {
           </div> <br />
       </div>
 
-      {/* les boutiques */}
-      <div className=' container mt-5'>
-        {/* bloc1 */}
-        <div className='d-flex'>
-          <h3> <strong>Nos boutiques</strong></h3>
-          <button class='btn  btn-success ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft:'830px'}}>
-              <a href="/boutiques" style={{color: '#ffffff', textDecoration: 'none'}}> <strong>voir plus</strong> </a>
-              
-            </button>
-
-        </div>
-        {/* bloc2 */}
-        <div className='d-flex gap-5' style={{marginLeft:'20px'}}>
-          {/* boutique1 */} 
-          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
-          <img 
-            src="http://localhost:5173/image/perruques_metisse1.jpeg" 
-            alt="Beauty Corporate" 
-            className="card-img-top img-fluid rounded-3"
-            style={{
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "12px"
-            }}
-          />
-          <div 
-            className="position-absolute top-0 start-0 rounded-3" 
-            style={{
-              width: "272.32px",
-              height: "150px",
-              background: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "12px"
-            }}
-          >
-
-          </div>
-            <div className="overlay-text2 mt-5 ">
-                
-                <p className=''><strong>Beauty corporate</strong></p>
-                
-            </div>
-            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By jane smith</strong></a>
-
-          </div>
-          {/* boutique2 */}
-          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
-          <img 
-            src="http://localhost:5173/image/habits1.jpeg" 
-            alt="Beauty Corporate" 
-            className="card-img-top img-fluid rounded-3 "
-            style={{
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "12px"
-
-            }}
-          />
-          <div 
-            className="position-absolute top-0 start-0 rounded-3" 
-            style={{
-              width: "272.32px",
-              height: "150px",
-              background: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "12px"
-            }}
-          >
-
-          </div>
-            <div className="overlay-text3 mt-5 ">
-                
-                <p className='text-center'><strong>Dress   Well</strong></p>
-                
-            </div>
-            <a href="/boutique_john" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By john doe</strong></a>
-
-          </div>
-          {/* boutique3 */}
-          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
-          <img 
-            src="http://localhost:5173/image/high_tech1.jpeg" 
-            alt="Beauty Corporate" 
-            className="card-img-top img-fluid rounded-3"
-            style={{
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "12px"
-            }}
-          />
-          <div 
-            className="position-absolute top-0 start-0 rounded-3" 
-            style={{
-              width: "272.32px",
-              height: "150px",
-              background: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "12px"
-            }}
-          >
-
-          </div>
-            <div className="overlay-text4 mt-5 ">
-                
-                <p className=''><strong>Hight-tech empire</strong></p>
-                
-            </div>
-            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By wifried  N.</strong></a>
-
-          </div>
-          {/* boutique4 */}
-          <div className='card border-0 shadow-sm mt-5' style={{width: "272.32px"}}  >
-          <img 
-            src="http://localhost:5173/image/all_shop1.jpeg" 
-            alt="Beauty Corporate" 
-            className="card-img-top img-fluid rounded-3"
-            style={{
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "12px"
-            }}
-          />
-          <div 
-            className="position-absolute top-0 start-0 rounded-3" 
-            style={{
-              width: "272.32px",
-              height: "150px",
-              background: "rgba(0, 0, 0, 0.5)",
-              borderRadius: "12px"
-            }}
-          >
-
-          </div>
-            <div className="overlay-text3 mt-5 ">
-                
-                <p className=''><strong>All-shop</strong></p>
-                
-            </div>
-            <a href="/boutique_jane" className='text-center mt-2' style={{color:'#000000', textDecoration:'none', fontSize:'25px'}}><strong>By Schékina  y.</strong></a>
-
-          </div>
-        </div>
-
-      </div>
+     
       {/* high_tech produit */}
       <div className='container mt-5' >
         <div>

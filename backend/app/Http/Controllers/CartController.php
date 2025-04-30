@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Product;
+use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,9 +11,9 @@ class CartController extends Controller
 {
     public function index()
     {
-        $cart = Cart::where('user_id', Auth::id())
-            ->with(['products' => function ($query) {
-                $query->select('products.id', 'title', 'price', 'stock', 'images');
+        $cart = Cart::where('utilisateur_id', Auth::id())
+            ->with(['produits' => function ($query) {
+                $query->select('produits.id', 'nom', 'prix', 'quantite_stock', 'images');
             }])
             ->first();
 
@@ -21,26 +21,26 @@ class CartController extends Controller
             return response()->json([]);
         }
 
-        return response()->json($cart->products);
+        return response()->json($cart->produits);
     }
 
     public function add(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'produit_id' => 'required|exists:produits,id',
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Produit::findOrFail($request->produit_id);
         
-        if ($product->stock < $request->quantity) {
+        if ($product->quantite_stock < $request->quantity) {
             return response()->json([
                 'message' => 'Stock insuffisant'
             ], 400);
         }
 
         $cart = Cart::firstOrCreate([
-            'user_id' => Auth::id()
+            'utilisateur_id' => Auth::id()
         ]);
 
         $cart->products()->syncWithoutDetaching([
@@ -55,21 +55,21 @@ class CartController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'product_id' => 'required|exists:products,id',
+            'produit_id' => 'required|exists:produits,id',
             'quantity' => 'required|integer|min:1'
         ]);
 
-        $product = Product::findOrFail($request->product_id);
+        $product = Produit::findOrFail($request->produit_id);
         
-        if ($product->stock < $request->quantity) {
+        if ($product->quantite_stock < $request->quantity) {
             return response()->json([
                 'message' => 'Stock insuffisant'
             ], 400);
         }
 
-        $cart = Cart::where('user_id', Auth::id())->firstOrFail();
+        $cart = Cart::where('utilisateur_id', Auth::id())->firstOrFail();
         
-        $cart->products()->updateExistingPivot($request->product_id, [
+        $cart->produits()->updateExistingPivot($request->produit_id, [
             'quantity' => $request->quantity
         ]);
 
@@ -80,7 +80,7 @@ class CartController extends Controller
 
     public function remove($productId)
     {
-        $cart = Cart::where('user_id', Auth::id())->firstOrFail();
+        $cart = Cart::where('utilisateur_id', Auth::id())->firstOrFail();
         
         $cart->products()->detach($productId);
 

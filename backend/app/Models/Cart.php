@@ -9,16 +9,16 @@ class Cart extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['utilisateur_id'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Utilisateur::class);
     }
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'cart_items')
+        return $this->belongsToMany(Produit::class, 'cart_items')
             ->withPivot('quantity')
             ->withTimestamps();
     }

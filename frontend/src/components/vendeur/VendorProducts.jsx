@@ -127,7 +127,8 @@ const VendorProducts = () => {
     <Container className="my-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Mes Produits</h2>
-        <Link to="/vendeur/products/add" className="btn btn-primary">
+        <Link to="/vendeur/products/add" className="btn  btn-sm " style={{ backgroundColor: '#FF6F00', color: 'white' }}>
+          <i className='bi bi-plus'></i>{' '}
           Ajouter un produit
         </Link>
       </div>
@@ -230,7 +231,7 @@ const VendorProducts = () => {
                   <div className="mt-auto d-flex gap-2">
                     <Link 
                       to={`/vendeur/products/edit/${product.id}`}
-                      className="btn btn-outline-primary flex-grow-1"
+                      className="btn btn-outline-success flex-grow-1"
                     >
                       Modifier
                     </Link>

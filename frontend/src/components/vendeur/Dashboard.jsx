@@ -192,7 +192,7 @@ const VendeurDashboard = () => {
                   Imprimer
                 </button>
               </div>
-              <button type='button' className='btn btn-sm btn-primary'>
+              <button type='button' className='btn btn-sm ' style={{ backgroundColor: '#FF6F00', color: 'white' }}>
                 <i className='bi bi-plus'></i>{' '}
                 <a
                   href='/vendeur/products/add'

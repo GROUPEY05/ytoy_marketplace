@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 // Configuration de l'URL de base pour les requêtes API
 const API_URL = 'http://localhost:8000';
 
@@ -10,8 +11,22 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  withCredentials: true // Pour gérer les cookies CSRF
+  withCredentials: true // Important pour la gestion des cookies CSRF
 });
+
+// Ajout d'un intercepteur pour gérer les erreurs CORS et autres
+apiClient.interceptors.response.use(
+  response => response,
+  error => {
+    // Log détaillé des erreurs
+    console.error('Erreur API:', error);
+    if (error.message === 'Network Error') {
+      console.warn('Erreur réseau possible - Vérifiez la configuration CORS');
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 // Intercepteur pour ajouter le token d'authentification à chaque requête
 apiClient.interceptors.request.use(
@@ -82,9 +97,9 @@ const authService = {
   },
 
   // Vérification d'email
-  verifyEmail: async (userId, token) => {
+  verifyEmail: async (utilisateurId, token) => {
     try {
-      const response = await apiClient.get(`/verify-email/${userId}/${token}`);
+      const response = await apiClient.get(`/verify-email/${utilisateurId}/${token}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la vérification de l\'email' };
