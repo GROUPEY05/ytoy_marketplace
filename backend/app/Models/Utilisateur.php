@@ -73,9 +73,9 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
         return $this->role === 'administrateur';
     }
 
-    public function orders()
+    public function commande()
     {
-        return $this->hasMany(Order::class, 'utilisateur_id');
+        return $this->hasMany(Commande::class, 'utilisateur_id');
     }
     
     public function produits()

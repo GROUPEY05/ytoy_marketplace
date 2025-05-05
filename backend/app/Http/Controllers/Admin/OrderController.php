@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Commande;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with(['utilisateur'])
+        $orders = Commande::with(['utilisateur'])
                     ->latest()
                     ->paginate(10);
                     
@@ -19,7 +19,7 @@ class OrderController extends Controller
     
     public function show($id)
     {
-        $order = Order::with(['items.produit', 'utilisateur', 'payment'])
+        $order = Commande::with(['items.produit', 'utilisateur', 'payment'])
                 ->findOrFail($id);
                 
         return response()->json($order);
@@ -27,7 +27,7 @@ class OrderController extends Controller
     
     public function update(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
+        $order = Commande::findOrFail($id);
         
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled,refunded'

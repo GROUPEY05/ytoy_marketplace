@@ -84,7 +84,18 @@ const productService = {
 
   // Commandes
   createOrder: async (orderData) => {
-    return apiClient.post('/orders/create', orderData);
+    // Transformation des données pour correspondre au format attendu par le backend
+    const formattedData = {
+      adresse_livraison: orderData.address || '',
+      phone: orderData.phone || '',
+      notes: orderData.notes || '',
+      panier_id: orderData.cartId,
+      items: orderData.items.map(item => ({
+        produit_id: item.productId || item.produit_id,
+        quantite: item.quantity || item.quantite
+      }))
+    };
+    return apiClient.post('/orders/create', formattedData);
   },
 
   getOrders: async () => {

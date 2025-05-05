@@ -58,7 +58,7 @@ const ProtectedRoute = ({ requiredRole }) => {
     } else if (userRole === 'vendeur') {
       return <Navigate to="/vendeur/dashboard" replace />;
     } else if (userRole === 'acheteur') {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to="/acheteur/dashboard" replace />;
     } else {
       return <Navigate to="/" replace />;
     }

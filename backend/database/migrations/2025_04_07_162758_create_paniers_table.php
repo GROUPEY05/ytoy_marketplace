@@ -13,10 +13,10 @@ return new class extends Migration
             $table->id();
             $table->timestamp('date_creation')->useCurrent();
             $table->timestamp('date_modification')->nullable();
-            $table->unsignedBigInteger('acheteur_id');
+            $table->unsignedBigInteger('utilisateur_id');
             $table->timestamps();
             
-            $table->foreign('acheteur_id')->references('id')->on('acheteurs')->onDelete('cascade');
+            $table->foreign('utilisateur_id')->references('id')->on('utilisateurs')->onDelete('cascade');
         });
     }
 

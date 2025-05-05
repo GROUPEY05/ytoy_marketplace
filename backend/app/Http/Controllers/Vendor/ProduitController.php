@@ -19,6 +19,13 @@ class ProduitController extends Controller
      */
     public function index(Request $request)
     {
+        // Logging pour déboguer
+        \Log::info('Requête de produits vendeur reçue', [
+            'user_id' => Auth::id(),
+            'is_authenticated' => Auth::check(),
+            'headers' => $request->headers->all()
+        ]);
+        
         $query = Produit::where('vendeur_id', Auth::id())
             ->with(['categorie', 'images']);
 
@@ -49,7 +56,8 @@ class ProduitController extends Controller
         $produits->getCollection()->transform(function ($produit) {
             $produit->images->transform(function ($image) {
                 // S'assurer que l'URL commence par /storage/
-                if (!str_starts_with($image->url, '/storage/')) {
+                // Utiliser strpos au lieu de str_starts_with pour compatibilité PHP < 8.0
+                if (strpos($image->url, '/storage/') !== 0) {
                     $image->url = '/storage/' . $image->url;
                 }
                 \Log::info('Image URL after transformation:', ['url' => $image->url]);

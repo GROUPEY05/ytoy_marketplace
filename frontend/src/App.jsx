@@ -22,6 +22,7 @@ import Home from './components/Home';
 import About from './components/About';
 import NotFound from './components/NotFound';
 import Unauthorized from './components/Unauthorized';
+import HomePage from './pages/HomePage';
 
 // Composants produits
 import ProductList from './components/products/ProductList';
@@ -29,8 +30,13 @@ import ProductDetail from './components/products/ProductDetail';
 import ProduitsByCategorie from './components/products/ProduitsByCategorie';
 
 // Composants acheteur
-import Dashboard from './components/Acheteur/Dashboard';
-import Cart from './components/cart/Cart';
+import Dashboard from './components/acheteur/Dashboard';
+import Profile from './components/acheteur/Profile';
+import Orders from './components/acheteur/Orders';
+import Wishlist from './components/acheteur/Wishlist';
+import Addresses from './components/acheteur/Addresses';
+import Invoice from './components/acheteur/Invoice';
+import Cart from './components/Cart';
 import OrderHistory from './components/orders/OrderHistory';
 import Checkout from './components/checkout/Checkout';
 
@@ -38,6 +44,12 @@ import Checkout from './components/checkout/Checkout';
 import VendeurDashboard from './components/vendeur/Dashboard';
 import VendorProducts from './components/vendeur/VendorProducts';
 import ProductForm from './components/vendeur/AddProduct';
+import VendorOrders from './components/vendeur/VendorOrders';
+import VendorCustomers from './components/vendeur/VendorCustomers';
+import VendorReviews from './components/vendeur/VendorReviews';
+import VendorAnalytics from './components/vendeur/VendorAnalytics';
+import VendorSettings from './components/vendeur/VendorSettings';
+import VendorPromotions from './components/vendeur/VendorPromotions';
 
 // Composants admin
 import AdminDashboard from './components/admin/Dashboard';
@@ -54,6 +66,7 @@ const App = () => {
           <Routes>
             {/* Routes publiques */}
             <Route path="/" element={<Home />} />
+            <Route path="/promotions-page" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/registervendeur" element={<RegisterVendeur />} />
@@ -63,6 +76,7 @@ const App = () => {
             <Route path="/products" element={<ProductList />} />
             <Route path="/categories/:categorieId" element={<ProduitsByCategorie />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route path="/promotions/:type" element={<ProductList />} />
 
             {/* Routes protégées pour les acheteurs */}
             <Route element={<ProtectedRoute requiredRole="acheteur" />}>
@@ -70,6 +84,11 @@ const App = () => {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders" element={<OrderHistory />} />
               <Route path="/acheteur/dashboard" element={<Dashboard />} />
+              <Route path="/acheteur/profile" element={<Profile />} />
+              <Route path="/acheteur/orders" element={<Orders />} />
+              <Route path="/acheteur/orders/:orderId/invoice" element={<Invoice />} />
+              <Route path="/acheteur/wishlist" element={<Wishlist />} />
+              <Route path="/acheteur/addresses" element={<Addresses />} />
             </Route>
 
             {/* Routes spécifiques aux vendeurs */}
@@ -78,6 +97,13 @@ const App = () => {
               <Route path="/vendeur/products" element={<VendorProducts />} />
               <Route path="/vendeur/products/add" element={<ProductForm />} />
               <Route path="/vendeur/products/edit/:productId" element={<ProductForm />} />
+              <Route path="/vendeur/orders" element={<VendorOrders />} />
+              <Route path="/vendeur/orders/:orderId" element={<VendorOrders />} />
+              <Route path="/vendeur/customers" element={<VendorCustomers />} />
+              <Route path="/vendeur/reviews" element={<VendorReviews />} />
+              <Route path="/vendeur/analytics" element={<VendorAnalytics />} />
+              <Route path="/vendeur/settings" element={<VendorSettings />} />
+              <Route path="/vendeur/promotions" element={<VendorPromotions />} />
             </Route>
 
             {/* Routes spécifiques aux administrateurs */}

@@ -2,7 +2,7 @@
 
 return [
 
-    'paths' => ['api/*', 'produits/*', 'cart/*'], // Ajoutez les chemins nécessaires
+    'paths' => ['api/*', 'produits/*', 'acheteur/*','cart/*','orders/*', 'sanctum/csrf-cookie'], // Ajoutez les chemins nécessaires
 
     'allowed_methods' => ['*'], // Autorise toutes les méthodes (GET, POST, etc.)
 

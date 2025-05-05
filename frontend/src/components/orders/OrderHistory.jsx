@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Table, Button, Alert, Spinner, Badge, Modal } from 'react-bootstrap';
+import { Container, Table, Badge, Button, Modal, Spinner, Alert } from 'react-bootstrap';
 import { apiClient } from '../../services/api';
+import PaymentForm from '../payment/PaymentForm';
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -8,13 +9,53 @@ const OrderHistory = () => {
   const [error, setError] = useState('');
   const [showInvoice, setShowInvoice] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [orderToPay, setOrderToPay] = useState(null);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/orders');
-      setOrders(response.data);
       setError('');
+      // Utiliser l'URL correcte avec le préfixe API et s'assurer que le token est envoyé
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Vous devez être connecté pour voir vos commandes');
+        setLoading(false);
+        return;
+      }
+      
+      // Essayer plusieurs routes possibles pour récupérer les commandes
+      let success = false;
+      
+      try {
+        // Première tentative avec la route pour les acheteurs
+        const response = await apiClient.get('/api/acheteur/orders');
+        setOrders(response.data);
+        success = true;
+      } catch (firstError) {
+        console.log('Premier endpoint a échoué, essai avec un autre endpoint');
+        
+        try {
+          // Deuxième tentative avec une autre route
+          const response = await apiClient.get('/api/orders');
+          setOrders(response.data);
+          success = true;
+        } catch (secondError) {
+          try {
+            // Si les deux tentatives échouent, essayer une troisième route
+            const response = await apiClient.get('/api/panier/orders');
+            setOrders(response.data);
+            success = true;
+          } catch (thirdError) {
+            // Toutes les tentatives ont échoué
+            throw new Error('Impossible de récupérer les commandes');
+          }
+        }
+      }
+      
+      if (success) {
+        setError('');
+      }
     } catch (err) {
       console.error('Erreur lors du chargement des commandes', err);
       setError('Impossible de charger vos commandes. Veuillez réessayer plus tard.');
@@ -27,26 +68,28 @@ const OrderHistory = () => {
     fetchOrders();
   }, []);
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (statut) => {
     const variants = {
-      'pending': 'warning',
-      'processing': 'info',
-      'shipped': 'primary',
-      'delivered': 'success',
-      'cancelled': 'danger'
+      'en_attente': 'warning',
+      'validee': 'info',
+      'en_preparation': 'info',
+      'expediee': 'primary',
+      'livree': 'success',
+      'annulee': 'danger'
     };
     
     const labels = {
-      'pending': 'En attente',
-      'processing': 'En traitement',
-      'shipped': 'Expédié',
-      'delivered': 'Livré',
-      'cancelled': 'Annulé'
+      'en_attente': 'En attente',
+      'validee': 'Validée',
+      'en_preparation': 'En préparation',
+      'expediee': 'Expédiée',
+      'livree': 'Livrée',
+      'annulee': 'Annulée'
     };
 
     return (
-      <Badge bg={variants[status] || 'secondary'}>
-        {labels[status] || status}
+      <Badge bg={variants[statut] || 'secondary'}>
+        {labels[statut] || statut}
       </Badge>
     );
   };
@@ -54,6 +97,21 @@ const OrderHistory = () => {
   const viewInvoice = (order) => {
     setSelectedOrder(order);
     setShowInvoice(true);
+  };
+  
+  const handlePayment = (order) => {
+    setOrderToPay(order);
+    setShowPaymentForm(true);
+  };
+  
+  const handlePaymentSuccess = () => {
+    setShowPaymentForm(false);
+    fetchOrders(); // Rafraîchir la liste des commandes
+    alert('Paiement effectué avec succès!');
+  };
+  
+  const handlePaymentCancel = () => {
+    setShowPaymentForm(false);
   };
 
   const Invoice = ({ order }) => (
@@ -134,17 +192,29 @@ const OrderHistory = () => {
             {orders.map(order => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                <td>{getStatusBadge(order.status)}</td>
-                <td>{order.total} FCFA</td>
+                <td>{new Date(order.date_commande || order.created_at).toLocaleDateString()}</td>
+                <td>{getStatusBadge(order.statut)}</td>
+                <td>{order.montant_total} FCFA</td>
                 <td>
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={() => viewInvoice(order)}
-                  >
-                    Voir la facture
-                  </Button>
+                  <div className="d-flex gap-2">
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => viewInvoice(order)}
+                    >
+                      Voir la facture
+                    </Button>
+                    
+                    {order.statut === 'en_attente' && (
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={() => handlePayment(order)}
+                      >
+                        Payer
+                      </Button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -174,6 +244,27 @@ const OrderHistory = () => {
             Imprimer
           </Button>
         </Modal.Footer>
+      </Modal>
+
+      {/* Modal pour le paiement */}
+      <Modal
+        show={showPaymentForm}
+        onHide={handlePaymentCancel}
+        size="lg"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Paiement de la commande #{orderToPay?.id}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {orderToPay && (
+            <PaymentForm
+              orderId={orderToPay.id}
+              amount={orderToPay.montant_total}
+              onSuccess={handlePaymentSuccess}
+              onCancel={handlePaymentCancel}
+            />
+          )}
+        </Modal.Body>
       </Modal>
     </Container>
   );

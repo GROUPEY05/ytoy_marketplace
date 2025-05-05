@@ -3,29 +3,35 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Panier extends Model
 {
+    use HasFactory;
+    
+    protected $table = 'paniers';
+    
     protected $fillable = [
-        'date_creation',
-        'date_modification',
-        'acheteur_id'
+        'utilisateur_id'
     ];
     
-    public function acheteur()
+    public function utilisateur()
     {
-        return $this->belongsTo(Acheteur::class);
+        return $this->belongsTo(Utilisateur::class);
     }
     
-    public function lignes()
+    public function produits()
     {
-        return $this->hasMany(LignePanier::class);
+        return $this->belongsToMany(Produit::class, 'paniers_produit', 'panier_id', 'produit_id')
+            ->withPivot('quantite', 'prix_unitaire')
+            ->select('produits.*') // Sélectionner toutes les colonnes de produits
+            ->withTimestamps();
     }
     
     public function calculerTotal()
     {
-        return $this->lignes->sum(function($ligne) {
-            return $ligne->prix_unitaire * $ligne->quantite;
+        return $this->produits->sum(function($produit) {
+            return $produit->pivot->prix_unitaire * $produit->pivot->quantite;
         });
     }
 }

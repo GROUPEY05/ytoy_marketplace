@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { apiClient } from '../../services/api';
 
 const ProductList = () => {
@@ -8,11 +8,15 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (searchTerm = '') => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/produits');
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+      const response = await apiClient.get(`/produits${queryString}`);
       setProducts(response.data.data);
       setError('');
     } catch (err) {
@@ -24,8 +28,10 @@ const ProductList = () => {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('search') || '';
+    fetchProducts(searchParam);
+  }, [location.search]);
 
   const addToCart = async (productId) => {
     try {

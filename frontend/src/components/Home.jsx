@@ -1,12 +1,12 @@
 // src/components/Home.jsx
 
 import { useAuth } from '../contexts/AuthContext'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './Home.css'
-
-
-
+import { apiClient } from '../services/api'
 import { FaCheck } from "react-icons/fa";
 
 import Header from './layout/Header'
@@ -16,12 +16,42 @@ import HomeProducts from './products/HomeProducts'
 
 const Home = () => {
   const { isAuthenticated, currentUser } = useAuth()
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const navigate = useNavigate()
+  const searchInputRef = useRef(null)
 
-  
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true)
+        const response = await apiClient.get('/categories')
+        setCategories(response.data)
+        setError('')
+      } catch (err) {
+        console.error('Erreur lors du chargement des catégories:', err)
+        setError('Impossible de charger les catégories.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`)
+    }
+  }
 
   return (
-    <>
+    <div className="">
       <Header />
+      
       <div className='container  mt-3'>
         <div className='d-flex  gap-3'>
           {/* menu */}
@@ -1309,8 +1339,8 @@ const Home = () => {
 
       </div> <br /><br />
       <Footer />
-    </>
+    </div>
   )
 }
 
-export default Home 
+export default Home

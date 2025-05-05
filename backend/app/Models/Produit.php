@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Produit extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'nom',
         'description',
@@ -22,14 +24,21 @@ class Produit extends Model
         return $this->belongsTo(Utilisateur::class, 'vendeur_id');
     }
 
+    public function paniers()
+    {
+        return $this->belongsToMany(panier::class, 'paniers_produit', 'produit_id', 'panier_id')
+            ->withPivot('quantite')
+            ->withTimestamps();
+    }
+
     public function categorie()
     {
         return $this->belongsTo(Categorie::class);
     }
 
-    public function orderItems()
+    public function commandes()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(Commande::class);
     }
 
     public function images()
@@ -40,6 +49,14 @@ class Produit extends Model
     public function avis()
     {
         return $this->hasMany(Avis::class);
+    }
+    
+    /**
+     * Relation avec les promotions
+     */
+    public function promotions()
+    {
+        return $this->hasMany(Promotion::class);
     }
 
     public function imagePrincipale()

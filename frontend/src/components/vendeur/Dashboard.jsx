@@ -2,16 +2,19 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { apiClient } from '../../services/api'
 
 
 const VendeurDashboard = () => {
   const { currentUser, logout } = useAuth()
   const navigate = useNavigate()
+  // Initialiser les stats avec des valeurs par défaut pour éviter les erreurs undefined
   const [stats, setStats] = useState({
     sales: 0,
     revenue: 0,
     products: 0,
-    orders: 0
+    orders: 0,
+    pending_orders: 0
   })
   const [recentOrders, setRecentOrders] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,60 +31,97 @@ const VendeurDashboard = () => {
     }
   }
 
-  // Simuler le chargement des données
+  // Charger les données réelles depuis l'API
   useEffect(() => {
-    setTimeout(() => {
-      setStats({
-        sales: 126,
-        revenue: 8754.5,
-        products: 45,
-        orders: 78
-      })
-
-      setRecentOrders([
-        {
-          id: 1001,
-          customer: 'Jean Dupont',
-          date: '15/04/2025',
-          status: 'En attente',
-          total: 129.99
-        },
-        {
-          id: 1002,
-          customer: 'Marie Leroy',
-          date: '14/04/2025',
-          status: 'Expédié',
-          total: 89.5
-        },
-        {
-          id: 1003,
-          customer: 'Thomas Martin',
-          date: '13/04/2025',
-          status: 'Livré',
-          total: 210.25
-        },
-        {
-          id: 1004,
-          customer: 'Emma Petit',
-          date: '12/04/2025',
-          status: 'En attente',
-          total: 45.0
-        },
-        {
-          id: 1005,
-          customer: 'Lucas Bernard',
-          date: '11/04/2025',
-          status: 'Annulé',
-          total: 67.75
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        
+        // Récupérer les statistiques du vendeur
+        try {
+          console.log('Tentative de récupération des statistiques du vendeur...');
+          const statsResponse = await apiClient.get('/api/vendor/stats')
+          console.log('Réponse des statistiques:', statsResponse.data);
+          
+          // Si la réponse contient les statistiques, les utiliser
+          if (statsResponse.data) {
+            setStats({
+              sales: statsResponse.data.total_orders || 0,
+              revenue: statsResponse.data.total_revenue || 0,
+              products: statsResponse.data.total_products || 0,
+              orders: statsResponse.data.total_orders || 0,
+              pending_orders: statsResponse.data.pending_orders || 0
+            })
+          }
+        } catch (statsError) {
+          console.error('Erreur lors du chargement des statistiques:', statsError)
+          // Utiliser des données par défaut en cas d'erreur
+          setStats({
+            sales: 0,
+            revenue: 0,
+            products: 0,
+            orders: 0,
+            pending_orders: 0
+          })
         }
-      ])
-
-      setLoading(false)
-    }, 1000)
+        
+        // Récupérer les commandes récentes
+        try {
+          console.log('Tentative de récupération des commandes récentes...');
+          const ordersResponse = await apiClient.get('/api/vendor/dashboard/recent-orders')
+          console.log('Réponse des commandes récentes:', ordersResponse.data);
+        
+          if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
+            // Les données sont déjà formatées par le backend
+            setRecentOrders(ordersResponse.data)
+          }
+        } catch (ordersError) {
+          console.error('Erreur lors du chargement des commandes:', ordersError)
+          setRecentOrders([])
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error)
+        // En cas d'erreur, utiliser des données par défaut
+        setStats({
+          sales: 0,
+          revenue: 0,
+          products: 0,
+          orders: 0
+        })
+        setRecentOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    // Fonction pour obtenir le libellé du statut
+    const getStatusLabel = (statut) => {
+      switch (statut) {
+        case 'en_attente': return 'En attente'
+        case 'validee': return 'Validée'
+        case 'en_preparation': return 'En préparation'
+        case 'expediee': return 'Expédiée'
+        case 'livree': return 'Livrée'
+        case 'annulee': return 'Annulée'
+        default: return statut
+      }
+    }
+    
+    fetchData()
   }, [])
 
+  // Marque une commande comme expédiée
+  const handleShip = async (orderId) => {
+    try {
+      await apiClient.put(`/api/vendor/orders/${orderId}/status`, { status: 'expediee' });
+      setRecentOrders(recentOrders.map(o => o.id === orderId ? { ...o, status: 'Expédiée' } : o));
+    } catch (error) {
+      console.error('Erreur lors du changement de statut de la commande', error);
+    }
+  };
+
   return (
-    <div className='container-fluid2 mt-4'>
+    <div className='container-fluid mt-4'>
       <div className='row'>
         {/* Sidebar */}
         <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse'>
@@ -101,6 +141,12 @@ const VendeurDashboard = () => {
             </div>
 
             <ul className='nav flex-column'>
+              <li className='nav-item'>
+                <Link to='/' className='nav-link  active'>
+                  <i className='bi bi-speedometer2 me-2'></i>
+                  Accueil
+                </Link>
+              </li>
               <li className='nav-item'>
                 <Link to='/vendeur/dashboard' className='nav-link  active'>
                   <i className='bi bi-speedometer2 me-2'></i>
@@ -138,6 +184,12 @@ const VendeurDashboard = () => {
                 </Link>
               </li>
               <li className='nav-item'>
+                <Link to='/vendeur/promotions' className='nav-link'>
+                  <i className='bi bi-tags me-2'></i>
+                  Promotions
+                </Link>
+              </li>
+              <li className='nav-item'>
                 <Link to='/vendeur/settings' className='nav-link'>
                   <i className='bi bi-gear me-2'></i>
                   Paramètres
@@ -155,21 +207,6 @@ const VendeurDashboard = () => {
             </ul>
 
             <hr />
-
-            <ul className='nav flex-column mb-2'>
-              <li className='nav-item'>
-                <Link to='/vendeur/profile' className='nav-link'>
-                  <i className='bi bi-person me-2'></i>
-                  Profil
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/help' className='nav-link'>
-                  <i className='bi bi-question-circle me-2'></i>
-                  Aide
-                </Link>
-              </li>
-            </ul>
           </div>
         </div>
 
@@ -224,7 +261,7 @@ const VendeurDashboard = () => {
                             Ventes (Mensuel)
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {stats.sales}
+                            {stats?.sales || 0}
                           </div>
                         </div>
                         <div className='col-auto'>
@@ -244,7 +281,7 @@ const VendeurDashboard = () => {
                             Revenus (Mensuel)
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {stats.revenue.toFixed(2)} €
+                            {(stats.revenue || 0).toFixed(2)} €
                           </div>
                         </div>
                         <div className='col-auto'>
@@ -264,7 +301,7 @@ const VendeurDashboard = () => {
                             Produits
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {stats.products}
+                            {stats?.products || 0}
                           </div>
                         </div>
                         <div className='col-auto'>
@@ -284,7 +321,7 @@ const VendeurDashboard = () => {
                             Commandes en attente
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {stats.orders}
+                            {stats?.pending_orders || 0}
                           </div>
                         </div>
                         <div className='col-auto'>
@@ -320,7 +357,7 @@ const VendeurDashboard = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {recentOrders.map(order => (
+                        {recentOrders && recentOrders.length > 0 ? recentOrders.map(order => (
                           <tr key={order.id}>
                             <td>#{order.id}</td>
                             <td>{order.customer}</td>
@@ -328,19 +365,19 @@ const VendeurDashboard = () => {
                             <td>
                               <span
                                 className={`badge ${
-                                  order.status === 'Livré'
+                                  order.status === 'Livrée'
                                     ? 'bg-success'
-                                    : order.status === 'Expédié'
+                                    : order.status === 'Expédiée'
                                     ? 'bg-info'
                                     : order.status === 'En attente'
                                     ? 'bg-warning'
-                                    : 'bg-danger'
+                                    : 'bg-secondary'
                                 }`}
                               >
                                 {order.status}
                               </span>
                             </td>
-                            <td>{order.total.toFixed(2)} €</td>
+                            <td>{(order.total || 0).toFixed(2)} €</td>
                             <td>
                               <Link
                                 to={`/vendeur/orders/${order.id}`}
@@ -348,12 +385,19 @@ const VendeurDashboard = () => {
                               >
                                 <i className='bi bi-eye'></i>
                               </Link>
-                              <button className='btn btn-sm btn-outline-success'>
+                              <button
+                                className='btn btn-sm btn-outline-success'
+                                onClick={() => handleShip(order.id)}
+                              >
                                 <i className='bi bi-truck'></i>
                               </button>
                             </td>
                           </tr>
-                        ))}
+                        )) : (
+                          <tr>
+                            <td colSpan="6" className="text-center">Aucune commande récente</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -382,8 +426,8 @@ const VendeurDashboard = () => {
                         </div>
                         <div className='col-6 mb-3'>
                           <Link
-                            to='/vendeur/orders/pending'
-                            className='btn btn-warning btn-block w-100'
+                            to='/vendeur/orders'
+                            className='btn btn-warning w-100'
                           >
                             <i className='bi bi-clock me-2'></i>Commandes en
                             attente
@@ -400,8 +444,8 @@ const VendeurDashboard = () => {
                         </div>
                         <div className='col-6 mb-3'>
                           <Link
-                            to='/vendeur/inventaire'
-                            className='btn btn-secondary btn-block w-100'
+                            to='/vendeur/products'
+                            className='btn btn-secondary w-100'
                           >
                             <i className='bi bi-list-check me-2'></i>Gérer le
                             stock

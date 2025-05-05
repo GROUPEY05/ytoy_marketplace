@@ -1,171 +1,205 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { AuthContext } from '../../contexts/AuthContext';
-import axios from 'axios';
-<link
-  rel='stylesheet'
-  href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css'
-></link>
-
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import { apiClient } from '../../services/api'
+import CartModal from '../cart/CartModal'
+import useCartStore from '../../store/cartStore'
+import { motion, AnimatePresence } from 'framer-motion'
+import './Header.css'
 
 const Header = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [cartCount, setCartCount] = useState(0);
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const [searchTerm, setSearchTerm] = useState('')
+  const [cartCount, setCartCount] = useState(0)
+  const [user, setUser] = useState(null)
+  const navigate = useNavigate()
+  const { setCartModalOpen } = useCartStore()
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
 
   const fetchCartCount = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token')
       if (token && user) {
-        const response = await axios.get('http://localhost:8000/api/cart/count', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setCartCount(response.data.count);
+        const response = await apiClient.get('/api/cart/count')
+        setCartCount(response.data.count)
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération du nombre d\'articles:', error);
+      console.error("Erreur lors de la récupération du panier :", error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchCartCount();
+    fetchCartCount()
 
-    // Écouter les mises à jour du panier
-    const handleCartUpdate = (event) => {
-      setCartCount(event.detail.count);
-    };
-
-    window.addEventListener('cartUpdated', handleCartUpdate);
-
-    return () => {
-      window.removeEventListener('cartUpdated', handleCartUpdate);
-    };
-  }, [user]);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
+    const handleCartUpdate = () => {
+      fetchCartCount()
     }
-  };
+
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate)
+  }, [user])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.removeItem('userRole')
+    setUser(null)
+    navigate('/')
+  }
+
+  const handleSearch = e => {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchTerm)}`)
+    }
+  }
+
+  const handleCartClick = (e) => {
+    e.preventDefault()
+    setCartModalOpen(true)
+  }
 
   return (
     <>
-      <header className='  d-flex  ' style={{boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', position: 'sticky', top: '0', zIndex: '1000', backgroundColor: 'white'}}>
-        <div className='container d-flex align-items-center gap-3 justify-content-between'>
-          <div>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100 }}
+        className='header-container'
+      >
+        <div className='header-content'>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="logo-container"
+          >
             <img
               src='http://localhost:5173/image/logo_ytoy.png'
-              alt=''
-              style={{ maxWidth: '110px' }}
+              alt='Logo'
+              className="logo-image"
             />
-          </div>
-          <div className='mb-2 mb-lg-0 d-flex gap-5'>
-            <a
+          </motion.div>
+
+          <nav className='nav-links'>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
               href='/'
-              style={{
-                fontSize: '16px',
-                color: '#FF6F00',
-                textDecoration: 'none'
-              }}
+              className='nav-link active'
             >
               Accueil
-            </a>
-          
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.1 }}
               href='/about'
-              style={{
-                fontSize: '16px',
-                textDecoration: 'none',
-                color: '#000000'
-              }}
+              className='nav-link'
             >
               A propos
-            </a>
-          </div>
-              {/* searchbar et bouton rechercher */}
-          <form className='d-flex gap-2' role='search' onSubmit={handleSearch}>
-            <div
-              className='d-flex'
-              style={{ position: 'relative', width: '300px' }}
-            >
+            </motion.a>
+          </nav>
+
+          <form className='search-form' onSubmit={handleSearch}>
+            <div className='search-container'>
               <input
-                className='form-control me-2'
                 type='search'
-                placeholder='cherchez ici....'
-                aria-label='Search'
-                style={{ width: '100%' }}
+                placeholder='Rechercher un produit...'
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
+                className='search-input'
               />
-              <div
-                className='position-absolute top-50'
-                style={{
-                  right: '50px',
-                  cursor: 'pointer',
-                  transform: 'translateY(-50%)'
-                }}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type='submit'
+                className='search-button'
               >
                 <i className='bi bi-search'></i>
-              </div>
+              </motion.button>
             </div>
-            <button className='btn btn-success' type='submit' style={{backgroundColor: '#FF6F00', border:'none'}}>
-              Rechercher
-            </button>
           </form>
 
-          {/* Icônes Panier et Connexion/Déconnexion */}
-          <div className='d-flex gap-5 align-items-center mt-3 mt-lg-0'>
-            {user && (
-              <Link to="/cart" className='cart-icon me-3 position-relative'>
-                <i className='bi bi-cart-fill' style={{ fontSize: '24px', color:'#000000' }}></i>
-                <span className='position-absolute top-0 start-100 translate-middle badge rounded-pill' style={{backgroundColor: '#FF6F00'}}>
-                  {cartCount}
-                </span>
-              </Link>
-            )}
+          <div className='actions-container'>
+            <AnimatePresence>
+              {user && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                >
+                  <motion.a
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    href="#"
+                    onClick={handleCartClick}
+                    className='cart-button'
+                  >
+                    <i className='bi bi-cart-fill'></i>
+                    {cartCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className='cart-count'
+                      >
+                        {cartCount}
+                      </motion.span>
+                    )}
+                  </motion.a>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {!user ? (
-              <Link to="/login" className='btn btn-success' style={{backgroundColor: '#FF6F00', border:'none', color: '#ffffff', textDecoration: 'none'}}>
-                Se connecter
-              </Link>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link to='/login' className='login-button'>
+                  Se connecter
+                </Link>
+              </motion.div>
             ) : (
-              <div className='d-flex gap-3'>
+              <div className='user-actions'>
                 {user.role === 'vendeur' && (
-                  <Link to="/vendeur/dashboard" className='btn btn-outline-primary'>
-                    Dashboard Vendeur
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <Link to='/vendeur/dashboard' className='dashboard-button'>
+                      Dashboard Vendeur
+                    </Link>
+                  </motion.div>
                 )}
                 {user.role === 'administrateur' && (
-                  <Link to="/admin/dashboard" className='btn btn-outline-primary'>
-                    Dashboard Admin
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <Link to='/admin/dashboard' className='dashboard-button'>
+                      Dashboard Admin
+                    </Link>
+                  </motion.div>
                 )}
                 {user.role === 'acheteur' && (
-                  <Link to="/acheteur/dashboard" className='btn btn-outline-primary'>
-                    Mes commandes
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.05 }}>
+                    <Link to='/acheteur/dashboard' className='dashboard-button'>
+                      Mes commandes
+                    </Link>
+                  </motion.div>
                 )}
-                <button 
-                  onClick={() => {
-                    localStorage.removeItem('token');
-                    window.location.href = '/';
-                  }} 
-                  className='btn btn-danger'
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleLogout}
+                  className='logout-button'
                 >
                   Déconnexion
-                </button>
+                </motion.button>
               </div>
             )}
           </div>
         </div>
-      </header>
-    </>
-  );
-};
+      </motion.header>
 
-export default Header;
+      <CartModal />
+    </>
+  )
+}
+
+export default Header

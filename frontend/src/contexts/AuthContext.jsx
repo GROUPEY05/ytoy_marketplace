@@ -1,8 +1,8 @@
 // src/contexts/AuthContext.jsx
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import authService from '../services/api'; // Tes appels API auth (login, logout, etc.)
-import axios from 'axios';
+import authService, { apiClient } from '../services/api'; // Tes appels API auth (login, logout, etc.)
+// Utilisation de apiClient pour les requêtes authentifiées
 
 // Crée le contexte
 export const AuthContext = createContext(); // ← ICI : on ajoute "export" !
@@ -23,30 +23,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
 
-const fetchCurrentUser = async () => {
+  const fetchCurrentUser = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/api/user',{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-
-      const user = response.data;
-      setCurrentUser(user);
+      // L'URL correcte selon les routes définies dans api.php
+      const response = await apiClient.get('/api/api/user');
+      setCurrentUser(response.data);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error("Erreur lors de la tentative de connexion :", error);
+      console.error('Erreur fetch CurrentUser :', error);
     } finally {
       setLoading(false);
     }
   };
 
-
   // Au chargement, on vérifie si l'utilisateur est déjà connecté
   useEffect(() => {
-
     fetchCurrentUser();
-
   }, []);
 
   console.log(currentUser);
@@ -63,6 +55,22 @@ const fetchCurrentUser = async () => {
 
       setCurrentUser(user);
       setIsAuthenticated(true);
+
+      // Redirection en fonction du rôle
+      switch(user.role) {
+        case 'administrateur':
+          window.location.href = '/admin/dashboard';
+          break;
+        case 'vendeur':
+          window.location.href = '/vendeur/dashboard';
+          break;
+        case 'acheteur':
+          window.location.href = '/acheteur/dashboard';
+          break;
+        default:
+          window.location.href = '/';
+      }
+
       return response;
     } catch (error) {
       throw error;

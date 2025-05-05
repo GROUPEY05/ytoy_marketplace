@@ -19,7 +19,14 @@ const VendorProducts = () => {
   const fetchProducts = async (page = 1) => {
     try {
       setLoading(true);
+      console.log('Tentative de récupération des produits du vendeur...');
+      // Récupérer le token pour le débogage
+      const token = localStorage.getItem('token');
+      console.log('Token d\'authentification présent:', !!token);
+      
+      // Utiliser la route correcte avec le préfixe api
       const response = await apiClient.get(`/api/vendor/produits?page=${page}&per_page=${perPage}`);
+      console.log('Requête envoyée à:', `/api/vendor/produits?page=${page}&per_page=${perPage}`);
       console.log('API Response:', response.data);
       const { data, current_page, last_page } = response.data;
       
@@ -127,7 +134,7 @@ const VendorProducts = () => {
     <Container className="my-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Mes Produits</h2>
-        <Link to="/vendeur/products/add" className="btn  btn-sm " style={{ backgroundColor: '#FF6F00', color: 'white' }}>
+        <Link to="/vendeur/products/add" className="btn " style={{ backgroundColor: '#FF6F00', color: 'white' }}>
           <i className='bi bi-plus'></i>{' '}
           Ajouter un produit
         </Link>

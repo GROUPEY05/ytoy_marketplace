@@ -16,10 +16,10 @@ return new class extends Migration
             $table->enum('statut', ['en_attente', 'validee', 'en_preparation', 'expediee', 'livree', 'annulee'])->default('en_attente');
             $table->decimal('montant_total', 10, 2);
             $table->text('adresse_livraison');
-            $table->unsignedBigInteger('acheteur_id');
+            $table->unsignedBigInteger('utilisateur_id');
             $table->timestamps();
             
-            $table->foreign('acheteur_id')->references('id')->on('acheteurs');
+            $table->foreign('utilisateur_id')->references('id')->on('utilisateurs');
         });
     }
 

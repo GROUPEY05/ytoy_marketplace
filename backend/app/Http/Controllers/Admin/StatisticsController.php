@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
 use App\Models\Produit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Commande;
 
 class StatisticsController extends Controller
 {
@@ -21,7 +21,7 @@ class StatisticsController extends Controller
         // Top produits
         $topProduits = Produit::select('produit.id', 'produit.nom', DB::raw('SUM(order_items.quantity) as total_quantity'))
                         ->join('order_items', 'produit.id', '=', 'order_items.produit_id')
-                        ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                        ->join('commande', 'order_items.commande_id', '=', 'orders.id')
                         ->where('orders.status', 'completed')
                         ->groupBy('produit.id', 'produit.nom')
                         ->orderByDesc('total_quantity')
@@ -71,7 +71,7 @@ class StatisticsController extends Controller
                 $format = 'Y-m-d';
         }
         
-        $sales = Order::select(
+        $sales = Commande::select(
                 DB::raw("$groupBy as date"),
                 DB::raw('COUNT(*) as total_orders'),
                 DB::raw('SUM(total_amount) as total_sales')

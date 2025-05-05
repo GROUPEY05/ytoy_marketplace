@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('montant', 10, 2);
             $table->timestamp('date_paiement')->useCurrent();
-            $table->enum('methode', ['paypal', 'mobile_money', 'carte_credit']);
+            $table->enum('methode', ['paypal', 'mobile_money', 'orange_money', 'stripe', 'carte_credit']);
             $table->enum('statut', ['en_attente', 'complete', 'echoue', 'rembourse'])->default('en_attente');
             $table->string('reference')->unique()->nullable();
             $table->unsignedBigInteger('commande_id');

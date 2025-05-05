@@ -13,6 +13,8 @@ const ProductForm = () => {
     prix: '',
     categorie_id: '', // Vérifiez que c'est bien orthographié comme dans la BD
     quantite_stock: '', // Ce champ sera envoyé comme 'stock' mais utilisé pour 'quantite_stock'
+    gestion_stock: true, // Activer la gestion du stock par défaut
+    seuil_alerte_stock: 5, // Seuil d'alerte pour le stock bas
     images: []
   })
 
@@ -99,6 +101,14 @@ const ProductForm = () => {
 
   const handleQuantiteStockChange = (e) => {
     setProduit({ ...produit, quantite_stock: e.target.value })
+  }
+  
+  const handleGestionStockChange = (e) => {
+    setProduit({ ...produit, gestion_stock: e.target.checked })
+  }
+  
+  const handleSeuilAlerteStockChange = (e) => {
+    setProduit({ ...produit, seuil_alerte_stock: e.target.value })
   }
   const handlePrixChange = (e) => {
     setProduit({ ...produit, prix: e.target.value })
@@ -262,7 +272,7 @@ const ProductForm = () => {
       }
 
       setMessage({
-        text: produitId
+        text: productId
           ? 'Produit modifié avec succès!'
           : 'Produit ajouté avec succès!',
         type: 'success'
@@ -339,14 +349,41 @@ const ProductForm = () => {
                 </Form.Group>
 
                 <Form.Group className='mb-3'>
-                  <Form.Label>Stock disponible</Form.Label>
-                  <Form.Control
-                    type='number'
-                    name='quantite_stock'
-                    value={produit.quantite_stock}
-                    onChange={handleQuantiteStockChange}
-                    required
+                  <Form.Check 
+                    type='checkbox'
+                    id='gestion-stock'
+                    label='Activer la gestion du stock'
+                    checked={produit.gestion_stock}
+                    onChange={handleGestionStockChange}
+                    className='mb-2'
                   />
+                  
+                  {produit.gestion_stock && (
+                    <>
+                      <Form.Label>Stock disponible</Form.Label>
+                      <Form.Control
+                        type='number'
+                        name='quantite_stock'
+                        value={produit.quantite_stock}
+                        onChange={handleQuantiteStockChange}
+                        required
+                      />
+                      
+                      <div className='mt-2'>
+                        <Form.Label>Seuil d'alerte stock bas</Form.Label>
+                        <Form.Control
+                          type='number'
+                          name='seuil_alerte_stock'
+                          value={produit.seuil_alerte_stock}
+                          onChange={handleSeuilAlerteStockChange}
+                          required
+                        />
+                        <Form.Text className='text-muted'>
+                          Vous recevrez une alerte lorsque le stock sera inférieur à ce seuil
+                        </Form.Text>
+                      </div>
+                    </>
+                  )}
                 </Form.Group>
 
                 <Form.Group className='mb-3'>

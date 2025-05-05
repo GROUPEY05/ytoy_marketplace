@@ -36,6 +36,9 @@ const Login = () => {
       // Stocker le jeton d'authentification dans le localStorage
     if (response.token) {
       localStorage.setItem('authToken', response.token);  // Vous stockez ici le jeton d'authentification
+      localStorage.setItem('user', JSON.stringify(response.utilisateur));
+
+      console.log('Login Response:', response);
     }
       
       // Utiliser le chemin de redirection fourni par le serveur
@@ -50,7 +53,7 @@ const Login = () => {
         } else if (userRole === 'vendeur') {
           navigate('/vendeur/dashboard');
         } else if (userRole === 'acheteur') {
-          navigate('acheteur/dashboard');
+          navigate('/acheteur/dashboard');
         } else {
           navigate('/');
         }

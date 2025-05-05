@@ -139,20 +139,20 @@ class AuthController extends Controller
                 'telephone' => $request->telephone,
             ]);
         } elseif ($request->role === 'acheteur') {
-                $utilisateur->update(['actif' => true]);
-                $acheteur = $utilisateur->acheteur()->create([
-                    'adresse_livraison' => $request->adresse_livraison,
-                    'preferences' => $request->preferences,
-    
-                ]);
-                // Acheteur::create([
-                //    // 'utilisateur_id' => $utilisateur->id,
-                //     'adresse_livraison' => $request->adresse_livraison ?? $request->adresse,
-                // ]);
-    
-    
-            } 
-       
+            $utilisateur->update(['actif' => true]);
+            $acheteur = $utilisateur->acheteur()->create([
+                'adresse_livraison' => $request->adresse_livraison,
+                'preferences' => $request->preferences,
+
+            ]);
+            // Acheteur::create([
+            //    // 'utilisateur_id' => $utilisateur->id,
+            //     'adresse_livraison' => $request->adresse_livraison ?? $request->adresse,
+            // ]);
+
+
+        }
+
 
         $token = $utilisateur->createToken('auth_token')->plainTextToken;
 
@@ -166,6 +166,37 @@ class AuthController extends Controller
      * Connexion d'un utilisateur
      */
     public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'mot_de_passe' => 'required|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = Utilisateur::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->mot_de_passe, $user->mot_de_passe)) {
+            return response()->json([
+                'message' => 'Email ou mot de passe incorrect.'
+            ], 401);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'utilisateur' => $user,
+            'token' => $token,
+            'message' => 'Connexion réussie'
+        ]);
+    }
+
+    /**
+     * Connexion d'un utilisateur
+     */
+    public function loginOld(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -198,6 +229,9 @@ class AuthController extends Controller
         }
 
         $token = $utilisateur->createToken('auth_token')->plainTextToken;
+
+        $utilisateur = Utilisateur::where('email', $request->email)->firstOrFail();
+        $utilisateur->makeHidden(['mot_de_passe', 'created_at', 'updated_at']);
 
         return response()->json([
             'utilisateur' => $utilisateur,
