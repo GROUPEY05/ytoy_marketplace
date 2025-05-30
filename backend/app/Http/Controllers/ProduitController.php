@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Vendor;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Produit;
@@ -59,6 +59,21 @@ class ProduitController extends Controller
         });
 
         return response()->json($produits);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        
+        // Recherche par nom de produit et catégorie
+        $products = Produit::with('categorie')
+            ->where('nom', 'LIKE', "%{$query}%")
+            ->orWhereHas('categorie', function($q) use ($query) {
+                $q->where('nom', 'LIKE', "%{$query}%");
+            })
+            ->get();
+        
+        return response()->json($products);
     }
 
     /**
@@ -135,11 +150,35 @@ class ProduitController extends Controller
      */
     public function show($id)
     {
-        $produit = Produit::with(['categorie', 'images'])
-            ->where('vendeur_id', Auth::id())
-            ->findOrFail($id);
-        
-        return response()->json($produit);
+        try {
+            \Log::info('Tentative de récupération du produit', ['id' => $id]);
+            
+            $produit = Produit::with(['vendeur', 'categorie', 'images', 'avis'])
+                ->where('id', $id)
+                ->first();
+            
+            if (!$produit) {
+                \Log::warning('Produit non trouvé', ['id' => $id]);
+                return response()->json([
+                    'message' => 'Produit non trouvé'
+                ], 404);
+            }
+            
+            \Log::info('Produit trouvé', ['produit' => $produit]);
+            return response()->json($produit);
+            
+        } catch (\Exception $e) {
+            \Log::error('Erreur lors de la récupération du produit', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'Erreur lors de la récupération du produit',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

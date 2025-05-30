@@ -2,11 +2,11 @@
 
 return [
 
-    'paths' => ['api/*', 'produits/*', 'acheteur/*','cart/*','orders/*', 'sanctum/csrf-cookie'], // Ajoutez les chemins nécessaires
+    'paths' => ['*'], // Autoriser tous les chemins
 
     'allowed_methods' => ['*'], // Autorise toutes les méthodes (GET, POST, etc.)
 
-    'allowed_origins' => ['http://localhost:5173'], // Origine autorisée
+    'allowed_origins' => ['http://localhost:5173', 'http://127.0.0.1:5173'], // Origines autorisées
 
     'allowed_origins_patterns' => [],
 

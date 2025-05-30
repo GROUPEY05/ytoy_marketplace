@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -289,24 +291,82 @@ class AuthController extends Controller
     }
 
     /**
-     * Réinitialisation du mot de passe
+     * Demande de réinitialisation du mot de passe
      */
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:utilisateurs,email',
+            'email' => 'required|email',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Ici, implémentez la logique d'envoi d'email de réinitialisation
-        // Utilisez les fonctionnalités Laravel pour la réinitialisation de mot de passe
+        try {
+            // Envoi de l'email de réinitialisation
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
 
-        return response()->json([
-            'message' => 'Email de réinitialisation envoyé'
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json([
+                    'message' => 'Un email de réinitialisation a été envoyé à votre adresse email.'
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Cette adresse email n\'existe pas dans notre système.'
+                ], 404);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la réinitialisation du mot de passe: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Réinitialisation du mot de passe avec token
+     */
+    public function updatePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'token' => 'required|string',
+            'password' => 'required|min:8|confirmed'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $user = Utilisateur::where('reset_token', $request->token)
+                ->where('reset_token_expiry', '>', now())
+                ->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Le lien de réinitialisation est invalide ou a expiré.'
+                ], 400);
+            }
+
+            $user->update([
+                'mot_de_passe' => Hash::make($request->password),
+                'reset_token' => null,
+                'reset_token_expiry' => null
+            ]);
+
+            return response()->json([
+                'message' => 'Votre mot de passe a été réinitialisé avec succès.'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la réinitialisation du mot de passe.'
+            ], 500);
+        }
     }
 
     public function sendEmailVerification($user)

@@ -1,0 +1,325 @@
+/* AboutPage.css */
+
+:root {
+    --primary-color: #ff7700;
+    --primary-dark: #e56b00;
+    --primary-light: #ff9a4d;
+    --black: #212529;
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+  }
+  
+  .about-page {
+    font-family: 'Poppins', sans-serif;
+    color: var(--black);
+  }
+  
+  /* Hero Section */
+  .about-hero {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .about-hero h1 {
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .about-hero .lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+  
+  .btn-orange {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-orange:hover, .btn-orange:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(255, 119, 0, 0.3);
+  }
+  
+  /* Mission Section */
+  .mission-section {
+    padding: 80px 0;
+    background-color: var(--white);
+  }
+  
+  .section-title {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--black);
+    position: relative;
+  }
+  
+  .title-underline {
+    height: 4px;
+    width: 70px;
+    background-color: var(--primary-color);
+    margin: 0 auto 2rem;
+    border-radius: 2px;
+  }
+  
+  .section-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .feature-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  
+  .icon-wrapper {
+    background-color: var(--primary-color);
+    color: var(--white);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem auto 1.5rem;
+  }
+  
+  .feature-icon {
+    font-size: 1.8rem;
+  }
+  
+  /* Story Section */
+  .story-section {
+    padding: 80px 0;
+    background-color: var(--light-gray);
+  }
+  
+  .story-section .title-underline {
+    margin: 0 0 2rem 0;
+  }
+  
+  .story-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Team Section */
+  .team-section {
+    padding: 80px 0;
+    background-color: var(--white);
+  }
+  
+  .team-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+  }
+  
+  .team-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+  
+  .team-image {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border: 5px solid rgba(255, 119, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .team-card:hover .team-image {
+    border-color: var(--primary-color);
+  }
+  
+  .team-name {
+    color: var(--black);
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+  
+  .team-role {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* Milestones Section */
+  .milestones-section {
+    padding: 80px 0;
+    background-color: var(--light-gray);
+    position: relative;
+  }
+  
+  .timeline {
+    position: relative;
+    padding: 20px 0;
+  }
+  
+  .timeline:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: var(--primary-color);
+    margin-left: -1.5px;
+  }
+  
+  .timeline-item {
+    position: relative;
+    margin-bottom: 50px;
+  }
+  
+  .timeline-item:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  .timeline-item .timeline-badge {
+    color: var(--white);
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.2rem;
+    text-align: center;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    margin-left: -25px;
+    background-color: var(--primary-color);
+    z-index: 100;
+    border-radius: 50%;
+    font-weight: 600;
+  }
+  
+  .timeline-item .timeline-panel {
+    position: relative;
+    width: 46%;
+    float: left;
+    right: 16px;
+    border: 1px solid var(--medium-gray);
+    background: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+  
+  .timeline-item.right .timeline-panel {
+    float: right;
+    left: 16px;
+    right: auto;
+  }
+  
+  .timeline-title {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--black);
+  }
+  
+  /* CTA Section */
+  .cta-section {
+    padding: 80px 0;
+    background-color: var(--black);
+    color: var(--white);
+    position: relative;
+  }
+  
+  .cta-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  
+  .cta-text {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+  }
+  
+  .cta-buttons {
+    margin-top: 2rem;
+  }
+  
+  .btn-outline-light:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+  
+  /* Media Queries */
+  @media (max-width: 992px) {
+    .about-hero {
+      padding: 70px 0;
+    }
+  
+    .timeline:before {
+      left: 60px;
+    }
+  
+    .timeline-item .timeline-badge {
+      left: 60px;
+      margin-left: 0;
+    }
+  
+    .timeline-item .timeline-panel, 
+    .timeline-item.right .timeline-panel {
+      width: calc(100% - 120px);
+      float: right;
+      left: 80px;
+      right: auto;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .about-hero h1 {
+      font-size: 2.2rem;
+    }
+  
+    .section-title {
+      font-size: 1.8rem;
+    }
+  
+    .timeline:before {
+      left: 40px;
+    }
+  
+    .timeline-item .timeline-badge {
+      left: 40px;
+    }
+  
+    .timeline-item .timeline-panel {
+      width: calc(100% - 90px);
+      left: 60px;
+    }
+  
+    .cta-title {
+      font-size: 2rem;
+    }
+  }

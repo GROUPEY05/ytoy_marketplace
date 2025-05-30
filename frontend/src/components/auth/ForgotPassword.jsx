@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../../utils/axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 const ForgotPassword = () => {
@@ -18,16 +18,13 @@ const ForgotPassword = () => {
     setStatus({ submitted: false, error: false, message: "" });
 
     try {
-      // Assurez-vous que cette URL correspond à votre endpoint Laravel
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/forgot-password`, {
-        email: email
-      });
-      
+      const response = await axiosInstance.post('/api/reset-password', { email });
       setStatus({
         submitted: true,
         error: false,
-        message: "Un lien de réinitialisation de mot de passe a été envoyé à votre adresse email."
+        message: "Un email de réinitialisation a été envoyé à votre adresse email."
       });
+      setEmail("");
     } catch (error) {
       let errorMessage = "Une erreur s'est produite. Veuillez réessayer.";
       

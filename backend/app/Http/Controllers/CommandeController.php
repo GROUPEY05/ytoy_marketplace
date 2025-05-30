@@ -13,11 +13,11 @@ class CommandeController extends Controller
     public function index(Request $request)
     {
         $query = Commande::where('utilisateur_id', Auth::id())
-            ->with(['items.produit']);
-
-        // Filtrage par statut
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
+        
+            ->with(['items.produit', 'customer']);
+        // Filtre par statut
+        if ($request->has('status') && !empty($request->status)) {
+            $query->where('statut', $request->status); // Changer 'status' en 'statut'
         }
 
         // Filtrage par date
@@ -145,7 +145,7 @@ class CommandeController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:en_attente,confirme,en_preparation,expedie,livre,annule'
+            'status' => 'required|in:en_attente,validee,en_preparation,expediee,livree,annulee'
         ]);
 
         $order = Commande::where('utilisateur_id', Auth::id())
@@ -153,12 +153,12 @@ class CommandeController extends Controller
 
         // Vérifier les transitions de statut valides
         $validTransitions = [
-            'en_attente' => ['confirme', 'annule'],
-            'confirme' => ['en_preparation', 'annule'],
-            'en_preparation' => ['expedie'],
-            'expedie' => ['livre'],
-            'livre' => [],
-            'annule' => []
+            'en_attente' => ['validee', 'annulee'],
+            'validee' => ['en_preparation', 'annulee'],
+            'en_preparation' => ['expediee'],
+            'expediee' => ['livree'],
+            'livree' => [],
+            'annulee' => []
         ];
 
         if (!in_array($request->status, $validTransitions[$order->status])) {

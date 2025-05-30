@@ -1,6 +1,7 @@
 // src/pages/Acheteur/OrderList.jsx
 import React, { useState, useEffect } from 'react';
 import { orderService } from '../../services/orderService';
+import { toast } from 'react-hot-toast';
 import OrderTable from '../OrderTable';
 import Pagination from '../Pagination';
 import Layout from '../Layout';
@@ -11,21 +12,36 @@ const OrderList = () => {
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
     currentPage: 1,
-    lastPage: 1
+    lastPage: 1,
+    total: 0
   });
 
   const fetchOrders = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await orderService.getOrders(page);
-      setOrders(response.data.data);
-      setPagination({
-        currentPage: response.data.current_page,
-        lastPage: response.data.last_page
-      });
-    } catch (err) {
-      setError('Erreur lors du chargement des commandes');
-      console.error(err);
+      const response = await orderService.getOrders('acheteur', page);
+      console.log('Réponse des commandes:', response.data);
+      
+      if (response.data && Array.isArray(response.data.data)) {
+        setOrders(response.data.data);
+        setPagination({
+          currentPage: response.data.current_page || 1,
+          lastPage: response.data.last_page || 1,
+          total: response.data.total || 0
+        });
+      } else {
+        setOrders([]);
+        setPagination({
+          currentPage: 1,
+          lastPage: 1,
+          total: 0
+        });
+        toast.error('Format de données invalide');
+      }
+    } catch (error) {
+      console.error('Erreur détaillée:', error.response || error);
+      toast.error(error.response?.data?.message || 'Erreur lors du chargement des commandes');
+      setOrders([]);
     } finally {
       setLoading(false);
     }

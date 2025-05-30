@@ -9,6 +9,14 @@ const productService = {
     return apiClient.get(`/produits?${params.toString()}`);
   },
 
+  // Produits - Admin
+  getAdminProducts: async (page = 1, search = '') => {
+    const params = new URLSearchParams();
+    if (page) params.append('page', page);
+    if (search) params.append('search', search);
+    return apiClient.get(`/api/admin/produits?${params.toString()}`);
+  },
+
   getProductsByCategory: async (categoryId, page = 1) => {
     return apiClient.get(`/categories/${categoryId}/produits?page=${page}`);
   },

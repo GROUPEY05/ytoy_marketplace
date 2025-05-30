@@ -16,7 +16,7 @@ const ProductList = () => {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
       const queryString = params.toString() ? `?${params.toString()}` : '';
-      const response = await apiClient.get(`/produits${queryString}`);
+      const response = await apiClient.get(`/api/produits${queryString}`);
       setProducts(response.data.data);
       setError('');
     } catch (err) {
@@ -76,26 +76,26 @@ const ProductList = () => {
                   <Card.Img
                     variant="top"
                     src={`http://localhost:8000/storage/${product.images[0].url}`}
-                    alt={product.title}
+                    alt={product.nom}
                     style={{ height: '200px', objectFit: 'cover' }}
                   />
                 )}
                 <Card.Body className="d-flex flex-column">
-                  <Card.Title>{product.title}</Card.Title>
+                  <Card.Title>{product.nom}</Card.Title>
                   <Card.Text className="text-muted mb-2">
                     {product.description.substring(0, 100)}...
                   </Card.Text>
                   <Card.Text className="text-primary fw-bold mb-3">
-                    {product.price} FCFA
+                    {product.prix} FCFA
                   </Card.Text>
                   <div className="mt-auto">
                     <Button
                       variant="primary"
                       className="w-100"
                       onClick={() => addToCart(product.id)}
-                      disabled={product.stock <= 0}
+                      disabled={product.quantite_stock <= 0}
                     >
-                      {product.stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
+                      {product.quantite_stock > 0 ? 'Ajouter au panier' : 'Rupture de stock'}
                     </Button>
                   </div>
                 </Card.Body>

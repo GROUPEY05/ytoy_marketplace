@@ -28,6 +28,9 @@ import HomePage from './pages/HomePage';
 import ProductList from './components/products/ProductList';
 import ProductDetail from './components/products/ProductDetail';
 import ProduitsByCategorie from './components/products/ProduitsByCategorie';
+import ProductsPage from './components/products/ProductsPage';
+
+import PaymentForm from './components/payment/PaymentForm';
 
 // Composants acheteur
 import Dashboard from './components/acheteur/Dashboard';
@@ -56,6 +59,10 @@ import AdminDashboard from './components/admin/Dashboard';
 import CategorieAdmin from './components/admin/CategoryAdmin';
 import OrderDetail from './components/admin/OrderDetail';
 import OrderList from './components/admin/OrderList';
+import UserList from './components/admin/UserList';
+import ProductManagement from './components/admin/ProductManagement';
+import AdminProductList from './components/admin/AdminProductList';
+import VendorManagement from './components/admin/VendorManagement';
 
 const App = () => {
   return (
@@ -73,9 +80,9 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/about" element={<About />} />
-            <Route path="/products" element={<ProductList />} />
+            <Route path="/products" element={<ProductsPage />} />
             <Route path="/categories/:categorieId" element={<ProduitsByCategorie />} />
-            <Route path="/product/:productId" element={<ProductDetail />} />
+            <Route path="/produits/:productId" element={<ProductDetail />} />
             <Route path="/promotions/:type" element={<ProductList />} />
 
             {/* Routes protégées pour les acheteurs */}
@@ -88,7 +95,9 @@ const App = () => {
               <Route path="/acheteur/orders" element={<Orders />} />
               <Route path="/acheteur/orders/:orderId/invoice" element={<Invoice />} />
               <Route path="/acheteur/wishlist" element={<Wishlist />} />
+              <Route path="/acheteur/orders/:orderId/payment" element={<PaymentForm />} />
               <Route path="/acheteur/addresses" element={<Addresses />} />
+              <Route path="/payment" element={<PaymentForm />} />
             </Route>
 
             {/* Routes spécifiques aux vendeurs */}
@@ -112,6 +121,10 @@ const App = () => {
               <Route path="/admin/categories" element={<CategorieAdmin />} />
               <Route path="/admin/orders" element={<OrderList />} />
               <Route path="/admin/orders/:orderId" element={<OrderDetail />} />
+              <Route path="/admin/users" element={<UserList />} />
+              <Route path="/admin/products" element={<AdminProductList />} />
+              <Route path="/admin/products-management" element={<ProductManagement />} />
+              <Route path="/admin/vendors" element={<VendorManagement />} />
             </Route>
 
             {/* Route 404 */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Badge, Button, Modal, Form, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { apiClient } from '../../services/api';
+import { orderService } from '../../services/orderService';
 
 const VendorOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -25,16 +25,21 @@ const VendorOrders = () => {
   const fetchOrders = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/api/vendor/orders?page=${page}&per_page=${perPage}`);
+      const response = await orderService.getOrders('vendeur', page);
       
-      if (response.data) {
-        setOrders(response.data.data || []);
-        setCurrentPage(response.data.current_page || 1);
-        setTotalPages(response.data.last_page || 1);
+      if (response && response.data) {
+        setOrders(response.data || []);
+        setCurrentPage(page);
+        setTotalPages(Math.ceil(response.total / response.per_page) || 1);
       }
       
       setError('');
     } catch (err) {
+      console.error('Erreur détaillée:', err)
+      const errorMessage = err.response?.data?.message || err.message || 'Erreur inconnue'
+      console.error('Message d\'erreur:', errorMessage)
+      console.error('Status:', err.response?.status)
+      console.error('Headers:', err.response?.headers)
       console.error('Erreur lors du chargement des commandes', err);
       setError('Impossible de charger vos commandes. Veuillez réessayer plus tard.');
     } finally {
@@ -57,7 +62,7 @@ const VendorOrders = () => {
     
     try {
       setLoading(true);
-      await apiClient.put(`/api/vendor/orders/${selectedOrder.id}/status`, { status: newStatus });
+      await orderService.updateOrderStatus(selectedOrder.id, newStatus, 'vendeur');
       
       // Mettre à jour l'état local
       setOrders(orders.map(order => 
@@ -66,6 +71,7 @@ const VendorOrders = () => {
       
       setShowStatusModal(false);
       setSelectedOrder(null);
+      setError('');
     } catch (error) {
       console.error('Erreur lors de la mise à jour du statut', error);
       setError('Erreur lors de la mise à jour du statut de la commande');
@@ -93,94 +99,106 @@ const VendorOrders = () => {
     }
   };
   
+  const getStatusLabel = (status) => {
+    const option = statusOptions.find(opt => opt.value === status);
+    return option ? option.label : status;
+  };
+
   return (
     <Container fluid className="py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="mb-0">Gestion des Commandes</h2>
-        <div>
-          <Button 
-            variant="outline-primary" 
-            className="me-2"
-            onClick={() => fetchOrders(currentPage)}
-          >
-            <i className="bi bi-arrow-clockwise me-1"></i> Actualiser
-          </Button>
-        </div>
-      </div>
-      
       {error && <Alert variant="danger">{error}</Alert>}
-      
-      {loading && orders.length === 0 ? (
-        <div className="text-center py-5">
+
+      {loading ? (
+        <div className="text-center">
           <Spinner animation="border" variant="primary" />
           <p className="mt-3">Chargement des commandes...</p>
         </div>
       ) : (
-        <>
-          <div className="card shadow mb-4">
-            <div className="card-body">
-              <div className="table-responsive">
-                <Table hover className="table-striped">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Client</th>
-                      <th>Date</th>
-                      <th>Montant</th>
-                      <th>Statut</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.length > 0 ? (
-                      orders.map((order) => (
-                        <tr key={order.id}>
-                          <td>#{order.id}</td>
-                          <td>
-                            {order.utilisateur ? 
-                              `${order.utilisateur.prenom} ${order.utilisateur.nom}` : 
-                              'Client'}
-                          </td>
-                          <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                          <td>{(order.montant_total || 0).toFixed(2)} €</td>
-                          <td>{getStatusBadge(order.statut)}</td>
-                          <td>
-                            <Link 
-                              to={`/vendeur/orders/${order.id}`} 
-                              className="btn btn-sm btn-outline-primary me-1"
-                            >
-                              <i className="bi bi-eye"></i>
-                            </Link>
-                            <Button 
-                              variant="outline-success" 
-                              size="sm"
-                              className="me-1"
-                              onClick={() => openStatusModal(order)}
-                            >
-                              <i className="bi bi-pencil"></i>
-                            </Button>
-                            <Button 
-                              variant="outline-secondary" 
-                              size="sm"
-                              as={Link}
-                              to={`/vendeur/invoices/${order.id}`}
-                            >
-                              <i className="bi bi-file-text"></i>
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="6" className="text-center py-4">
-                          Aucune commande trouvée
+        <div className="card shadow mb-4">
+          <div className="card-body">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h2 className="mb-0">Gestion des Commandes</h2>
+              <Button 
+                variant="outline-primary" 
+                className="me-2"
+                onClick={() => fetchOrders(currentPage)}
+              >
+                <i className="bi bi-arrow-clockwise me-1"></i>
+                Rafraîchir
+              </Button>
+            </div>
+            <div className="table-responsive">
+              <Table hover className="table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders && orders.length > 0 ? (
+                    orders.map((order) => (
+                      <tr key={order.id}>
+                        <td>#{order.id}</td>
+                        <td>
+                          {order.customer}
+                        </td>
+                        <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                        <td>{(order.montant_total || 0).toFixed(2)} FRCFA</td>
+                       <td>
+                              <span
+                                className={`badge ${
+                                  order.status === 'Livrée'
+                                    ? 'bg-success'
+                                    : order.status === 'Expédiée'
+                                    ? 'bg-info'
+                                    : order.status === 'En attente'
+                                    ? 'bg-warning'
+                                    : 'bg-secondary'
+                                }`}
+                              >
+                                {order.status}
+                              </span>
+                            </td>
+                        <td className="d-flex gap-2">
+                          <Link 
+                            to={`/vendeur/orders/${order.id}`} 
+                            className="btn btn-sm btn-outline-primary me-1"
+                          >
+                            <i className="bi bi-eye"></i>
+                          </Link>
+                          <Button 
+                            variant="outline-success" 
+                            size="sm"
+                            className="me-1"
+                            onClick={() => openStatusModal(order)}
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </Button>
+                          <Button 
+                            variant="outline-secondary" 
+                            size="sm"
+                            as={Link}
+                            to={`/vendeur/invoices/${order.id}`}
+                          >
+                            <i className="bi bi-file-text"></i>
+                          </Button>
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </div>
-              
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center py-4">
+                        Aucune commande trouvée
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
               {totalPages > 1 && (
                 <div className="d-flex justify-content-center mt-4">
                   <nav>
@@ -222,12 +240,11 @@ const VendorOrders = () => {
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
       
-      {/* Modal de mise à jour du statut */}
       <Modal show={showStatusModal} onHide={() => setShowStatusModal(false)}>
-        <Modal.Header closeButton style={{ backgroundColor: '#FF6F00', color: 'white' }}>
+        <Modal.Header closeButton>
           <Modal.Title>Mettre à jour le statut</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -254,7 +271,6 @@ const VendorOrders = () => {
           <Button 
             variant="primary" 
             onClick={updateOrderStatus}
-            style={{ backgroundColor: '#FF6F00', borderColor: '#FF6F00' }}
           >
             Mettre à jour
           </Button>

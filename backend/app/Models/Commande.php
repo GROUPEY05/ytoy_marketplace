@@ -12,12 +12,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Commande extends Model
 {
     use HasFactory;
+    const STATUT_EN_ATTENTE = 'en_attente';
+    const STATUT_VALIDEE = 'validee';
+    const STATUT_EN_PREPARATION = 'en_preparation';
+    const STATUT_EXPEDIEE = 'expediee';
+    const STATUT_LIVREE = 'livree';
+    const STATUT_ANNULEE = 'annulee';
+
     protected $fillable = [
         'date_commande',
         'statut',
         'montant_total',
         'adresse_livraison',
-        'utilisateur_id'
+        'utilisateur_id',
+        'order_number'
+    ];
+
+    protected $attributes = [
+        'statut' => self::STATUT_EN_ATTENTE
     ];
 
     protected $casts = [
@@ -27,6 +39,11 @@ class Commande extends Model
     public function utilisateur()
     {
         return $this->belongsTo(Utilisateur::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'utilisateur_id');
     }
     
     /**
@@ -51,5 +68,12 @@ class Commande extends Model
     {
         $this->statut = $statut;
         return $this->save();
+    }
+
+    public function produits()
+    {
+        return $this->belongsToMany(Produit::class, 'ligne_commandes')
+            ->withPivot(['quantite', 'prix_unitaire'])
+            ->withTimestamps();
     }
 }

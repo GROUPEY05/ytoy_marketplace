@@ -40,6 +40,26 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Ajoutez cet intercepteur après la création de apiClient
+apiClient.interceptors.request.use(
+  (config) => {
+    // Nettoyez les données circulaires si présentes dans le body
+    if (config.data) {
+      config.data = JSON.parse(JSON.stringify(config.data, (key, value) => {
+        // Évitez les références circulaires
+        if (key.startsWith('_') || key.startsWith('__')) {
+          return undefined;
+        }
+        return value;
+      }));
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Service d'authentification
 const authService = {
   // Inscription d'un nouvel utilisateur
@@ -344,5 +364,134 @@ const authService = {
   },
 };
 
-export { apiClient }; // pour les appels simples sans wrapper
+const adminService = {
+  // Dashboard et statistiques
+  getStatistics: () => {
+    return apiClient.get('/api/administrateur/statistics');
+  },
+
+  getRecentOrders: () => {
+    return apiClient.get('/api/administrateur/recent-orders');
+  },
+
+  // Gestion des utilisateurs
+  getUsers: (page = 1, role = 'all', search = '') => {
+    let url = `/api/administrateur/utilisateurs?page=${page}`;
+    if (role !== 'all') {
+      url += `&role=${role}`;
+    }
+    if (search) {
+      url += `&search=${search}`;
+    }
+    return apiClient.get(url);
+  },
+
+  getUserById: (id) => {
+    return apiClient.get(`/api/administrateur/utilisateurs/${id}`);
+  },
+
+  updateUser: (id, data) => {
+    return apiClient.put(`/api/administrateur/utilisateurs/${id}`, data);
+  },
+
+  deleteUser: (id) => {
+    return apiClient.delete(`/api/administrateur/utilisateurs/${id}`);
+  },
+
+  banUser: (id) => {
+    return apiClient.post(`/api/administrateur/utilisateurs/${id}/ban`);
+  },
+
+  // Gestion des vendeurs
+  getPendingVendors: () => {
+    return apiClient.get('/api/administrateur/vendeurs/pending');
+  },
+
+  approveVendor: (vendorId) => {
+    return apiClient.post(`/api/administrateur/vendeurs/${vendorId}/approve`);
+  },
+
+  rejectVendor: (vendorId) => {
+    return apiClient.post(`/api/administrateur/vendeurs/${vendorId}/reject`);
+  },
+
+  // Gestion des produits
+  getProducts: () => {
+    return apiClient.get('/api/administrateur/produits');
+  },
+
+  getProduct: (id) => {
+    return apiClient.get(`/api/administrateur/produits/${id}`);
+  },
+
+  updateProduct: (id, data) => {
+    return apiClient.put(`/api/administrateur/produits/${id}`, data);
+  },
+
+  deleteProduct: (id) => {
+    return apiClient.delete(`/api/administrateur/produits/${id}`);
+  },
+
+  // Gestion des catégories
+  getCategories: () => {
+    return apiClient.get('api/administrateur/categories');
+  },
+
+  getCategoryById: (id) => {
+    return apiClient.get(`/api/administrateur/categories/${id}`);
+  },
+
+  createCategory: (data) => {
+    const categoryData = {
+      nom: data.nom,
+      description: data.description,
+    };
+    return apiClient.post('/api/administrateur/categories', categoryData);
+  },
+
+  updateCategory: (id, data) => {
+    const categoryData = {
+      nom: data.nom,
+      description: data.description,
+    };
+    return apiClient.put(`/api/administrateur/categories/${id}`, categoryData);
+  },
+
+  deleteCategory: (id) => {
+    return apiClient.delete(`/api/administrateur/categories/${id}`);
+  },
+
+  // Gestion des avis
+  getReviews: () => {
+    return apiClient.get('/api/administrateur/reviews');
+  },
+
+  approveReview: (reviewId) => {
+    return apiClient.post(`/api/administrateur/reviews/${reviewId}/approve`);
+  },
+
+  // Gestion des commandes
+  getOrders: (page = 1) => {
+    return apiClient.get(`/api/administrateur/orders?page=${page}`);
+  },
+
+  getOrderDetails: (orderId) => {
+    return apiClient.get(`/api/administrateur/orders/${orderId}`);
+  },
+
+  createOrder: (orderData) => {
+    return apiClient.post('/api/administrateur/orders', orderData);
+  },
+
+  cancelOrder: (orderId) => {
+    return apiClient.delete(`/api/administrateur/orders/${orderId}`);
+  },
+
+  updateOrderStatus: (orderId, status) => {
+    return apiClient.put(`/api/administrateur/orders/${orderId}/status`, { status });
+  }
+};
+
+// Modification de l'export pour inclure adminService
+export { apiClient, adminService };
 export default authService;

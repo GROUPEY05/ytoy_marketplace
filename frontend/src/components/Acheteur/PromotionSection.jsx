@@ -45,7 +45,7 @@ const PromotionSection = ({ title, items, type }) => {
                   {title}
                 </span>
               </div>
-              <Link to={`/product/${item.produit_id}`}>
+              <Link to={`/produits/${item.produit_id}`}>
                 <div className="card-img-container">
                   <Card.Img 
                     variant="top" 
@@ -56,7 +56,7 @@ const PromotionSection = ({ title, items, type }) => {
                 </div>
               </Link>
               <Card.Body>
-                <Link to={`/product/${item.produit_id}`} className="text-decoration-none">
+                <Link to={`/produits/${item.produit_id}`} className="text-decoration-none">
                   <Card.Title className="product-title">{item.produit_nom}</Card.Title>
                 </Link>
                 <div className="price-container mb-2">

@@ -251,20 +251,31 @@ const OrderHistory = () => {
         show={showPaymentForm}
         onHide={handlePaymentCancel}
         size="lg"
+        backdrop="static"
+        keyboard={false}
       >
         <Modal.Header closeButton>
           <Modal.Title>Paiement de la commande #{orderToPay?.id}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {orderToPay && (
+          {orderToPay ? (
             <PaymentForm
               orderId={orderToPay.id}
               amount={orderToPay.montant_total}
               onSuccess={handlePaymentSuccess}
               onCancel={handlePaymentCancel}
             />
+          ) : (
+            <Alert variant="warning">
+              Aucune commande sélectionnée pour le paiement.
+            </Alert>
           )}
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handlePaymentCancel}>
+            Annuler
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );

@@ -22,7 +22,7 @@ class CustomerController extends Controller
                 $query->where('vendeur_id', Auth::id());
             });
         })
-        ->pluck('user_id')
+        ->pluck('utilisateur_id')
         ->unique();
         
         // Requête pour récupérer les clients avec leurs informations
@@ -84,7 +84,7 @@ class CustomerController extends Controller
                 });
             })
             ->where('created_at', '>=', now()->subDays(30))
-            ->pluck('user_id')
+            ->pluck('utilisateur_id')
             ->unique()
             ->count(),
             'returning_customers' => DB::table('commandes')

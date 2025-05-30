@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { apiClient } from '../../services/api'
 import CartModal from '../cart/CartModal'
@@ -9,9 +9,13 @@ import './Header.css'
 
 const Header = () => {
   const [searchTerm, setSearchTerm] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [showResults, setShowResults] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
   const [cartCount, setCartCount] = useState(0)
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
+  const location = useLocation()
   const { setCartModalOpen } = useCartStore()
 
   useEffect(() => {
@@ -20,6 +24,12 @@ const Header = () => {
       setUser(JSON.parse(storedUser))
     }
   }, [])
+
+  // Réinitialiser le terme de recherche quand l'utilisateur navigue vers une autre page
+  useEffect(() => {
+    setSearchTerm('')
+    setShowResults(false)
+  }, [location.pathname])
 
   const fetchCartCount = async () => {
     try {
@@ -44,6 +54,41 @@ const Header = () => {
     return () => window.removeEventListener('cartUpdated', handleCartUpdate)
   }, [user])
 
+  // Nouvelle fonction pour rechercher les produits pendant la saisie
+  const searchProducts = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([])
+      setShowResults(false)
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const response = await apiClient.get(`/api/search/produits?query=${encodeURIComponent(query)}`)
+      setSearchResults(response.data)
+      setShowResults(true)
+    } catch (error) {
+      console.error("Erreur lors de la recherche de produits:", error)
+      setSearchResults([])
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  // Debounce pour éviter trop de requêtes pendant la saisie
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm.trim()) {
+        searchProducts(searchTerm)
+      } else {
+        setSearchResults([])
+        setShowResults(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchTerm])
+
   const handleLogout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -52,11 +97,29 @@ const Header = () => {
     navigate('/')
   }
 
+  // Fonction mise à jour pour gérer la soumission du formulaire
   const handleSearch = e => {
     e.preventDefault()
     if (searchTerm.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchTerm)}`)
+      setShowResults(false)
     }
+  }
+
+  // Fonction pour gérer le clic sur un résultat de recherche
+  const handleResultClick = (productId) => {
+    navigate(`/produits/${productId}`)
+    setShowResults(false)
+  }
+
+  const handleInputFocus = () => {
+    if (searchTerm.trim() && searchResults.length > 0) {
+      setShowResults(true)
+    }
+  }
+
+  const handleClickOutside = () => {
+    setShowResults(false)
   }
 
   const handleCartClick = (e) => {
@@ -101,25 +164,61 @@ const Header = () => {
             </motion.a>
           </nav>
 
-          <form className='search-form' onSubmit={handleSearch}>
-            <div className='search-container'>
-              <input
-                type='search'
-                placeholder='Rechercher un produit...'
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className='search-input'
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type='submit'
-                className='search-button'
-              >
-                <i className='bi bi-search'></i>
-              </motion.button>
-            </div>
-          </form>
+          <div className='search-wrapper'>
+            <form className='search-form' onSubmit={handleSearch}>
+              <div className='search-container'>
+                <input
+                  type='search'
+                  placeholder='Rechercher un produit...'
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  onFocus={handleInputFocus}
+                  className='search-input'
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type='submit'
+                  className='search-button'
+                >
+                  <i className='bi bi-search'></i>
+                </motion.button>
+              </div>
+            </form>
+
+            {/* Affichage des résultats de recherche */}
+            {showResults && searchResults.length > 0 && (
+              <div className='search-results-dropdown'>
+                {isSearching ? (
+                  <div className='search-loading'>Recherche en cours...</div>
+                ) : (
+                  <>
+                    <div className='results-header'>Résultats ({searchResults.length})</div>
+                    <ul className='results-list'>
+                      {searchResults.slice(0, 5).map(product => (
+                        <li 
+                          key={product.id} 
+                          className='result-item'
+                          onClick={() => handleResultClick(product.id)}
+                        >
+                          <div className='result-name'>{product.nom}</div>
+                          {product.categorie && (
+                            <span className='result-category'>{product.categorie.nom}</span>
+                          )}
+                          <div className='result-price'>{product.prix} frcfa</div>
+                        </li>
+                      ))}
+                      {searchResults.length > 5 && (
+                        <li className='more-results' onClick={handleSearch}>
+                          Voir tous les résultats ({searchResults.length})
+                        </li>
+                      )}
+                    </ul>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
 
           <div className='actions-container'>
             <AnimatePresence>
@@ -196,6 +295,11 @@ const Header = () => {
           </div>
         </div>
       </motion.header>
+
+      {/* Clic en dehors des résultats pour fermer le dropdown */}
+      {showResults && (
+        <div className="overlay" onClick={handleClickOutside}></div>
+      )}
 
       <CartModal />
     </>

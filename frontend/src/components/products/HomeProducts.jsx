@@ -29,13 +29,21 @@ const HomeProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true)
-      const response = await apiClient.get('api/produits/featured')
+      // Get CSRF token first if needed
+      await apiClient.get('/sanctum/csrf-cookie')
+      const response = await apiClient.get('/api/produits/getFeatured', {
+        withCredentials: true
+      })
       setProducts(response.data)
       setError('')
     } catch (err) {
-      console.error('Erreur lors du chargement des produits', err)
+      console.error('Erreur lors du chargement des produits:', err)
+      const errorMessage = err.response?.data?.message || err.message || 'Erreur inconnue';
+      console.error('Message d\'erreur détaillé:', errorMessage)
+      console.error('Status:', err.response?.status)
+      console.error('Headers:', err.response?.headers)
       setError(
-        'Impossible de charger les produits. Veuillez réessayer plus tard.'
+        `Erreur: ${errorMessage}`
       )
     } finally {
       setLoading(false)
@@ -101,7 +109,7 @@ const HomeProducts = () => {
 
   return (
     <>
-      <Container fluid className='home-container my-4 px-4'>
+      <Container fluid2 className='home-container my-4 px-4'>
         <motion.div
           initial="hidden"
           animate="visible"
@@ -126,7 +134,7 @@ const HomeProducts = () => {
                       {product.thumbnail && product.thumbnail[0] && (
                         <Card.Img
                           variant='top'
-                          src={`http://localhost:8000${product.thumbnail}`}
+                          src={`http://localhost:8000${product.thumbnail.startsWith('/storage/') ? product.thumbnail : '/storage/' + product.thumbnail}`}
                           alt={product.nom}
                           className="product-image"
                         />
@@ -135,7 +143,7 @@ const HomeProducts = () => {
                         <Button
                           className="details-button"
                           variant='light'
-                          onClick={() => navigate(`/product/${product.id}`)}
+                          onClick={() => navigate(`/produits/${product.id}`)}
                         >
                           Voir détails
                         </Button>

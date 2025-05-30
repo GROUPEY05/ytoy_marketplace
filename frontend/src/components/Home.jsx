@@ -2,17 +2,21 @@
 
 import { useAuth } from '../contexts/AuthContext'
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './Home.css'
 import { apiClient } from '../services/api'
 import { FaCheck } from "react-icons/fa";
+import { FaPercent} from "react-icons/fa";
+import { FaStore} from "react-icons/fa";
+
 
 import Header from './layout/Header'
 import Footer from './layout/Footer'
 import MenuCategories from './layout/MenuCategories'
 import HomeProducts from './products/HomeProducts'
+
 
 const Home = () => {
   const { isAuthenticated, currentUser } = useAuth()
@@ -23,6 +27,15 @@ const Home = () => {
   const navigate = useNavigate()
   const searchInputRef = useRef(null)
 
+  const promotionsRef = useRef(null);
+ 
+  
+  // Fonction pour défiler vers la référence
+  const scrollToRef = (ref) => {
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }; // Added missing closing brace
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -51,9 +64,9 @@ const Home = () => {
   return (
     <div className="">
       <Header />
-      
+    
       <div className='container  mt-3'>
-        <div className='d-flex  gap-3'>
+        <div className='d-flex  gap-5'>
           {/* menu */}
           {/* <div className='dropdown'>
             <button
@@ -106,11 +119,13 @@ const Home = () => {
           </div>
             {/* promotion */}
           <div className='justify-content-center  mt-2' >
-            <a href="/promotions" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '300px' }}> <strong>Promotions </strong></a>
+            
+            <a href="" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '250px' }} onClick={() => scrollToRef(promotionsRef)}><FaPercent className=""style={{color: 'black'}} /> <strong>Promotions </strong></a>
           </div>
           {/* devenir vendeur */}
-          <div className='justify-content-end mt-2'>
-            <a href="/RegisterVendeur" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '300px' }}> <strong>Devenir Vendeur </strong></a>
+          <div className='justify-content-end  mt-2'>
+            
+            <a href="/RegisterVendeur" style={{ color: '#FF6F00', fontSize: '15px', textDecoration: 'none', marginLeft: '242px' }}><FaStore className="me-2" style={{color: 'black'}}/> <strong>Devenir Vendeur </strong></a>
           </div>
         </div>
       </div>
@@ -252,8 +267,8 @@ const Home = () => {
       <div className=' container mt-5'>
         {/* bloc1 */}
         <div className='d-flex'>
-          <h3> <strong>Nos boutiques</strong></h3>
-          <button class='btn  btn-success ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft:'830px'}}>
+          <h3 className='justify-content-start'> <strong>Nos boutiques</strong></h3>
+          <button className='btn  btn-success justify-content-end ' type='submit' style={{backgroundColor: '#000000', border:'none', marginLeft: '820px'}}>
               <a href="/boutiques" style={{color: '#ffffff', textDecoration: 'none'}}> <strong>voir plus</strong> </a>
               
             </button>
@@ -391,7 +406,7 @@ const Home = () => {
       </div>
 
       {/* Affichage des produits */}
-      <HomeProducts />
+      <HomeProducts /><br /><br />
 
       {/* card offres */}
       <div  className= "mt-5" style={{background:' rgba(217, 217, 217, 0.4)',}} > <br />
@@ -562,7 +577,7 @@ const Home = () => {
       </div> 
 
       {/* card super deals */}
-      <div className='container   mt-5' style={{background:'rgba(232, 185, 161, 0.4)'}} > <br />
+      <div className='container   mt-5'ref={promotionsRef} style={{background:'rgba(232, 185, 161, 0.4)'}} > <br />
           <h3  style={{marginLeft:'20px'}}> <strong>Super Deals de la Semaine</strong></h3><br />
           {/* bloc1 */}
           <div className='d-flex ' style={{marginLeft:'20px'}}>
@@ -717,7 +732,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -727,7 +742,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit2 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -755,7 +770,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -765,7 +780,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit3 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -793,7 +808,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -803,7 +818,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
            {/* produit4 */}
            <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -831,7 +846,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -841,7 +856,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
 
 
@@ -880,7 +895,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -890,7 +905,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit2 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -918,7 +933,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -928,7 +943,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit3 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -956,7 +971,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -966,7 +981,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
            {/* produit4 */}
            <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -994,7 +1009,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1004,7 +1019,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
 
 
@@ -1043,7 +1058,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1053,7 +1068,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit2 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1081,7 +1096,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1091,7 +1106,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit3 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1119,7 +1134,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1129,7 +1144,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
            {/* produit4 */}
            <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1157,7 +1172,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1167,7 +1182,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
 
 
@@ -1207,7 +1222,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1217,7 +1232,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit2 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1245,7 +1260,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1255,7 +1270,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
           {/* produit3 */}
           <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1283,7 +1298,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1293,7 +1308,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
            {/* produit4 */}
            <div className='card' style={{width: "272.32px", borderTopLeftRadius:'8px', borderTopRightRadius:'8px', borderBottomLeftRadius:'0px', borderBottomRightRadius:'0px'}}>
@@ -1321,7 +1336,7 @@ const Home = () => {
               </button>
              
             </div>
-            <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
+            {/* <p className='d-flex gap-2' style={{marginLeft:'15px'}}>
                 <FaCheck  className='mt-1' style={{color: '#F98B3A'}}/>
                 <strong> 
                   <span style={{color: '#F98B3A'}}> 
@@ -1331,7 +1346,7 @@ const Home = () => {
                   <span style={{color: '#666B71'}}> produits</span>
                   
                 </strong>
-              </p>
+              </p> */}
           </div>
 
 
@@ -1343,4 +1358,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home;

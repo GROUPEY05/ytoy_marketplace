@@ -2,23 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Image, Button, Form, Alert } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../contexts/AuthContext'; // ✅ Utilisation du hook
-
-// Simulez des données de produits (à remplacer par de vraies données d'API)
-const dummyProducts = [
-  { id: 1, name: 'Produit 1', price: 19.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 1.', stock: 15 },
-  { id: 2, name: 'Produit 2', price: 29.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 2.', stock: 8 },
-  { id: 3, name: 'Produit 3', price: 39.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 3.', stock: 20 },
-  { id: 4, name: 'Produit 4', price: 49.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 4.', stock: 5 },
-  { id: 5, name: 'Produit 5', price: 59.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 5.', stock: 12 },
-  { id: 6, name: 'Produit 6', price: 69.99, image: '/api/placeholder/500/300', description: 'Description détaillée du produit 6.', stock: 3 },
-];
+import { useAuth } from '../../contexts/AuthContext';
+import { apiClient } from '../../services/api'; // Importez votre client API
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { productId } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth(); // ✅ Remplacement ici
-  const [produit, setProduit] = useState(null);
+  const { currentUser } = useAuth();
+  const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
@@ -26,34 +17,56 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setTimeout(() => {
-          const foundProduit = dummyProduits.find(p => p.id === parseInt(id));
-          if (foundProduit) {
-            setProduit(foundProduit);
-          } else {
-            setError('Produit non trouvé');
-          }
-          setLoading(false);
-        }, 500);
+        setLoading(true);
+        // Remplacez dummyProduits par un appel API réel
+        const response = await apiClient.get(`/produits/${productId}`);
+        
+        // Vérifiez les données reçues et ajustez selon votre structure d'API
+        if (response.data) {
+          setProduct(response.data);
+        } else {
+          setError('Produit non trouvé');
+        }
       } catch (error) {
         console.error('Erreur lors du chargement du produit:', error);
         setError('Erreur lors du chargement du produit');
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchProduit();
-  }, [id]);
+    fetchProduct();
+  }, [productId]);
 
   const handleQuantityChange = (e) => {
     const value = parseInt(e.target.value);
-    if (value > 0 && value <= (produit?.stock || 1)) {
+    if (value > 0 && value <= (product?.quantite_stock || 1)) {
       setQuantity(value);
     }
   };
 
-  const handleAddToCart = () => {
-    toast.success(`${quantity} ${produit.nom} ajouté(s) au panier`);
+  const handleAddToCart = async () => {
+    try {
+      if (!currentUser) {
+        toast.warning("Veuillez vous connecter pour ajouter des articles au panier");
+        navigate('/login');
+        return;
+      }
+
+      // Appel API pour ajouter au panier
+      await apiClient.post('/api/cart/add', {
+        product_id: product.id,
+        quantity: quantity
+      });
+      
+      toast.success(`${quantity} ${product.nom} ajouté(s) au panier`);
+      
+      // Déclencher l'événement pour mettre à jour le compteur du panier
+      window.dispatchEvent(new Event('cartUpdated'));
+    } catch (error) {
+      console.error("Erreur lors de l'ajout au panier:", error);
+      toast.error("Erreur lors de l'ajout au panier");
+    }
   };
 
   if (loading) {
@@ -83,28 +96,33 @@ const ProductDetail = () => {
         <i className="bi bi-arrow-left"></i> Retour aux produits
       </Button>
 
-      {produit && (
+      {product && (
         <Row>
           <Col md={6}>
-            <Image src={produit.image} alt={produit.name} fluid className="rounded" />
+            <Image 
+              src={product.image_url || 'http://localhost:5173/image/placeholder.png'} 
+              alt={product.nom} 
+              fluid 
+              className="rounded"
+            />
           </Col>
           <Col md={6}>
-            <h1>{produit.nom}</h1>
-            <p className="fs-3 fw-bold text-primary">{produit.prix.toFixed(2)} €</p>
-            <p>{produit.description}</p>
+            <h1>{product.nom}</h1>
+            <p className="fs-3 fw-bold text-primary">{product.prix?.toFixed(2) || '0.00'} frcfa</p>
+            <p>{product.description}</p>
 
-            <p className={`mb-2 ${produit.stock < 5 ? 'text-danger' : 'text-success'}`}>
-              {produit.stock > 0 ? `En stock: ${produit.stock} disponible(s)` : 'Rupture de stock'}
+            <p className={`mb-2 ${product.quantite_stock < 5 ? 'text-danger' : 'text-success'}`}>
+              {product.quantite_stock > 0 ? `En stock: ${product.quantite_stock} disponible(s)` : 'Rupture de stock'}
             </p>
 
-            {produit.stock > 0 && (
+            {product.quantite_stock > 0 && (
               <div className="d-flex gap-3 align-items-center mb-4">
                 <Form.Group style={{ width: '100px' }}>
                   <Form.Label>Quantité</Form.Label>
                   <Form.Control
                     type="number"
                     min="1"
-                    max={produit.stock}
+                    max={product.quantite_stock}
                     value={quantity}
                     onChange={handleQuantityChange}
                   />
@@ -119,13 +137,26 @@ const ProductDetail = () => {
               <div className="mt-4 p-3 bg-light rounded">
                 <h5>Options de vendeur</h5>
                 <div className="d-flex gap-2">
-                  <Button variant="outline-primary" size="sm">
+                  <Button 
+                    variant="outline-primary" 
+                    size="sm"
+                    onClick={() => navigate(`/vendeur/produits/edit/${product.id}`)}
+                  >
                     <i className="bi bi-pencil me-1"></i> Modifier
                   </Button>
                   <Button variant="outline-danger" size="sm">
                     <i className="bi bi-trash me-1"></i> Supprimer
                   </Button>
                 </div>
+              </div>
+            )}
+
+            {/* Affichage de la catégorie */}
+            {product.categorie && (
+              <div className="mt-3">
+                <span className="badge bg-info text-dark p-2">
+                  Catégorie: {product.categorie.nom}
+                </span>
               </div>
             )}
           </Col>

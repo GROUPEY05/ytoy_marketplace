@@ -367,7 +367,7 @@ const Register = () => {
                 <div className='d-grid mt-4'>
                   <button
                     type='submit'
-                    className='btn btn-primary btn-lg'
+                    className='btn btn-orange btn-lg' 
                     disabled={loading}
                   >
                     {loading ? (

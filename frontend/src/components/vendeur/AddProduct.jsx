@@ -13,8 +13,6 @@ const ProductForm = () => {
     prix: '',
     categorie_id: '', // Vérifiez que c'est bien orthographié comme dans la BD
     quantite_stock: '', // Ce champ sera envoyé comme 'stock' mais utilisé pour 'quantite_stock'
-    gestion_stock: true, // Activer la gestion du stock par défaut
-    seuil_alerte_stock: 5, // Seuil d'alerte pour le stock bas
     images: []
   })
 
@@ -71,7 +69,7 @@ const ProductForm = () => {
           if (produitData.images) {
             setImagePreview(
               produitData.images.map(img => ({
-                url: img.url,
+                url: `http://localhost:8000${img.url}`,
                 id: img.id
               }))
             );
@@ -101,14 +99,6 @@ const ProductForm = () => {
 
   const handleQuantiteStockChange = (e) => {
     setProduit({ ...produit, quantite_stock: e.target.value })
-  }
-  
-  const handleGestionStockChange = (e) => {
-    setProduit({ ...produit, gestion_stock: e.target.checked })
-  }
-  
-  const handleSeuilAlerteStockChange = (e) => {
-    setProduit({ ...produit, seuil_alerte_stock: e.target.value })
   }
   const handlePrixChange = (e) => {
     setProduit({ ...produit, prix: e.target.value })
@@ -224,88 +214,122 @@ const ProductForm = () => {
     setIsLoading(true);
     setMessage({ text: '', type: '' });
 
-    try {
-      const formData = new FormData()
+    // Log du token
+    const token = localStorage.getItem('token');
+    console.log('Token:', token);
 
+    // Validation des champs obligatoires
+    if (!produit.nom || !produit.description || !produit.prix || !produit.categorie_id || !produit.quantite_stock) {
+      setMessage({
+        text: 'Veuillez remplir tous les champs obligatoires',
+        type: 'danger'
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Validation du prix et de la quantité
+    if (isNaN(produit.prix) || produit.prix <= 0) {
+      setMessage({
+        text: 'Le prix doit être un nombre positif',
+        type: 'danger'
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (isNaN(produit.quantite_stock) || produit.quantite_stock < 0) {
+      setMessage({
+        text: 'La quantité doit être un nombre positif ou nul',
+        type: 'danger'
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      
       // Ajouter les données du produit au formData
-      Object.keys(produit).forEach(key => {
-        if (key !== 'images' && key !== 'imagesToDelete') {
-          formData.append(key, produit[key])
-        }
-      })
+      formData.append('nom', produit.nom);
+      formData.append('description', produit.description);
+      formData.append('prix', produit.prix);
+      formData.append('quantite_stock', produit.quantite_stock);
+      formData.append('categorie_id', produit.categorie_id);
+
+      // Log des données avant envoi
+      console.log('Données du produit:', {
+        nom: produit.nom,
+        description: produit.description,
+        prix: produit.prix,
+        quantite_stock: produit.quantite_stock,
+        categorie_id: produit.categorie_id
+      });
 
       // Ajouter les images
       imageFiles.forEach(file => {
-        formData.append('images[]', file)
-      })
+        formData.append('images[]', file);
+      });
 
       // Gérer les suppressions d'images si nécessaire
       if (produit.imagesToDelete && produit.imagesToDelete.length > 0) {
         produit.imagesToDelete.forEach(id => {
-          formData.append('images_to_delete[]', id)
-        })
+          formData.append('images_to_delete[]', id);
+        });
       }
 
+      // Log des en-têtes de la requête
+      const headers = {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+      };
+      console.log('Headers:', headers);
+
       let response;
+      console.log('Données du produit:', formData.get('nom'));
+
       if (productId) {
         // Mise à jour
-        response = await apiClient.post(
-          `/api/vendor/produits/${productId}`,
+        response = await axios.post(
+          `http://localhost:8000/api/vendor/produits/${productId}`,
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
+          { headers }
         );
       } else {
         // Création
-        response = await apiClient.post(
-          '/api/vendor/produits',
+        response = await axios.post(
+          'http://localhost:8000/api/vendor/produits',
           formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
+          { headers }
+
         );
       }
 
       setMessage({
-        text: productId
-          ? 'Produit modifié avec succès!'
-          : 'Produit ajouté avec succès!',
+        text: productId ? 'Produit modifié avec succès!' : 'Produit ajouté avec succès!',
         type: 'success'
-      })
-      
-      // Rediriger vers la liste des produits du vendeur
-      navigate('/vendeur/products');
+      });
+
+      // Rediriger vers la liste des produits après un court délai
+      setTimeout(() => {
+        navigate('/vendeur/products');
+      }, 2000);
+
     } catch (error) {
       console.error('Erreur détaillée:', error.response?.data);
       console.error('Status:', error.response?.status);
+      console.error('Headers:', error.response?.headers);
+      console.error('Config:', error.config);
+      console.error('Request:', error.request);
       
-      // Afficher un message plus détaillé
-      if (error.response?.data?.errors) {
-        // Si le serveur renvoie des erreurs de validation spécifiques
-        const errorMessages = Object.values(error.response.data.errors)
-          .flat()
-          .join(', ');
-        setMessage({
-          text: `Validation échouée: ${errorMessages}`,
-          type: 'danger'
-        });
-      } else {
-        setMessage({
-          text: `Erreur: ${error.response?.data?.message || error.message}`,
-          type: 'danger'
-        });
-      }
-    }finally {
-      setIsLoading(false)
-      // Scroll to top to show message
-      window.scrollTo(0, 0)
+      setMessage({
+        text: error.response?.data?.message || 'Une erreur est survenue lors de l\'enregistrement du produit',
+        type: 'danger'
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Container className='my-4'>
@@ -349,41 +373,14 @@ const ProductForm = () => {
                 </Form.Group>
 
                 <Form.Group className='mb-3'>
-                  <Form.Check 
-                    type='checkbox'
-                    id='gestion-stock'
-                    label='Activer la gestion du stock'
-                    checked={produit.gestion_stock}
-                    onChange={handleGestionStockChange}
-                    className='mb-2'
+                  <Form.Label>Stock disponible</Form.Label>
+                  <Form.Control
+                    type='number'
+                    name='quantite_stock'
+                    value={produit.quantite_stock}
+                    onChange={handleQuantiteStockChange}
+                    required
                   />
-                  
-                  {produit.gestion_stock && (
-                    <>
-                      <Form.Label>Stock disponible</Form.Label>
-                      <Form.Control
-                        type='number'
-                        name='quantite_stock'
-                        value={produit.quantite_stock}
-                        onChange={handleQuantiteStockChange}
-                        required
-                      />
-                      
-                      <div className='mt-2'>
-                        <Form.Label>Seuil d'alerte stock bas</Form.Label>
-                        <Form.Control
-                          type='number'
-                          name='seuil_alerte_stock'
-                          value={produit.seuil_alerte_stock}
-                          onChange={handleSeuilAlerteStockChange}
-                          required
-                        />
-                        <Form.Text className='text-muted'>
-                          Vous recevrez une alerte lorsque le stock sera inférieur à ce seuil
-                        </Form.Text>
-                      </div>
-                    </>
-                  )}
                 </Form.Group>
 
                 <Form.Group className='mb-3'>

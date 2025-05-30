@@ -97,7 +97,7 @@ const CategoryProducts = ({ categoryId, categoryName, limit = 8 }) => {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <Card className="h-100 product-card shadow-sm">
-                <Link to={`/product/${product.id}`}>
+                <Link to={`/produits/${product.id}`}>
                   <div className="card-img-container">
                     {product.images && product.images[0] && (
                       <Card.Img
@@ -110,7 +110,7 @@ const CategoryProducts = ({ categoryId, categoryName, limit = 8 }) => {
                   </div>
                 </Link>
                 <Card.Body className="d-flex flex-column">
-                  <Link to={`/product/${product.id}`} className="text-decoration-none">
+                  <Link to={`/produits/${product.id}`} className="text-decoration-none">
                     <Card.Title className="product-title">{product.nom}</Card.Title>
                   </Link>
                   <Card.Text className="text-primary fw-bold mb-3">

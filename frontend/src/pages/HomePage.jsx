@@ -4,6 +4,7 @@ import { fetchPromotions } from '../services/promotionService';
 import PromotionSection from '../components/acheteur/PromotionSection';
 import { Link } from 'react-router-dom';
 import './HomePage.css';
+import StoreList from '../components/store/StoreList';
 
 const HomePage = () => {
   const [promotions, setPromotions] = useState({});
@@ -103,7 +104,10 @@ const HomePage = () => {
               type="top_deal"
             />
           )}
-          
+
+          {/* Boutiques */}
+          <StoreList />
+
           {/* Le Njoh */}
           {promotions.le_njoh && (
             <PromotionSection 

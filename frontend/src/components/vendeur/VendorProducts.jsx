@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../../services/api';
+import { FaArrowLeft } from 'react-icons/fa';
 
 const VendorProducts = () => {
   const [products, setProducts] = useState([]);
@@ -86,7 +87,7 @@ const VendorProducts = () => {
     }
 
     try {
-      const response = await apiClient.patch(`/api/vendor/produits/${productId}`, {
+      const response = await apiClient.patch(`/api/vendor/produits/${produit.id}`, {
         [field]: editValue
       });
 
@@ -131,8 +132,16 @@ const VendorProducts = () => {
   }
 
   return (
-    <Container className="my-4">
+    <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
+        <Link 
+          to="/vendeur/dashboard" 
+          className="btn btn-link text-decoration-none"
+          style={{ color: '#FF6600' }}
+        >
+          <FaArrowLeft className="me-2" />
+          Retour au Dashboard
+        </Link>
         <h2>Mes Produits</h2>
         <Link to="/vendeur/products/add" className="btn " style={{ backgroundColor: '#FF6F00', color: 'white' }}>
           <i className='bi bi-plus'></i>{' '}

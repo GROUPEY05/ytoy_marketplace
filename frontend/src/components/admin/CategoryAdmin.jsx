@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
+import { adminService } from '../../services/api';
 import { Table, Button, Form, Modal } from 'react-bootstrap';
 
 const CategorieAdmin = () => {
@@ -27,71 +28,52 @@ const CategorieAdmin = () => {
     }
     
     try {
-      const res = await axios.get('http://localhost:8000/api/admin/categories', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Catégories récupérées:', res.data);
-      setCategories(res.data);
+      const response = await adminService.getCategories(); // Utilisez la méthode du service
+      console.log('Catégories récupérées:', response.data);
+      setCategories(response.data);
+      console.log('les categories ont été recupérer');
     } catch (error) {
       console.error('Erreur lors de la récupération des catégories :', error);
       alert('Erreur lors de la récupération des catégories');
     }
   };
 
+  // Fonction utilitaire pour nettoyer les données
+  const cleanData = (data) => {
+    return {
+      nom: data.nom?.trim(),
+      description: data.description?.trim(),
+      // Ajoutez d'autres champs nécessaires ici
+    };
+  };
+
   const handleCreate = async () => {
-    if (!newCategorie.trim()) return alert('Veuillez entrer un nom de catégorie');
-    if (!token) {
-      console.error('Token is missing!');
+    if (!newCategorie.trim()) {
+      alert('Veuillez entrer un nom de catégorie');
       return;
     }
   
-    // CORRECTION: Utiliser 'nom' au lieu de 'name' pour correspondre au backend
-    const requestData = { nom: newCategorie };
-    console.log('Données envoyées:', requestData);
-  
     try {
-      const response = await axios.post(
-        'http://localhost:8000/api/admin/categories',
-        requestData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      
-      console.log('Réponse complète:', response);
-      
+      await adminService.createCategory({
+        nom: newCategorie,
+        description: '' // Ajoutez une description si nécessaire
+      });
       setNewCategorie('');
       fetchCategories();
     } catch (error) {
-      console.error('Erreur détaillée:', error.response?.data || error.message || error);
-      console.error('Statut HTTP:', error.response?.status);
-      console.error('Headers:', error.response?.headers);
-      alert('Erreur lors de l\'ajout de la catégorie');
+      console.error('Erreur lors de la création de la catégorie:', error);
+      alert('Erreur lors de la création de la catégorie');
     }
   };
 
   const handleUpdate = async () => {
-    if (!token) {
-      console.error('Token is missing!');
-      return;
-    }
+    if (!editCategorie) return;
 
     try {
-      // CORRECTION: Utiliser 'nom' au lieu de 'name'
-      await axios.put(
-        `http://localhost:8000/api/admin/categories/${editCategorie.id}`,
-        { nom: editCategorie.nom },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await adminService.updateCategory(editCategorie.id, {
+        nom: editCategorie.nom,
+        description: editCategorie.description
+      });
       setShowModal(false);
       fetchCategories();
     } catch (error) {
@@ -107,8 +89,8 @@ const CategorieAdmin = () => {
     }
 
     try {
-      await axios.delete(
-        `http://localhost:8000/api/admin/categories/${id}`,
+      await adminService.deleteCategory(
+        id,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -123,8 +105,8 @@ const CategorieAdmin = () => {
   };
 
   useEffect(() => {
-    if (token) fetchCategories();
-  }, [token]);
+    fetchCategories();
+  }, []); // Supprimez la dépendance au token
 
   return (
     <div className="p-4">
@@ -178,9 +160,9 @@ const CategorieAdmin = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="3" className="text-center">
+              {/* <td colSpan="3" className="text-center">
                 Aucune catégorie disponible
-              </td>
+              </td> */}
             </tr>
           )}
         </tbody>

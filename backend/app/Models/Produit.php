@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Utilisateur;
+use App\Models\Categorie;
+use App\Models\ProduitImage;
+use App\Models\Promotion;
+use App\Models\Avis;
 
 class Produit extends Model
 {
@@ -38,7 +43,9 @@ class Produit extends Model
 
     public function commandes()
     {
-        return $this->hasMany(Commande::class);
+        return $this->belongsToMany(Commande::class, 'ligne_commandes')
+            ->withPivot(['quantite', 'prix_unitaire'])
+            ->withTimestamps();
     }
 
     public function images()
@@ -59,19 +66,16 @@ class Produit extends Model
         return $this->hasMany(Promotion::class);
     }
 
-    public function imagePrincipale()
-    {
-        return $this->hasOne(ImageProduit::class)->where('principale', true);
-    }
+    // public function imagePrincipale()
+    // {
+    //     return $this->hasOne(ImageProduit::class)->where('principale', true);
+    // }
 
     public function verifierDisponibilite($quantite)
     {
         return $this->quantite_stock >= $quantite;
     }
 
-    public function produits()
-    {
-        return $this->hasMany(Produit::class, 'categorie_id');
-    }
+
 
 }

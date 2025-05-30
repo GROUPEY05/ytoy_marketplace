@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Alert, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -48,8 +47,8 @@ const Cart = () => {
   const updateQuantity = async (productId, quantity) => {
     try {
       await apiClient.put('/api/panier/update', {
-        product_id: productId,
-        quantity: quantity
+        produit_id: productId,  // Correction du nom du paramètre
+        quantite: quantity      // Correction du nom du paramètre
       });
       fetchCart(); // Recharger le panier
     } catch (error) {
@@ -70,7 +69,12 @@ const Cart = () => {
 
   const checkout = async () => {
     try {
-      await apiClient.post('api/orders/create');
+      // Vous devrez probablement ajouter les informations de livraison, etc.
+      await apiClient.post('/api/panier/checkout', {
+        adresse_livraison: 'Adresse par défaut', // À ajuster selon votre formulaire
+        phone: '123456789', // À ajuster selon votre formulaire
+        notes: '' // Optionnel
+      });
       navigate('/orders'); // Rediriger vers la page des commandes
     } catch (error) {
       console.error('Erreur lors de la création de la commande', error);
@@ -88,7 +92,8 @@ const Cart = () => {
     );
   }
 
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  // Calcul du total en utilisant les propriétés correctes (prix et quantite)
+  const total = cartItems.reduce((sum, item) => sum + (item.prix * item.pivot.quantite), 0);
 
   return (
     <Container className="my-4">
@@ -117,38 +122,54 @@ const Cart = () => {
                 <tr key={item.id}>
                   <td>
                     <div className="d-flex align-items-center">
-                      {item.images && item.images[0] && (
+                      {item.images && item.images.length > 0 ? (
                         <img
-                          src={`http://localhost:8000/storage/${item.images[0].url}`}
-                          alt={item.title}
-                          style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
+                          src={item.images[0].url}
+                          alt={item.nom}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            marginRight: '10px'
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src="/default-image.png"
+                          alt="Image par défaut"
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            marginRight: '10px'
+                          }}
                         />
                       )}
-                      {item.title}
+                      {item.nom}
                     </div>
                   </td>
-                  <td>{item.price} FCFA</td>
+                  <td>{item.prix} FCFA</td>
                   <td>
                     <div className="d-flex align-items-center">
                       <Button
                         variant="outline-secondary"
                         size="sm"
-                        onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                        onClick={() => updateQuantity(item.id, Math.max(1, item.pivot.quantite - 1))}
                       >
                         -
                       </Button>
-                      <span className="mx-2">{item.quantity}</span>
+                      <span className="mx-2">{item.pivot.quantite}</span>
                       <Button
                         variant="outline-secondary"
                         size="sm"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        disabled={item.quantity >= item.stock}
+                        onClick={() => updateQuantity(item.id, item.pivot.quantite + 1)}
+                        disabled={item.pivot.quantite >= item.quantite_stock}
                       >
                         +
                       </Button>
                     </div>
                   </td>
-                  <td>{item.price * item.quantity} FCFA</td>
+                  <td>{item.prix * item.pivot.quantite} FCFA</td>
                   <td>
                     <Button
                       variant="outline-danger"

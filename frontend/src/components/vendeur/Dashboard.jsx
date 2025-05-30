@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { apiClient } from '../../services/api'
+import { Home } from "lucide-react";
 
 
 const VendeurDashboard = () => {
@@ -26,8 +27,16 @@ const VendeurDashboard = () => {
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error)
       alert('Erreur lors de la déconnexion. Veuillez réessayer.')
-    } finally {
-      setLoading(false)
+    }  finally {
+      // Nettoyer complètement le localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      
+      // Réinitialiser l'état
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      
     }
   }
 
@@ -121,29 +130,29 @@ const VendeurDashboard = () => {
   };
 
   return (
-    <div className='container-fluid mt-4'>
+    <div className='container-fluid4 mt-4'>
       <div className='row'>
         {/* Sidebar */}
         <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse'>
           <div className='position-sticky pt-3'>
             <div className='text-center mb-4'>
               <div
-                className='avatar bg-primary rounded-circle p-3 mx-auto mb-3'
-                style={{ width: '80px', height: '80px' }}
+                className='avatar  rounded-circle p-3 mx-auto mb-3'
+                style={{ width: '80px', height: '80px', background: 'green' }}
               >
                 <span className='fs-1 text-white'>
                   {currentUser?.vendeur?.nom_boutique?.charAt(0) ||
                     currentUser?.prenom?.charAt(0)}
                 </span>
               </div>
-              <h5>{currentUser?.vendeur?.nom_boutique || 'Ma Boutique'}</h5>
+              <h5>{currentUser?.vendeur?.nom_boutique || currentUser?.prenom}</h5>
               <span className='badge bg-success'>Vendeur vérifié</span>
             </div>
 
             <ul className='nav flex-column'>
               <li className='nav-item'>
-                <Link to='/' className='nav-link  active'>
-                  <i className='bi bi-speedometer2 me-2'></i>
+                <Link to='/' className='nav-link'>
+                  <Home className='me-2' />
                   Accueil
                 </Link>
               </li>
@@ -281,11 +290,11 @@ const VendeurDashboard = () => {
                             Revenus (Mensuel)
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {(stats.revenue || 0).toFixed(2)} €
+                            {(stats.revenue || 0).toFixed(2)} frcfa
                           </div>
                         </div>
                         <div className='col-auto'>
-                          <i className='bi bi-currency-euro fs-2 text-gray-300'></i>
+                          
                         </div>
                       </div>
                     </div>
@@ -377,7 +386,7 @@ const VendeurDashboard = () => {
                                 {order.status}
                               </span>
                             </td>
-                            <td>{(order.total || 0).toFixed(2)} €</td>
+                            <td>{(order.total || 0).toFixed(2)} frcfa</td>
                             <td>
                               <Link
                                 to={`/vendeur/orders/${order.id}`}

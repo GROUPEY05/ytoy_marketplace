@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Panier;
 use App\Models\Produit;
+use App\Models\ProduitImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +38,8 @@ class PanierController extends Controller
 
                 Log::info('Panier récupéré', ['panier_id' => $cart->id]);
                 
-                $products = $cart->produits()->get();
+                // Récupération des produits avec leurs images
+                $products = $cart->produits()->with('images')->get();
                 Log::info('Produits récupérés', [
                     'nombre_produits' => $products->count(),
                     'produits' => $products->toArray()
@@ -87,7 +89,7 @@ class PanierController extends Controller
             ], 401);
         }
 
-        $product = Produit::findOrFail($request->produit_id);
+        $product = Produit::with('images')->findOrFail($request->produit_id);
         Log::info('Produit trouvé: ' . $product->nom);
         if ($product->quantite_stock < $request->quantite) {
             return response()->json([
@@ -108,7 +110,8 @@ class PanierController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Produit ajouté au panier'
+                'message' => 'Produit ajouté au panier',
+                'produit' => $product
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur lors de l\'ajout au panier: ' . $e->getMessage());
@@ -240,7 +243,7 @@ class PanierController extends Controller
             
             // Calculer le montant total de la commande
             $montant_total = 0;
-            $produits = $panier->produits()->get();
+            $produits = $panier->produits()->with('images')->get();
             foreach ($produits as $produit) {
                 $montant_total += $produit->prix * $produit->pivot->quantite;
             }
@@ -271,7 +274,7 @@ class PanierController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Commande créée avec succès',
-                'commande' => $commande->load('lignes.produit')
+                'commande' => $commande->load('lignes.produit.images')
             ], 201);
             
         } catch (\Exception $e) {
@@ -305,7 +308,7 @@ class PanierController extends Controller
             
             // Récupérer les commandes de l'utilisateur
             $commandes = \App\Models\Commande::where('utilisateur_id', $user->id)
-                ->with(['lignes.produit'])
+                ->with(['lignes.produit.images'])  // Inclure les images des produits
                 ->orderBy('created_at', 'desc')
                 ->get();
             

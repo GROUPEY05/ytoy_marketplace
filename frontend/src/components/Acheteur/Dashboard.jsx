@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { apiClient } from '../../services/api';
 import axios from 'axios';
+import { Home } from "lucide-react";
 
 const Dashboard = () => {
   const { currentUser, logout } = useAuth();
@@ -26,7 +27,15 @@ const Dashboard = () => {
       console.error('Erreur lors de la déconnexion:', error)
       alert('Erreur lors de la déconnexion. Veuillez réessayer.')
     } finally {
-      setLoading(false)
+      // Nettoyer complètement le localStorage
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      
+      // Réinitialiser l'état
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      
     }
   }
   
@@ -88,19 +97,23 @@ const Dashboard = () => {
       <div className="row">
         <div className="col-md-3">
           <div className="card mb-4">
-            <div className="card-header bg-primary text-white">
+            <div className="card-header bg-orange text-black">
               <h5 className="mb-0">Mon profil</h5>
             </div>
             <div className="card-body">
               <div className="text-center mb-3">
-                <div className="avatar bg-light rounded-circle p-3 mx-auto mb-3" style={{ width: '100px', height: '100px' }}>
-                  <span className="fs-1 text-primary">{currentUser.prenom.charAt(0)}{currentUser.nom.charAt(0)}</span>
+                <div className="avatar bg-light rounded-circle p-3 mx-auto mb-3" style={{ width: '100px', height: '100px', color:'#FF6F00' }}>
+                  <span className="fs-1 " style={{color:'#FF6F00'}}> {currentUser.prenom.charAt(0)}{currentUser.nom.charAt(0)}</span>
                 </div>
                 <h5>{currentUser.prenom} {currentUser.nom}</h5>
-                <p className="text-muted">{currentUser.email}</p>
+                {/* <p className="text-muted">{currentUser.email}</p> */}
               </div>
               <div className="list-group">
-                <Link to="/acheteur/dashboard" className="list-group-item list-group-item-action active">
+              <Link to="/" className="list-group-item list-group-item-action ">
+                  <Home className='me-2' />
+                  Accueil 
+              </Link>
+                <Link to="/acheteur/dashboard" className="list-group-item list-group-item-action active" style={{backgroundColor:'#FF6F00', border:'#FF6F00'}}>
                   <i className="bi bi-speedometer2 me-2"></i>Tableau de bord
                 </Link>
                 <Link to="/acheteur/profile" className="list-group-item list-group-item-action">
@@ -135,7 +148,7 @@ const Dashboard = () => {
               <h4 className="mb-0">Tableau de bord</h4>
             </div>
             <div className="card-body">
-              <div className="alert alert-info" role="alert">
+              <div className="alert alert-info" role="alert" >
                 <i className="bi bi-info-circle me-2"></i>
                 Bienvenue dans votre espace personnel, {currentUser.prenom}!
               </div>
@@ -313,7 +326,7 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {selectedOrder.statut === 'en_attente' && (
+              {(selectedOrder.statut !== 'payee' && selectedOrder.statut !== 'annulee') && (
                 <div className="mt-3">
                   <Alert variant="warning">
                     <strong>Paiement requis</strong> - Cette commande est en attente de paiement.

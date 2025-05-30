@@ -319,7 +319,7 @@ const VendorPromotions = () => {
                           <td>{promotion.titre}</td>
                           <td>
                             {promotion.produit ? (
-                              <Link to={`/product/${promotion.produit.id}`}>
+                              <Link to={`/produits/${promotion.produit.id}`}>
                                 {promotion.produit.titre}
                               </Link>
                             ) : 'N/A'}

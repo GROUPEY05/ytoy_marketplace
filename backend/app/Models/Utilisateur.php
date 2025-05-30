@@ -4,15 +4,15 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;         
-use Laravel\Sanctum\HasApiTokens; //pour l'authentification avec sanctum
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Contracts\Auth\MustVerifyEmail;//pour une verification plus approfondie de l'email
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 
-class Utilisateur extends Authenticatable implements MustVerifyEmail
+class Utilisateur extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
+    use CanResetPasswordTrait;
     use HasApiTokens, Notifiable;
-
-    use HasRoles; // Pour la gestion des rôles et permissions
 
     protected $table = 'utilisateurs';
 
@@ -24,18 +24,22 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail
         'adresse', 
         'role', 
         'mot_de_passe',
-        'actif'
+        'actif',
+        'reset_token',
+        'reset_token_expiry'
     ];
 
     protected $hidden = [
         'mot_de_passe',
         'token_reinitialisation',
         'remember_token',
+        'reset_token',
+        'reset_token_expiry'
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'mot_de_passe' => 'hashed',
     ];
 
     public function getAuthPassword()

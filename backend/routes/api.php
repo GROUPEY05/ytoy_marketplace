@@ -5,15 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriePublicController;
 
 use App\Http\Controllers\Admin\UtilisateurController;
-use App\Http\Controllers\Admin\VendorController;
+use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\ReviewController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\StatisticsController;
-use App\Http\Controllers\PanierController;
-
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategorieController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
-use App\Http\Controllers\Vendor\ProduitController;
+use App\Http\Controllers\Acheteur\OrderController as AcheteurOrderController;
+
+use App\Http\Controllers\Vendor\ProduitController as VendorProduitController;
 use App\Http\Controllers\Vendor\CommandeController as VendorCommandeController;
 use App\Http\Controllers\Vendor\InvoiceController;
 use App\Http\Controllers\Vendor\DashboardController;
@@ -22,16 +23,20 @@ use App\Http\Controllers\Vendor\ReviewController as VendorReviewController;
 use App\Http\Controllers\Vendor\AnalyticsController;
 use App\Http\Controllers\Vendor\SettingsController;
 use App\Http\Controllers\Vendor\PromotionController;
+
+use App\Http\Controllers\AcheteurController;
+
+use App\Http\Controllers\ProduitController;
+use App\Http\Controllers\VendeurController;
+use App\Http\Controllers\PanierController;
 use App\Http\Controllers\PromotionPublicController;
-
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Acheteur\OrderController as AcheteurOrderController;
-
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ImageProduitController;
 
-Route::get('/produits/featured', [ProduitController::class, 'featured']);
-
+Route::get('/produits/getFeatured', [ProduitController::class, 'getFeatured']);
+Route::get('/categories', [CategoriePublicController::class, 'index']);
+Route::get('/search/produits', [ProduitController::class, 'search']);
 Route::get('/api/user', function () {
     return request()->user();
 })->middleware('auth:sanctum');
@@ -41,26 +46,29 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/registervendeur', [AuthController::class, 'registervendeur']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/verify-email/{userId}/{token}', [AuthController::class, 'verifyEmail']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/update-password', [AuthController::class, 'updatePassword']);
 
 // Routes publiques - Produits et Catégories
 Route::get('/produits', [ProduitController::class, 'index']);
 Route::get('/produits/{id}', [ProduitController::class, 'show']);
-Route::get('/produits/featured', [ProduitController::class, 'getFeatured']);
-Route::get('/categories', [CategoriePublicController::class, 'index']);
-Route::get('/categories/{id}', [CategoriePublicController::class, 'show']);
-Route::get('/categories/{id}/produits', [CategoriePublicController::class, 'getProduits']);
 
 // Routes publiques - Promotions
 Route::get('/promotions', [PromotionPublicController::class, 'index']);
 Route::get('/promotions/type/{type}', [PromotionPublicController::class, 'getByType']);
 Route::get('/promotions/{id}', [PromotionPublicController::class, 'show']);
 
-// Routes protégées (auth + actif)
-Route::middleware(['auth:sanctum'])->group(function () {
+// Route pour récupérer l'utilisateur connecté
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return response()->json($request->user());
+});
+
+// Routes protégées par l'authentification
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/verify-phone', [AuthController::class, 'verifyPhone']);
     Route::post('/send-phone-verification', [AuthController::class, 'sendPhoneVerification']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+   
     
     // Routes du panier
     Route::get('/panier', [PanierController::class, 'index']);
@@ -85,7 +93,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     // Routes de recherche
-    Route::get('/search/produits', [ProduitController::class, 'search']);
+   
     Route::get('/search/categories', [CategoriePublicController::class, 'search']);
 
     // Routes des avis
@@ -103,49 +111,48 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/avatar', [AuthController::class, 'updateAvatar']);
     });
 
-    // Routes d'admin
-    Route::prefix('admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json(['data' => 'Dashboard Admin']);
-        });
-        Route::apiResource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
-
-        // Gestion des catégories
+    // Routes pour le dashboard admin
+    // Routes Admin
+    Route::prefix('administrateur')->group(function () {
+        // Dashboard et statistiques
+        Route::get('/dashboard', [AdminController::class, 'dashboard']);
+        
+        // Gestion des utilisateurs
+        Route::get('/utilisateurs', [UtilisateurController::class, 'index']);
+        Route::get('/utilisateurs/{id}', [UtilisateurController::class, 'show']);
+        Route::put('/utilisateurs/{id}', [UtilisateurController::class, 'update']);
+        Route::delete('/utilisateurs/{id}', [UtilisateurController::class, 'destroy']);
+        Route::put('/utilisateurs/{id}/ban', [UtilisateurController::class, 'ban']);
+        Route::put('/utilisateurs/{id}/unban', [UtilisateurController::class, 'unban']);
+        
+        // Gestion des vendeurs
+        Route::get('/vendeurs/pending', [AdminVendorController::class, 'getPendingVendors']);
+        Route::put('/vendeurs/{id}/approve', [AdminVendorController::class, 'approveVendor']);
+        Route::put('/vendeurs/{id}/reject', [AdminVendorController::class, 'rejectVendor']);
+        
+        // Gestion des commandes
+        Route::get('/commandes', [AdminOrderController::class, 'index']);
+        Route::get('/commandes/{id}', [AdminOrderController::class, 'show']);
+        Route::post('/commandes', [AdminOrderController::class, 'store']);
+        Route::delete('/commandes/{id}', [AdminOrderController::class, 'cancel']);
+        Route::put('/commandes/{id}/status', [AdminOrderController::class, 'updateStatus']);
+        Route::get('commandes/stats', [AdminController::class, 'getOrderStats']);
+        // gestion categories
         Route::get('/categories', [CategorieController::class, 'index']);
-        Route::get('/categories/{id}', [CategorieController::class, 'show']);
         Route::post('/categories', [CategorieController::class, 'store']);
         Route::put('/categories/{id}', [CategorieController::class, 'update']);
         Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
+        Route::get('/categories/{id}', [CategorieController::class, 'show']);
         
-        // Gestion utilisateurs
-        Route::resource('utilisateurs', UtilisateurController::class);
-        Route::post('utilisateurs/{user}/ban', [UtilisateurController::class, 'banUser'])->name('admin.users.ban');
-        
-        // Validation vendeurs
-        Route::get('vendeurs/en-attente', [VendorController::class, 'pendingVendors'])->name('admin.vendors.pending');
-        Route::post('vendeurs/{vendor}/approuver', [VendorController::class, 'approveVendor'])->name('admin.vendors.approve');
-        Route::post('vendeurs/{vendor}/rejeter', [VendorController::class, 'rejectVendor'])->name('admin.vendors.reject');
-        
-        // Modération avis
-        Route::resource('reviews', ReviewController::class);
-        Route::post('reviews/{review}/approve', [ReviewController::class, 'approveReview'])->name('admin.reviews.approve');
-        
-        // Gestion commandes
-        Route::resource('commandes', OrderController::class);
-        Route::get('commandes/{order}/details', [OrderController::class, 'showDetails'])->name('admin.orders.details');
-        
-        // Statistiques
-        Route::get('statistics', [StatisticsController::class, 'index'])->name('admin.statistics');
-        
-        // Activer/Désactiver utilisateurs
-        Route::post('/utilisateurs/{id}/activer', [AuthController::class, 'activerUtilisateur']);
-        Route::post('/utilisateurs/{id}/desactiver', [AuthController::class, 'desactiverUtilisateur']);
-        
-        // Routes de gestion des vendeurs
-        Route::get('/vendeurs/en-attente', [AuthController::class, 'getVendeursEnAttente']);
-        Route::post('/vendeurs/{id}/approuver', [AuthController::class, 'approuverVendeur']);
-        Route::post('/vendeurs/{id}/rejeter', [AuthController::class, 'rejeterVendeur']);
+
+        // Gestion des produits
+        Route::get('/produits', [ProductController::class, 'index']);
+        Route::put('/produits/{id}', [ProductController::class, 'update']);
+        Route::delete('/produits/{id}', [ProductController::class, 'destroy']);
+        Route::get('commandes/stats', [AdminController::class, 'getOrderStats']);
     });
+    
+
     
     // Routes de vendeur
     // Routes de vendeur avec middleware d'authentification et de rôle
@@ -159,10 +166,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
         
         // Gestion des produits
-        Route::get('/produits', [ProduitController::class, 'index']);
-        Route::post('/produits', [ProduitController::class, 'store']);
-        Route::post('/produits/{id}', [ProduitController::class, 'update']);
-        Route::delete('/produits/{id}', [ProduitController::class, 'destroy']);
+        Route::get('/produits', [VendorProduitController::class, 'index']);
+        Route::post('/produits', [VendorProduitController::class, 'store']);
+        Route::get('/produits/{id}', [VendorProduitController::class, 'show']);
+        Route::post('/produits/{id}', [VendorProduitController::class, 'update']);
+        Route::delete('/produits/{id}', [VendorProduitController::class, 'destroy']);
 
         // Gestion des images des produits
         Route::prefix('produits')->group(function () {
@@ -228,16 +236,16 @@ Route::middleware(['auth:sanctum'])->group(function () {
             return response()->json(['message' => 'Acheteur Dashboard', 'status' => 'success']);
         });
 
-        Route::prefix('orders')->group(function () {
-            Route::get('/', [OrderController::class, 'index']);
-            Route::post('/create', [OrderController::class, 'store']);
-            Route::get('/{id}', [OrderController::class, 'show']);
-            Route::post('/{id}/cancel', [OrderController::class, 'cancel']);
-            Route::put('/{id}/status', [OrderController::class, 'updateStatus']);
-        });
+        
 
         Route::prefix('acheteur')->group(function () {
             Route::apiResource('orders', AcheteurOrderController::class)->only(['index', 'show', 'store']);
         });
     });
+    
+    // Routes pour les boutiques
+    Route::get('/stores', [VendorController::class, 'index']);
+    Route::get('/vendors/{id}', [VendorController::class, 'show']);
+    Route::get('/vendors/{id}/products', [VendorController::class, 'products']);
 });
+

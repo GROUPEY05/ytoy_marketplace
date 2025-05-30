@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 <link
@@ -35,7 +34,7 @@ export default function Footer() {
               </div>
               <input 
                 type='email' 
-                class='form-control bg-dark text-white border-secondary' 
+                className='form-control bg-dark text-white border-secondary' 
                 placeholder=' Saisissez votre email' 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -59,8 +58,10 @@ export default function Footer() {
             <div className="bg-white rounded-circle p-2 me-2">
              <img className="rounded-circle" src='http://localhost:5173/image/logo_ytoy.png' alt="" style={{ maxWidth: '30px' }} />
             </div>
-            <h5 className="">Marketplace</h5> 
-            <h5 className="">Marketplace</h5>
+            <div>
+              <h5 className="">Ytoy</h5>
+              <h5 className="">Marketplace</h5>
+            </div>
           </div>
           
           {/* Menu principal */}
@@ -82,7 +83,7 @@ export default function Footer() {
             </select>
             
             <small className="text-white-50">
-              © 2023 Brand, Inc. • <a href="#" className="text-white-50">Privacy</a> • <a href="#" className="text-white-50">Terms</a> • <a href="#" className="text-white-50">Sitemap</a>
+              2023 Brand, Inc. • <a href="#" className="text-white-50">Privacy</a> • <a href="#" className="text-white-50">Terms</a> • <a href="#" className="text-white-50">Sitemap</a>
             </small>
           </div>
           

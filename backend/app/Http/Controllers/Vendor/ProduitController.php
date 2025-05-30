@@ -287,8 +287,8 @@ class ProduitController extends Controller
     }
 
     /**
- * Récupérer les produits en vedette ou récents
- */
+     * Récupérer les produits en vedette ou récents
+     */
     public function getFeatured(Request $request)
     {
         $perPage = $request->per_page ?? 8;
@@ -303,7 +303,16 @@ class ProduitController extends Controller
         
         // Ajouter l'URL de la miniature pour faciliter l'affichage côté client
         $produits->transform(function ($produit) {
-            $produit->thumbnail = $produit->images->first()->url ?? null; 
+            if ($produit->images->isNotEmpty()) {
+                $imageUrl = $produit->images->first()->url;
+                // S'assurer que l'URL commence par /storage/
+                if (!str_starts_with($imageUrl, '/storage/')) {
+                    $imageUrl = '/storage/' . $imageUrl;
+                }
+                $produit->thumbnail = $imageUrl;
+            } else {
+                $produit->thumbnail = null;
+            }
             unset($produit->images);
             return $produit;
         });

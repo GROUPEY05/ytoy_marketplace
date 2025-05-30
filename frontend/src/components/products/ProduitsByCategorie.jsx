@@ -229,7 +229,7 @@ const ProduitsByCategorie = () => {
                         </Card.Text>
                         <div className="mt-auto d-flex flex-column gap-2">
                           <Link
-                            to={`/product/${produit.id}`}
+                            to={`/produits/${produit.id}`}
                             className="btn w-100"
                             style={{ backgroundColor: '#FF6600', borderColor: '#FF6600', color: 'white' }}
                           >
