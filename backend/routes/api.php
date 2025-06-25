@@ -33,9 +33,14 @@ use App\Http\Controllers\PromotionPublicController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ImageProduitController;
+use App\Http\Controllers\GuestOrderController;
 
 Route::get('/produits/getFeatured', [ProduitController::class, 'getFeatured']);
 Route::get('/categories', [CategoriePublicController::class, 'index']);
+Route::get('/categories/nom/{nom}', [CategoriePublicController::class, 'showByNom']);
+Route::get('/categories/nom/{nom}/produits', [CategoriePublicController::class, 'getProduitsByNom']);
+Route::get('/categories-avec-produits', [CategoriePublicController::class, 'categoriesAvecProduits']);
+
 Route::get('/search/produits', [ProduitController::class, 'search']);
 Route::get('/api/user', function () {
     return request()->user();
@@ -48,6 +53,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/verify-email/{userId}/{token}', [AuthController::class, 'verifyEmail']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/update-password', [AuthController::class, 'updatePassword']);
+
+// Routes pour les commandes anonymes
+Route::post('/guest/orders', [GuestOrderController::class, 'store']);
+Route::get('/guest/orders/{id}', [GuestOrderController::class, 'show']);
 
 // Routes publiques - Produits et Catégories
 Route::get('/produits', [ProduitController::class, 'index']);
@@ -68,6 +77,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/verify-phone', [AuthController::class, 'verifyPhone']);
     Route::post('/send-phone-verification', [AuthController::class, 'sendPhoneVerification']);
+
+    // Routes Admin
+    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/statistics', [DashboardController::class, 'getStatistics']);
+    });
    
     
     // Routes du panier
@@ -113,9 +128,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Routes pour le dashboard admin
     // Routes Admin
-    Route::prefix('administrateur')->group(function () {
+    Route::prefix('administrateur')->middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
         // Dashboard et statistiques
-        Route::get('/dashboard', [AdminController::class, 'dashboard']);
+        Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index']);
         
         // Gestion des utilisateurs
         Route::get('/utilisateurs', [UtilisateurController::class, 'index']);

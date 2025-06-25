@@ -53,6 +53,12 @@ class Produit extends Model
         return $this->hasMany(ProduitImage::class);
     }
 
+     public function thumbnail()
+    {
+        // Relation 1 image, la plus ancienne (par exemple)
+        return $this->hasOne(ProduitImage::class)->oldest();
+    }
+
     public function avis()
     {
         return $this->hasMany(Avis::class);

@@ -109,7 +109,7 @@ const AdminProductList = () => {
     if (!productToDelete) return;
     
     try {
-      await apiClient.delete(`/api/admin/produits/${productToDelete.id}`);
+      await apiClient.delete(`/api/admin/produits/${productToDelete.id}`);  
       
       // Mettre à jour l'état local
       setProducts(products.filter(p => p.id !== productToDelete.id));

@@ -3,6 +3,15 @@ import axios from 'axios';
 // Configuration de l'URL de base pour les requêtes API
 const API_URL = 'http://localhost:8000';
 
+// Récupération du token CSRF
+async function getCsrfToken() {
+  try {
+    await apiClient.get('/sanctum/csrf-cookie');
+  } catch (error) {
+    console.error('Erreur lors de la récupération du token CSRF:', error);
+  }
+}
+
 // Création d'une instance Axios avec configuration par défaut
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -366,8 +375,9 @@ const authService = {
 
 const adminService = {
   // Dashboard et statistiques
-  getStatistics: () => {
-    return apiClient.get('/api/administrateur/statistics');
+  async getStatistics() {
+    await getCsrfToken();
+    return apiClient.get('/api/administrateur/dashboard');
   },
 
   getRecentOrders: () => {
@@ -434,7 +444,7 @@ const adminService = {
 
   // Gestion des catégories
   getCategories: () => {
-    return apiClient.get('api/administrateur/categories');
+    return apiClient.get('/api/administrateur/categories');
   },
 
   getCategoryById: (id) => {

@@ -1,69 +1,15 @@
-// import React, { useEffect, useState } from 'react';
-// import { apiClient } from "../../services/api";
-// import { MdMenu } from "react-icons/md";
-
-// const slugify = (text) =>
-//   text
-//     .toString()
-//     .normalize("NFD")
-//     .replace(/[\u0300-\u036f]/g, "")
-//     .toLowerCase()
-//     .replace(/\s+/g, '-')
-//     .replace(/[^\w\-]+/g, '')
-//     .replace(/\-\-+/g, '-')
-//     .replace(/^-+/, '')
-//     .replace(/-+$/, '');
-
-// const MenuCategories = () => {
-//   const [categories, setCategories] = useState([]);
-
-//   useEffect(() => {
-//     const fetchCategories = async () => {
-//       try {
-//         const response = await apiClient.get('/categories');
-//         setCategories(response.data);
-//       } catch (error) {
-//         console.error("Erreur chargement catégories :", error);
-//       }
-//     };
-//     fetchCategories();
-//   }, []);
-
-//   return (
-//     <div className='dropdown'>
-//       <button
-//         className='btn btn-white'
-//         type='button'
-//         data-bs-toggle='dropdown'
-//         aria-expanded='false'>
-//         <MdMenu style={{ fontSize: '30px' }} />
-//       </button>
-//       <ul className='dropdown-menu'>
-//         {categories.map((category) => (
-//           <li key={category.id}>
-//             <button className='dropdown-item' type='button'>
-//               <a
-//                 href={`/${slugify(category.name)}`}
-//                 style={{ color: '#000000', textDecoration: 'none' }}>
-//                 {category.name}
-//               </a>
-//             </button>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
 
 // export default MenuCategories;
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { MdMenu } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 const MenuCategories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+   const navigate = useNavigate();
 
   // Fonction pour récupérer les catégories
   const fetchCategories = async () => {
@@ -116,27 +62,22 @@ const MenuCategories = () => {
 
   return (
     <div className='dropdown'>
-      <button
-        className='btn btn-white'
-        type='button'
-        data-bs-toggle='dropdown'
-        aria-expanded='false'>
+      <button className='btn btn-white' type='button' data-bs-toggle='dropdown' aria-expanded='false'>
         <MdMenu style={{ fontSize: '30px' }} />
       </button>
       <ul className='dropdown-menu'>
         {categories.length > 0 ? (
           categories.map((category) => (
             <li key={category.id}>
-              <button className='dropdown-item' type='button'>
-                <a 
-                  href={`/${encodeURIComponent(category.nom)}`} 
-                  style={{ color: '#000000', textDecoration: 'none' }}
-                >
-                  {category.nom}
-                  {category.produits_count > 0 && (
+              <button
+                className='dropdown-item'
+                type='button'
+                onClick={() => navigate(`/categorie/${encodeURIComponent(category.nom)}`)}
+              >
+                {category.nom}
+                {category.produits_count > 0 && (
                   <span className="badge bg-secondary ms-2">{category.produits_count}</span>
-                  )}
-                </a>
+                )}
               </button>
             </li>
           ))

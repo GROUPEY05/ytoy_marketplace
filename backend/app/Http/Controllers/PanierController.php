@@ -23,6 +23,7 @@ class PanierController extends Controller
                     'message' => 'Vous devez être connecté pour accéder au panier'
                 ], 401);
             }
+
             
             Log::info('Utilisateur authentifié', ['user_id' => $user->id]);
 

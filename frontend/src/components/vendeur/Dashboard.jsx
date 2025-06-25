@@ -142,10 +142,10 @@ const VendeurDashboard = () => {
               >
                 <span className='fs-1 text-white'>
                   {currentUser?.vendeur?.nom_boutique?.charAt(0) ||
-                    currentUser?.prenom?.charAt(0)}
+                    currentUser?.nom?.charAt(0)}
                 </span>
               </div>
-              <h5>{currentUser?.vendeur?.nom_boutique || currentUser?.prenom}</h5>
+              <h5>{currentUser?.vendeur?.nom_boutique || currentUser?.nom}</h5>
               <span className='badge bg-success'>Vendeur vérifié</span>
             </div>
 

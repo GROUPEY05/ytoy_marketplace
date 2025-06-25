@@ -20,6 +20,7 @@ class CommandeController extends Controller
     {
         // On récupère les commandes qui contiennent au moins un article du vendeur connecté
         DB::enableQueryLog();
+       
 
         // Vérifions d'abord les commandes sans jointure
         $commandes = Commande::whereHas('lignes', function ($query) {
@@ -101,22 +102,29 @@ class CommandeController extends Controller
                 return $item->prix_unitaire * $item->quantite;
             });
             
+            $nomComplet = 'N/A';
+            $email = 'N/A';
+            
+            if ($utilisateur) {
+                $prenom = $utilisateur->prenom === $utilisateur->email ? '' : $utilisateur->prenom;
+                $nomComplet = trim($utilisateur->nom . ' ' . $prenom);
+                $email = $utilisateur->email;
+            }
+
             Log::info('Order data:', [
                 'id' => $order->id,
-                'user_nom' => $order->user_nom,
-                'user_prenom' => $order->user_prenom,
-                'user_email' => $order->user_email
+                'utilisateur' => $utilisateur ? [
+                    'nom' => $utilisateur->nom,
+                    'prenom' => $utilisateur->prenom,
+                    'email' => $utilisateur->email
+                ] : null
             ]);
-
-            // Éviter d'afficher l'email comme prénom si c'est le cas
-            $prenom = $order->user_prenom === $order->user_email ? '' : $order->user_prenom;
-            $nomComplet = trim($order->user_nom . ' ' . $prenom);
 
             return [
                 'id' => $order->id,
-                'order_numero' => $order->numero_commande,
-                'customer_nom' => !empty($nomComplet) ? $nomComplet : 'N/A',
-                'customer_email' => $order->user_email ?? 'N/A',
+                'order_number' => $order->order_number,
+                'customer_nom' => $nomComplet,
+                'customer_email' => $email,
                 'montant_total' => $vendorTotal,
                 'item_count' => $vendorItems->count(),
                 'statut' => $order->statut,

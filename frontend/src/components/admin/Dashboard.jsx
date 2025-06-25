@@ -47,145 +47,82 @@ const AdminDashboard = () => {
     }
   }
 
-  const [stats, setStats] =useState({
-      utilisateurs: 0,
-      revenue: 0,
-      products: 0,
-      orders: 0,
-      pending_orders: 0
-    })
+  const [stats, setStats] = useState({
+    utilisateurs: {
+      total: 0,
+      acheteurs: 0,
+      vendeurs: 0,
+      admins: 0
+    },
+    commandes: {
+      total: 0,
+      montant_total: 0,
+      en_attente: 0
+    },
+    produits: {
+      total: 0
+    },
+    vendeurs: {
+      en_attente: 0
+    }
+  })
   const [pendingVendors, setPendingVendors] = useState([])
   const [recentUsers, setRecentUsers] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
 
-    // Charger les données réelles depuis l'API
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          setLoading(true);
-          
-          // Récupérer les commandes récentes - essayer plusieurs routes possibles
-          let usersData = [];
-          
-          try {
-            // Essayer d'abord avec la route acheteur/orders
-            const usersResponse = await adminService.getUsers(currentPage, selectedRole, searchTerm);
-            if (usersResponse.data && Array.isArray(usersResponse.data)) {
-              usersData = usersResponse.data;
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const response = await adminService.getStatistics();
+        
+        if (response.data) {
+          setStats({
+            utilisateurs: response.data.utilisateurs || {
+              total: 0,
+              acheteurs: 0,
+              vendeurs: 0,
+              admins: 0
+            },
+            commandes: response.data.commandes || {
+              total: 0,
+              montant_total: 0,
+              en_attente: 0
+            },
+            produits: response.data.produits || {
+              total: 0
+            },
+            vendeurs: response.data.vendeurs || {
+              en_attente: 0
             }
-          } catch (orderError) {
-            console.log('Erreur avec la première route, essai avec une autre route');
-            // try {
-            //   // Essayer ensuite avec la route panier/orders
-            //   const ordersResponse = await apiClient.get('/api/panier/orders');
-            //   if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
-            //     ordersData = ordersResponse.data;
-            //   }
-            // } catch (secondError) {
-            //   console.log('Erreur avec la deuxième route aussi');
-            // }
+          });
+
+          if (response.data.recentUsers) {
+            setRecentUsers(response.data.recentUsers);
           }
           
-          setRecentUsers(usersData.slice(0, 3)); // Limiter aux 3 plus récentes
-          
-          // Pour la liste de souhaits et les avis, utiliser des valeurs par défaut
-          // car ces routes ne semblent pas exister dans le backend
-          setWishlistCount(0);
-          setReviewsCount(0);
-          
-        } catch (error) {
-          console.error('Erreur lors du chargement des données:', error);
-          // En cas d'erreur, utiliser des données par défaut
-          setRecentUsers([]);
-        } finally {
-          setLoading(false);
+          if (response.data.pendingVendors) {
+            setPendingVendors(response.data.pendingVendors);
+          }
+
+          if (response.data.orders) {
+            setOrders(response.data.orders);
+          }
         }
-      };
-      
-      fetchData();
-    }, []);
+      } catch (error) {
+        console.error('Erreur lors du chargement des données:', error);
+        toast.error('Erreur lors du chargement des statistiques');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // useEffect(() => {
-  //   fetchData()
-  // }, [])
+    fetchDashboardData();
+  }, []);
 
-  // const fetchData = async () => {
-  //   try {
-  //     setLoading(true)
-      
-  //     // Récupérer les données du dashboard
-  //     const response = await apiClient.get('/api/admin/dashboard')
-      
-  //     if (response.data.success) {
-  //       const {
-  //         stats,
-  //         commandes_recentes,
-  //         vendeurs_en_attente,
-  //         utilisateurs_recents,
-  //         produits_recents
-  //       } = response.data.data
-
-  //       // Mise à jour des statistiques
-  //       setStats({
-  //         utilisateurs:response.data.total_utilisateurs || {},
-  //         vendeurs: stats.vendeurs || {},
-  //         produits: stats.produits || {},
-  //         commandes: stats.commandes || {}
-  //       })
-
-  //       // Mise à jour des commandes récentes
-  //       setOrders(commandes_recentes.map(commande => ({
-  //         id: commande.id,
-  //         client: commande.client,
-  //         montant_total: commande.montant_total,
-  //         status: commande.status,
-  //         date: new Date(commande.created_at).toLocaleDateString('fr-FR', {
-  //           day: '2-digit',
-  //           month: '2-digit',
-  //           year: 'numeric',
-  //           hour: '2-digit',
-  //           minute: '2-digit'
-  //         }),
-  //         produits: commande.produits || []
-  //       })))
-
-  //       // Mise à jour des vendeurs en attente
-  //       setPendingVendors(vendeurs_en_attente.map(vendeur => ({
-  //         id: vendeur.id,
-  //         nom: vendeur.nom,
-  //         prenom: vendeur.prenom,
-  //         email: vendeur.email,
-  //         telephone: vendeur.telephone,
-  //         boutique: vendeur.boutique,
-  //         date_inscription: new Date(vendeur.created_at).toLocaleDateString('fr-FR', {
-  //           day: '2-digit',
-  //           month: '2-digit',
-  //           year: 'numeric'
-  //         })
-  //       })))
-
-  //       // Mise à jour des utilisateurs récents
-  //       setRecentUsers(utilisateurs_recents || [])
-  //     } else {
-  //       toast.error(response.data.message || 'Une erreur est survenue lors du chargement des données')
-  //     }
-  //   } catch (error) {
-  //     console.error('Erreur lors du chargement des données:', error)
-  //     if (error.response?.status === 401) {
-  //       toast.error('Session expirée. Veuillez vous reconnecter.')
-  //       handleLogout()
-  //     } else if (error.response?.status === 403) {
-  //       toast.error('Vous n\'avez pas les droits nécessaires pour accéder à cette page')
-  //       navigate('/')
-  //     } else {
-  //       toast.error('Erreur lors du chargement des données du tableau de bord')
-  //     }
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
+  
 
   const handleVendorApproval = async (vendorId, approved) => {
     try {
@@ -407,7 +344,7 @@ const AdminDashboard = () => {
                         Utilisateurs
                       </div>
                       <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                        {recentUsers.length}
+                        {stats.utilisateurs.total}
                       </div>
                     </div>
                     <div className='col-auto'>
@@ -427,7 +364,7 @@ const AdminDashboard = () => {
                         Revenus
                       </div>
                       <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                        {(stats.commandes?.montant_total || 0).toFixed(2)} francs
+                        {(stats.commandes.montant_total || 0).toLocaleString()} FCFA
                       </div>
                     </div>
                     <div className='col-auto'>
@@ -464,10 +401,10 @@ const AdminDashboard = () => {
                   <div className='row no-gutters align-items-center'>
                     <div className='col mr-2'>
                       <div className='text-xs font-weight-bold text-warning text-uppercase mb-1'>
-                        Vendeurs en attente
+                        Vendeurs 
                       </div>
                       <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                        {pendingVendors.length}
+                        {stats.vendeurs.total|| 0}
                       </div>
                     </div>
                     <div className='col-auto'>
@@ -479,72 +416,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Pending Vendors Table */}
-          <div className='card shadow mb-4'>
-            <div className='card-header py-3 d-flex flex-row align-items-center justify-content-between'>
-              <h6 className='m-0 font-weight-bold text-primary'>
-                Vendeurs en attente d'approbation
-              </h6>
-              <Link
-                to='/admin/vendeurs/pending'
-                className='btn btn-sm btn-primary'
-              >
-                Voir tout
-              </Link>
-            </div>
-            <div className='card-body'>
-              {pendingVendors.length === 0 ? (
-                <div className='text-center py-3'>
-                  <i className='bi bi-check-circle fs-1 text-success'></i>
-                  <p className='mt-2'>
-                    Aucun vendeur en attente d'approbation
-                  </p>
-                </div>
-              ) : (
-                <div className='table-responsive'>
-                  <table className='table table-bordered'>
-                    <thead className='table-light'>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Boutique</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {pendingVendors.map(vendor => (
-                        <tr key={vendor.id}>
-                          <td>{vendor.id}</td>
-                          <td>{vendor.nom}</td>
-                          <td>{vendor.nom_boutique}</td>
-                          <td>{vendor.date}</td>
-                          <td>
-                            <button
-                              onClick={() =>
-                                handleVendorApproval(vendor.id, true)
-                              }
-                              className='btn btn-sm btn-success me-1'
-                            >
-                              <i className='bi bi-check-lg'></i> Approuver
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleVendorApproval(vendor.id, false)
-                              }
-                              className='btn btn-sm btn-danger'
-                            >
-                              <i className='bi bi-x-lg'></i> Rejeter
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
+          
 
           {/* Recent Users */}
           <div className='card shadow mb-4'>
@@ -553,7 +425,7 @@ const AdminDashboard = () => {
                 Utilisateurs récents
               </h6>
               <Link
-                to='/admin/utilisateurs'
+                to='/admin/users'
                 className='btn btn-sm btn-primary'
               >
                 Voir tout
@@ -619,91 +491,7 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Statistiques des commandes */}
-          <div className="row mb-4">
-            <div className="col-12 mb-3">
-              <h4>Statistiques des commandes</h4>
-            </div>
-            <div className="col-xl-3 col-md-6 mb-4">
-              <div className="card border-left-primary shadow h-100 py-2">
-                <div className="card-body">
-                  <div className="row no-gutters align-items-center">
-                    <div className="col mr-2">
-                      <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                        Total commandes
-                      </div>
-                      <div className="h5 mb-0 font-weight-bold text-gray-800">
-                        {stats.commandes?.total || 0}
-                      </div>
-                    </div>
-                    <div className="col-auto">
-                      <i className="bi bi-cart4 fs-2 text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-3 col-md-6 mb-4">
-              <div className="card border-left-success shadow h-100 py-2">
-                <div className="card-body">
-                  <div className="row no-gutters align-items-center">
-                    <div className="col mr-2">
-                      <div className="text-xs font-weight-bold text-success text-uppercase mb-1">
-                        Montant total
-                      </div>
-                      <div className="h5 mb-0 font-weight-bold text-gray-800">
-                        {(stats.commandes?.montant_total || 0).toFixed(2)} €
-                      </div>
-                    </div>
-                    <div className="col-auto">
-                      <i className="bi bi-currency-euro fs-2 text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-3 col-md-6 mb-4">
-              <div className="card border-left-info shadow h-100 py-2">
-                <div className="card-body">
-                  <div className="row no-gutters align-items-center">
-                    <div className="col mr-2">
-                      <div className="text-xs font-weight-bold text-info text-uppercase mb-1">
-                        Commandes aujourd'hui
-                      </div>
-                      <div className="h5 mb-0 font-weight-bold text-gray-800">
-                        {stats.commandes?.aujourd_hui || 0}
-                      </div>
-                    </div>
-                    <div className="col-auto">
-                      <i className="bi bi-calendar-check fs-2 text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-xl-3 col-md-6 mb-4">
-              <div className="card border-left-warning shadow h-100 py-2">
-                <div className="card-body">
-                  <div className="row no-gutters align-items-center">
-                    <div className="col mr-2">
-                      <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                        En attente
-                      </div>
-                      <div className="h5 mb-0 font-weight-bold text-gray-800">
-                        {stats.commandes?.en_attente || 0}
-                      </div>
-                    </div>
-                    <div className="col-auto">
-                      <i className="bi bi-hourglass fs-2 text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+         
 
           {/* Liste des commandes récentes */}
           <div className='card shadow mb-4'>
@@ -790,92 +578,7 @@ const AdminDashboard = () => {
                 </table>
               </div>
             </div>
-            {/* Vendeurs en attente */}
-            <div className='card shadow mb-4'>
-              <div className='card-header py-3 d-flex flex-row align-items-center justify-content-between'>
-                <h6 className='m-0 font-weight-bold text-primary'>
-                  Vendeurs en attente d'approbation
-                </h6>
-                <Link to='/admin/vendeurs' className='btn btn-sm btn-primary'>
-                  Voir tous les vendeurs
-                </Link>
-              </div>
-              <div className='card-body'>
-                {pendingVendors.length === 0 ? (
-                  <div className="text-center py-4">
-                    <i className="bi bi-check-circle text-success fs-1"></i>
-                    <p className="mt-2 mb-0">Aucun vendeur en attente d'approbation</p>
-                  </div>
-                ) : (
-                  <div className='table-responsive'>
-                    <table className='table table-bordered'>
-                      <thead className='table-light'>
-                        <tr>
-                          <th>Nom</th>
-                          <th>Email</th>
-                          <th>Téléphone</th>
-                          <th>Boutique</th>
-                          <th>Date d'inscription</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pendingVendors.map(vendor => (
-                          <tr key={vendor.id}>
-                            <td>
-                              {vendor.nom} {vendor.prenom}
-                            </td>
-                            <td>{vendor.email}</td>
-                            <td>{vendor.telephone}</td>
-                            <td>
-                              {vendor.boutique ? (
-                                <>
-                                  <strong>{vendor.boutique.nom}</strong><br />
-                                  <small>{vendor.boutique.ville}</small>
-                                  {vendor.boutique.siret && (
-                                    <div className="small text-muted mt-1">
-                                      SIRET: {vendor.boutique.siret}
-                                    </div>
-                                  )}
-                                </>
-                              ) : (
-                                'Non renseigné'
-                              )}
-                            </td>
-                            <td>{vendor.date_inscription}</td>
-                            <td>
-                              <div className='btn-group' role='group'>
-                                <button
-                                  className='btn btn-sm btn-outline-success'
-                                  onClick={() => handleVendorApproval(vendor.id, true)}
-                                  title="Approuver le vendeur"
-                                >
-                                  <i className='bi bi-check-lg'></i>
-                                </button>
-                                <button
-                                  className='btn btn-sm btn-outline-danger'
-                                  onClick={() => handleVendorApproval(vendor.id, false)}
-                                  title="Rejeter le vendeur"
-                                >
-                                  <i className='bi bi-x-lg'></i>
-                                </button>
-                                <Link
-                                  to={`/admin/vendeurs/${vendor.id}`}
-                                  className='btn btn-sm btn-outline-primary'
-                                  title="Voir les détails"
-                                >
-                                  <i className='bi bi-eye'></i>
-                                </Link>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            </div>
+           
           </div>
         </main>
       </div>

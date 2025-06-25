@@ -233,7 +233,7 @@ const Header = () => {
                     whileTap={{ scale: 0.9 }}
                     href="#"
                     onClick={handleCartClick}
-                    className='cart-button'
+                    className='cart-button'    
                   >
                     <i className='bi bi-cart-fill'></i>
                     {cartCount > 0 && (

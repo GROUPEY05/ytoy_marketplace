@@ -103,9 +103,9 @@ const Dashboard = () => {
             <div className="card-body">
               <div className="text-center mb-3">
                 <div className="avatar bg-light rounded-circle p-3 mx-auto mb-3" style={{ width: '100px', height: '100px', color:'#FF6F00' }}>
-                  <span className="fs-1 " style={{color:'#FF6F00'}}> {currentUser.prenom.charAt(0)}{currentUser.nom.charAt(0)}</span>
+                  <span className="fs-1 " style={{color:'#FF6F00'}}> {currentUser.nom.charAt(0)}</span>
                 </div>
-                <h5>{currentUser.prenom} {currentUser.nom}</h5>
+                <h5>{currentUser.nom}</h5>
                 {/* <p className="text-muted">{currentUser.email}</p> */}
               </div>
               <div className="list-group">
@@ -150,7 +150,7 @@ const Dashboard = () => {
             <div className="card-body">
               <div className="alert alert-info" role="alert" >
                 <i className="bi bi-info-circle me-2"></i>
-                Bienvenue dans votre espace personnel, {currentUser.prenom}!
+                Bienvenue dans votre espace personnel, {currentUser.nom}!
               </div>
 
               <div className="row mb-4">

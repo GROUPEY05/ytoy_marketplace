@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin; // Ajout du namespace correct
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Categorie; // Import du modèle Categorie
 use Illuminate\Http\Request; // Import de la classe Request
 use App\Http\Controllers\Controller; // Import de la classe Controller
+
 class CategorieController extends Controller
 {
     // 🔓 Méthodes publiques (visibles par tous les utilisateurs)
@@ -20,11 +21,11 @@ class CategorieController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
         ]);
-    
+
         $categorie = Categorie::create([
             'nom' => $request->nom,
         ]);
-    
+
         return response()->json($categorie, 201);
     }
 
@@ -44,6 +45,10 @@ class CategorieController extends Controller
 
     public function show($id)
     {
-        return Categorie::findOrFail($id);
+        $categorie = Categorie::with('produits.images')->findOrFail($id);
+
+        return response()->json($categorie);
     }
+    
+
 }

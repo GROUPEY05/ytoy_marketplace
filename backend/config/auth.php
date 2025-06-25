@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => 'api',
+        'passwords' => 'utilisateurs',
     ],
 
     /*
@@ -95,8 +95,8 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'utilisateurs' => [
+            'provider' => 'utilisateurs',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

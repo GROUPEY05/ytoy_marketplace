@@ -28,7 +28,9 @@ import HomePage from './pages/HomePage';
 import ProductList from './components/products/ProductList';
 import ProductDetail from './components/products/ProductDetail';
 import ProduitsByCategorie from './components/products/ProduitsByCategorie';
-import ProductsPage from './components/products/ProductsPage';
+import HomeProducts from './components/products/HomeProducts';
+import HomeCategoryPreview from './components/products/HomeCategoryPreview'
+
 
 import PaymentForm from './components/payment/PaymentForm';
 
@@ -39,6 +41,8 @@ import Orders from './components/acheteur/Orders';
 import Wishlist from './components/acheteur/Wishlist';
 import Addresses from './components/acheteur/Addresses';
 import Invoice from './components/acheteur/Invoice';
+import PromotionSection from './components/acheteur/PromotionSection';
+
 import Cart from './components/Cart';
 import OrderHistory from './components/orders/OrderHistory';
 import Checkout from './components/checkout/Checkout';
@@ -73,6 +77,7 @@ const App = () => {
           <Routes>
             {/* Routes publiques */}
             <Route path="/" element={<Home />} />
+            <Route path="/produit-par-categorie" element={<HomeCategoryPreview />} />
             <Route path="/promotions-page" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -80,9 +85,10 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/about" element={<About />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/categories/:categorieId" element={<ProduitsByCategorie />} />
-            <Route path="/produits/:productId" element={<ProductDetail />} />
+            
+             <Route path="/categorie/:nom" element={<ProduitsByCategorie />} />
+            <Route path="/produits/:id" element={<ProductDetail />} />
+             <Route path="/produits" element={<HomeProducts />} />
             <Route path="/promotions/:type" element={<ProductList />} />
 
             {/* Routes protégées pour les acheteurs */}
@@ -91,6 +97,7 @@ const App = () => {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders" element={<OrderHistory />} />
               <Route path="/acheteur/dashboard" element={<Dashboard />} />
+              <Route path="/acheteur/promotion-liste" element={<PromotionSection />} />
               <Route path="/acheteur/profile" element={<Profile />} />
               <Route path="/acheteur/orders" element={<Orders />} />
               <Route path="/acheteur/orders/:orderId/invoice" element={<Invoice />} />
