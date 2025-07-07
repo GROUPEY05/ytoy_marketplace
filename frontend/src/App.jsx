@@ -43,7 +43,7 @@ import Addresses from './components/acheteur/Addresses';
 import Invoice from './components/acheteur/Invoice';
 import PromotionSection from './components/acheteur/PromotionSection';
 
-import Cart from './components/Cart';
+
 import OrderHistory from './components/orders/OrderHistory';
 import Checkout from './components/checkout/Checkout';
 
@@ -93,7 +93,7 @@ const App = () => {
 
             {/* Routes protégées pour les acheteurs */}
             <Route element={<ProtectedRoute requiredRole="acheteur" />}>
-              <Route path="/cart" element={<Cart />} />
+              
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/orders" element={<OrderHistory />} />
               <Route path="/acheteur/dashboard" element={<Dashboard />} />

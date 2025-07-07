@@ -20,7 +20,6 @@ class CommandeController extends Controller
     {
         // On récupère les commandes qui contiennent au moins un article du vendeur connecté
         DB::enableQueryLog();
-       
 
         // Vérifions d'abord les commandes sans jointure
         $commandes = Commande::whereHas('lignes', function ($query) {
@@ -28,10 +27,10 @@ class CommandeController extends Controller
                 $query->where('vendeur_id', Auth::id());
             });
         })->get();
-        
+
         Log::info('Commandes trouvées:', [
             'count' => $commandes->count(),
-            'commandes' => $commandes->map(function($c) {
+            'commandes' => $commandes->map(function ($c) {
                 return ['id' => $c->id, 'utilisateur_id' => $c->utilisateur_id];
             })
         ]);
@@ -41,7 +40,7 @@ class CommandeController extends Controller
         $utilisateurs = DB::table('utilisateurs')
             ->whereIn('id', $utilisateurIds)
             ->get();
-        
+
         Log::info('Utilisateurs trouvés:', [
             'count' => $utilisateurs->count(),
             'utilisateurs' => $utilisateurs
@@ -54,7 +53,7 @@ class CommandeController extends Controller
                     $query->where('vendeur_id', Auth::id());
                 });
             });
-        
+
         // Log the query
         Log::info('SQL Query:', DB::getQueryLog());
 
@@ -63,11 +62,11 @@ class CommandeController extends Controller
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('order_number', 'like', "%{$searchTerm}%")
-                  ->orWhereHas('utilisateur', function ($q) use ($searchTerm) {
-                      $q->where('nom', 'like', "%{$searchTerm}%")
-                        ->orWhere('prenom', 'like', "%{$searchTerm}%")
-                        ->orWhere('email', 'like', "%{$searchTerm}%");
-                  });
+                    ->orWhereHas('utilisateur', function ($q) use ($searchTerm) {
+                        $q->where('nom', 'like', "%{$searchTerm}%")
+                            ->orWhere('prenom', 'like', "%{$searchTerm}%")
+                            ->orWhere('email', 'like', "%{$searchTerm}%");
+                    });
             });
         }
 
@@ -89,22 +88,117 @@ class CommandeController extends Controller
 
         // Formater les résultats pour inclure seulement les informations pertinentes
         $orders->getCollection()->transform(function ($order) {
-            // Récupérer les informations de l'utilisateur
             $utilisateur = $order->utilisateur;
-            
-            // Calculer le nombre d'articles du vendeur dans cette commande
-            $vendorItems = $order->lignes->filter(function($ligne) {
+
+            $prenom = $utilisateur->prenom === $utilisateur->email ? '' : $utilisateur->prenom;
+            $nomComplet = trim($utilisateur->nom . ' ' . $prenom);
+
+            $vendorItems = $order->lignes->filter(function ($ligne) {
                 return $ligne->produit->vendeur_id === Auth::id();
             });
-            
-            // Calculer le montant total pour ce vendeur uniquement
+
             $vendorTotal = $vendorItems->sum(function ($item) {
                 return $item->prix_unitaire * $item->quantite;
             });
-            
+
+            return [
+                'id' => $order->id,
+                'order_numero' => $order->numero_commande,
+                'customer_nom' => !empty($nomComplet) ? $nomComplet : 'N/A',
+                'customer_email' => $utilisateur->email ?? 'N/A',
+                'montant_total' => $vendorTotal,
+                'item_count' => $vendorItems->count(),
+                'statut' => $order->statut,
+                'created_at' => $order->created_at,
+                'invoice_id' => $order->invoice_id
+            ];
+        });
+
+
+        return response()->json($orders);
+    }
+
+    /**
+     * Afficher les commandes recentes du vendeur
+     */
+    public function getRecentOrders(Request $request)
+    {
+        DB::enableQueryLog();
+
+        // Vérifions d'abord les commandes sans jointure
+        $commandes = Commande::whereHas('lignes', function ($query) {
+            $query->whereHas('produit', function ($query) {
+                $query->where('vendeur_id', Auth::id());
+            });
+        })->get();
+
+        Log::info('Commandes trouvées:', [
+            'count' => $commandes->count(),
+            'commandes' => $commandes->map(fn($c) => ['id' => $c->id, 'utilisateur_id' => $c->utilisateur_id])
+        ]);
+
+        // Vérifions les utilisateurs correspondants
+        $utilisateurIds = $commandes->pluck('utilisateur_id')->unique();
+        $utilisateurs = DB::table('utilisateurs')->whereIn('id', $utilisateurIds)->get();
+
+        Log::info('Utilisateurs trouvés:', [
+            'count' => $utilisateurs->count(),
+            'utilisateurs' => $utilisateurs
+        ]);
+
+        // Requête principale
+        $query = Commande::with(['utilisateur', 'lignes.produit'])
+            ->whereHas('lignes', function ($query) {
+                $query->whereHas('produit', function ($query) {
+                    $query->where('vendeur_id', Auth::id());
+                });
+            });
+
+        // Recherche
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('order_number', 'like', "%{$searchTerm}%")
+                    ->orWhereHas('utilisateur', function ($q) use ($searchTerm) {
+                        $q->where('nom', 'like', "%{$searchTerm}%")
+                            ->orWhere('prenom', 'like', "%{$searchTerm}%")
+                            ->orWhere('email', 'like', "%{$searchTerm}%");
+                    });
+            });
+        }
+
+        // Filtre par statut
+        if ($request->has('statut') && !empty($request->statut)) {
+            $query->where('statut', $request->statut);
+        }
+
+        // Tri
+        $sortField = $request->sort_by ?? 'created_at';
+        $sortDirection = $request->sort_direction ?? 'desc';
+        $query->orderBy($sortField, $sortDirection);
+
+        // Limiter aux 3 dernières
+        $orders = $query->take(3)->get();
+
+        Log::info('Orders before transform:', ['orders' => $orders->toArray()]);
+
+        // Formater les résultats
+        $formatted = $orders->map(function ($order) {
+            $utilisateur = $order->utilisateur;
+
+            $vendorItems = $order->lignes->filter(
+                fn($ligne) =>
+                $ligne->produit && $ligne->produit->vendeur_id === Auth::id()
+            );
+
+            $vendorTotal = $vendorItems->sum(
+                fn($item) =>
+                $item->prix_unitaire * $item->quantite
+            );
+
             $nomComplet = 'N/A';
             $email = 'N/A';
-            
+
             if ($utilisateur) {
                 $prenom = $utilisateur->prenom === $utilisateur->email ? '' : $utilisateur->prenom;
                 $nomComplet = trim($utilisateur->nom . ' ' . $prenom);
@@ -133,8 +227,12 @@ class CommandeController extends Controller
             ];
         });
 
-        return response()->json($orders);
+        return response()->json($formatted);
     }
+    /**
+     * Afficher les commandes recentes du vendeur
+     */
+
 
     /**
      * Afficher les détails d'une commande spécifique
@@ -151,7 +249,7 @@ class CommandeController extends Controller
             )
             ->where('commandes.id', $id)
             ->firstOrFail();
-        
+
         // Vérifier que le vendeur a des articles dans cette commande
         $vendorItems = LigneCommande::where('commande_id', $order->id)
             ->whereHas('produit', function ($query) {
@@ -159,25 +257,25 @@ class CommandeController extends Controller
             })
             ->with(['produit', 'produit.images'])
             ->get();
-        
+
         if ($vendorItems->isEmpty()) {
             return response()->json(['message' => 'Aucun produit de ce vendeur dans cette commande'], 403);
         }
-        
+
         // Calculer le sous-total pour ce vendeur
         $subtotal = $vendorItems->sum(function ($item) {
             return $item->unit_price * $item->quantity;
         });
-        
+
         // Calculer les taxes proportionnelles (si applicable)
         $taxRate = $order->tax_rate ?? 0.2; // 20% par défaut
         $tax = $subtotal * $taxRate;
-        
+
         // Si les frais de livraison sont partagés entre les vendeurs
         $totalItems = LigneCommande::where('commande_id', $order->id)->count();
         $vendorItemsCount = $vendorItems->count();
         $shippingCost = $order->shipping_cost * ($vendorItemsCount / $totalItems);
-        
+
         // Formater les items pour l'affichage
         $formattedItems = $vendorItems->map(function ($item) {
             return [
@@ -188,12 +286,12 @@ class CommandeController extends Controller
                 'quantite' => $item->quantite
             ];
         });
-        
+
         // Construire la réponse
         $response = [
             'id' => $order->id,
             'commande_numero' => $order->numero_commande,
-            'customer_nom' => ($prenom = $order->user_prenom === $order->user_email ? '' : $order->user_prenom) && 
+            'customer_nom' => ($prenom = $order->user_prenom === $order->user_email ? '' : $order->user_prenom) &&
                 !empty(trim($order->user_nom . ' ' . $prenom)) ? trim($order->user_nom . ' ' . $prenom) : 'N/A',
             'customer_email' => $order->user_email ?? 'N/A',
             'customer_phone' => $order->user_telephone ?? 'N/A',
@@ -207,7 +305,7 @@ class CommandeController extends Controller
             'created_at' => $order->created_at,
             'invoice_id' => $order->invoice_id
         ];
-        
+
         return response()->json($response);
     }
 
@@ -229,29 +327,29 @@ class CommandeController extends Controller
         ]);
 
         $order = Commande::findOrFail($id);
-        
+
         // Vérifier que le vendeur a des articles dans cette commande
         $hasItems = LigneCommande::where('commande_id', $order->id)
             ->whereHas('produit', function ($query) {
                 $query->where('vendeur_id', Auth::id());
             })
             ->exists();
-        
+
         if (!$hasItems) {
             return response()->json(['message' => 'Aucun produit de ce vendeur dans cette commande'], 403);
         }
-        
+
         try {
             // Dans une marketplace multi-vendeurs, il serait plus logique d'avoir un statut par vendeur
             // Mais pour simplifier, nous mettons à jour le statut global de la commande
             $order->statut = $validated['statut'];
             $order->save();
-            
+
             // Si la commande est annulée, remettre les articles en stock
             if ($validated['statut'] === Commande::STATUT_ANNULEE) {
                 $this->restoreStock($order->id);
             }
-            
+
             return response()->json([
                 'message' => 'Statut mis à jour avec succès',
                 'statut' => $order->statut
@@ -263,7 +361,7 @@ class CommandeController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Remettre les produits en stock pour les commandes annulées
      */
@@ -275,7 +373,7 @@ class CommandeController extends Controller
                 $query->where('vendeur_id', Auth::id());
             })
             ->get();
-        
+
         foreach ($orderItems as $item) {
             $produit = Produit::find($item->produit_id);
             if ($produit) {

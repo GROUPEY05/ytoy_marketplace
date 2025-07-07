@@ -3,6 +3,10 @@ import { Modal, Button, Table, Form } from 'react-bootstrap'
 import { apiClient } from '../../services/api'
 import useCartStore from '../../store/cartStore'
 import './CartModal.css'
+import orangeLogo from '../../assets/orange.jpeg'
+import carteLogo from '../../assets/carte.jpeg'
+import especeLogo from '../../assets/especes.png'
+import mobileMoneyLogo from '../../assets/mtn.jpeg'
 
 const CartModal = () => {
   const [cartItems, setCartItems] = useState([])
@@ -16,6 +20,18 @@ const CartModal = () => {
   const [defaultImage, setDefaultImage] = useState(
     'http://localhost:8000/assets/placeholder.png'
   )
+  const logoMap = {
+    mobile_money: mobileMoneyLogo,
+    orange_money: orangeLogo,
+    carte: carteLogo,
+    especes: especeLogo
+  }
+  const labelMap = {
+    mobile_money: 'Mobile Money',
+    orange_money: 'Orange Money',
+    carte: 'Carte bancaire',
+    especes: 'Espèces'
+  }
 
   // Pas besoin de précharger l'image par défaut car nous utilisons une image locale
 
@@ -232,7 +248,36 @@ const CartModal = () => {
                   <p className='item-price'>{item.prix} FCFA</p>
                 </div>
                 <div className='item-quantity'>
-                 
+                  <div className='quantity-controls'>
+                    <button
+                      type='button'
+                      className='quantity-btn'
+                      onClick={() => {
+                        const currentQty = item.pivot?.quantite || 1
+                        if (currentQty > 1) {
+                          handleQuantityChange(item.id, currentQty - 1)
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                    <span className='quantity-display'>
+                      {item.pivot?.quantite || 1}
+                    </span>
+                    <button
+                      type='button'
+                      className='quantity-btn'
+                      onClick={() => {
+                        const currentQty = item.pivot?.quantite || 1
+                        const maxQty = item.quantite_stock || 99
+                        if (currentQty < maxQty) {
+                          handleQuantityChange(item.id, currentQty + 1)
+                        }
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
                 <div className='item-total'>
                   {item.prix * item.pivot.quantite} FCFA
@@ -279,8 +324,10 @@ const CartModal = () => {
                     placeholder='Entrez votre adresse de livraison'
                   />
                 </Form.Group>
-                <Form.Group className='mb-3'>
-                  <Form.Label>Méthode de paiement</Form.Label>
+                <Form.Group className='mb-4'>
+                  <Form.Label className='fw-semibold'>
+                    Méthode de paiement
+                  </Form.Label>
                   <Form.Select
                     value={methodePaiement}
                     onChange={e => setMethodePaiement(e.target.value)}
@@ -290,6 +337,17 @@ const CartModal = () => {
                     <option value='carte'>Carte bancaire</option>
                     <option value='especes'>Espèces</option>
                   </Form.Select>
+
+                  <div className='mt-3 d-flex align-items-center gap-3'>
+                    <img
+                      src={logoMap[methodePaiement]}
+                      alt={labelMap[methodePaiement]}
+                      width={40}
+                      height={40}
+                      style={{ objectFit: 'contain' }}
+                    />
+                    <span className='fs-6'>{labelMap[methodePaiement]}</span>
+                  </div>
                 </Form.Group>
                 <div className='action-buttons'>
                   <Button

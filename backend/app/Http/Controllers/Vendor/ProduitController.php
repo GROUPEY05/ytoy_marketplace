@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
-class ProduitController extends Controller  
+class ProduitController extends Controller
 {
     /**
      * Afficher la liste des produits du vendeur 
@@ -25,7 +26,7 @@ class ProduitController extends Controller
             'is_authenticated' => Auth::check(),
             'headers' => $request->headers->all()
         ]);
-        
+
         $query = Produit::where('vendeur_id', Auth::id())
             ->with(['categorie', 'images']);
 
@@ -91,7 +92,7 @@ class ProduitController extends Controller
             'categorie_id' => 'required|exists:categories,id',
             'quantite_stock' => 'required|integer|min:0',
             'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:2048',
-            
+
         ]);
 
         try {
@@ -113,7 +114,7 @@ class ProduitController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $imageFile) {
                     $path = $imageFile->store('produits', 'public');
-                    
+
                     $produitImage = new ProduitImage();
                     $produitImage->produit_id = $produit->id;
                     $produitImage->url = Storage::url($path);
@@ -136,7 +137,7 @@ class ProduitController extends Controller
         }
     }
 
-    
+
 
     /**
      * Afficher un produit spécifique
@@ -146,7 +147,7 @@ class ProduitController extends Controller
         $produit = Produit::with(['categorie', 'images'])
             ->where('vendeur_id', Auth::id())
             ->findOrFail($id);
-        
+
         return response()->json($produit);
     }
 
@@ -158,9 +159,9 @@ class ProduitController extends Controller
         $produit = Produit::with(['categorie', 'images'])
             ->where('vendeur_id', Auth::id())
             ->findOrFail($id);
-        
+
         $categories = Categorie::all(['id', 'nom']);
-        
+
         return response()->json([
             'produit' => $produit,
             'categories' => $categories
@@ -212,7 +213,7 @@ class ProduitController extends Controller
                     if (Storage::disk('public')->exists($filePath)) {
                         Storage::disk('public')->delete($filePath);
                     }
-                    
+
                     // Supprimer l'enregistrement
                     $image->delete();
                 }
@@ -222,7 +223,7 @@ class ProduitController extends Controller
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $imageFile) {
                     $path = $imageFile->store('produits', 'public');
-                    
+
                     $produitImage = new ProduitImage();
                     $produitImage->produit_id = $produit->id;
                     $produitImage->url = Storage::url($path);
@@ -264,7 +265,7 @@ class ProduitController extends Controller
                 if (Storage::disk('public')->exists($filePath)) {
                     Storage::disk('public')->delete($filePath);
                 }
-                
+
                 // Supprimer l'enregistrement
                 $image->delete();
             }
@@ -292,15 +293,17 @@ class ProduitController extends Controller
     public function getFeatured(Request $request)
     {
         $perPage = $request->per_page ?? 8;
-        
-        $produits = Produit::with(['images' => function ($query) {
+
+        $produits = Produit::with([
+            'images' => function ($query) {
                 $query->select('id', 'produit_id', 'url')->limit(1);
-            }])
+            }
+        ])
             ->where('actif', true)
             ->orderBy('date_ajout', 'desc')
             ->limit($perPage)
             ->get();
-        
+
         // Ajouter l'URL de la miniature pour faciliter l'affichage côté client
         $produits->transform(function ($produit) {
             if ($produit->images->isNotEmpty()) {
@@ -316,9 +319,20 @@ class ProduitController extends Controller
             unset($produit->images);
             return $produit;
         });
-        
+
         return response()->json($produits);
     }
 
-   
+    public function generateSignedLink(Request $request, Produit $produit)
+    {
+        $url = URL::temporarySignedRoute(
+            'produit.show', // doit correspondre au nom de ta route produit
+            now()->addMinutes(60),
+            ['id' => $produit->id, 'paiement' => 1]
+        );
+
+        return response()->json(['url' => $url]);
+    }
+
+
 }

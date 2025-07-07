@@ -7,5 +7,10 @@ Route::get('/test-mail', function () {
                 ->subject('Test Mailtrap');
     });
 
+
     return 'Mail envoyé avec succès !';
+});
+
+Route::get('/', function () {
+    return 'Bienvenue sur l’API Laravel via Ngrok !';
 });

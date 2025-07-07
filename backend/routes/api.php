@@ -40,11 +40,14 @@ Route::get('/categories', [CategoriePublicController::class, 'index']);
 Route::get('/categories/nom/{nom}', [CategoriePublicController::class, 'showByNom']);
 Route::get('/categories/nom/{nom}/produits', [CategoriePublicController::class, 'getProduitsByNom']);
 Route::get('/categories-avec-produits', [CategoriePublicController::class, 'categoriesAvecProduits']);
+Route::get('/paiement-produit', [PaiementController::class, 'paiementProduit'])
+ ->name('paiement.produit');
 
 Route::get('/search/produits', [ProduitController::class, 'search']);
 Route::get('/api/user', function () {
     return request()->user();
 })->middleware('auth:sanctum');
+
 
 // Routes publiques
 Route::post('/register', [AuthController::class, 'register']);
@@ -78,34 +81,37 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify-phone', [AuthController::class, 'verifyPhone']);
     Route::post('/send-phone-verification', [AuthController::class, 'sendPhoneVerification']);
 
-    // Routes Admin
-    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'index']);
-        Route::get('/statistics', [DashboardController::class, 'getStatistics']);
-    });
+    // // Routes Admin
+    // Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
+    //     Route::get('/dashboard', [DashboardController::class, 'index']);
+    //     Route::get('/statistics', [DashboardController::class, 'getStatistics']);
+    // });
    
     
     // Routes du panier
-    Route::get('/panier', [PanierController::class, 'index']);
-    Route::get('/cart/count', [PanierController::class, 'getCount']);
-    Route::post('/panier/add', [PanierController::class, 'add']);
-    Route::put('/panier/update', [PanierController::class, 'update']);
-    Route::delete('/panier/remove/{productId}', [PanierController::class, 'remove']);
-    Route::delete('/panier/clear', [PanierController::class, 'clear']);
-    Route::post('/panier/checkout', [PanierController::class, 'checkout']);
-    Route::get('/panier/orders', [PanierController::class, 'orders']);
-    
-    // Route directe pour les commandes
-    Route::get('/orders', [PanierController::class, 'orders']);
+ Route::get('/panier', [PanierController::class, 'index']);
+ Route::get('/cart/count', [PanierController::class, 'getCount']);
+ Route::post('/panier/add', [PanierController::class, 'add']);
+ Route::put('/panier/update', [PanierController::class, 'update']);
+ Route::delete('/panier/remove/{productId}', [PanierController::class, 'remove']);
+ Route::delete('/panier/clear', [PanierController::class, 'clear']);
+ Route::post('/panier/checkout', [PanierController::class, 'checkout']);
+ Route::get('/panier/orders', [PanierController::class, 'orders']);
+ 
+ // Route directe pour les commandes
+ Route::get('/orders', [PanierController::class, 'orders']);
 
-    // Routes de paiement
-    Route::prefix('payment')->group(function () {
-        Route::post('/process', [PaiementController::class, 'process']);
-        Route::post('/verify', [PaiementController::class, 'verify']);
-        Route::get('/status/{orderId}', [PaiementController::class, 'getStatus']);
-        Route::post('/mobile-money', [PaiementController::class, 'simulateMobileMoney']);
-        Route::post('/orange-money', [PaiementController::class, 'simulateOrangeMoney']);
-    });
+ // Routes de paiement
+ Route::prefix('payment')->group(function () {
+     Route::post('/process', [PaiementController::class, 'process']);
+     Route::post('/verify', [PaiementController::class, 'verify']);
+     Route::get('/status/{orderId}', [PaiementController::class, 'getStatus']);
+     Route::post('/mobile-money', [PaiementController::class, 'simulateMobileMoney']);
+     Route::post('/orange-money', [PaiementController::class, 'simulateOrangeMoney']);
+     Route::post('/products/{id}/payment-link', [PaiementController::class, 'generateInternalLink']);
+     
+ });
+
 
     // Routes de recherche
    
@@ -151,7 +157,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/commandes', [AdminOrderController::class, 'store']);
         Route::delete('/commandes/{id}', [AdminOrderController::class, 'cancel']);
         Route::put('/commandes/{id}/status', [AdminOrderController::class, 'updateStatus']);
-        Route::get('commandes/stats', [AdminController::class, 'getOrderStats']);
+        Route::get('/commandes/stats', [AdminController::class, 'getOrderStats']);
+        Route:: get('/stats',[AdminController::class,'getStats']);
+        Route::get('/statGenerale', [AdminController::class, 'dashboard']);
         // gestion categories
         Route::get('/categories', [CategorieController::class, 'index']);
         Route::post('/categories', [CategorieController::class, 'store']);
@@ -196,6 +204,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Gestion des commandes du vendeur
         Route::get('/orders', [VendorCommandeController::class, 'index']);
+        Route::get('/recent-orders', [VendorCommandeController::class, 'getRecentOrders']);
         Route::get('/orders/{id}', [VendorCommandeController::class, 'show']);
         Route::put('/orders/{id}/status', [VendorCommandeController::class, 'updateStatus']);
 

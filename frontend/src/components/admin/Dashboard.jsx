@@ -70,57 +70,58 @@ const AdminDashboard = () => {
   const [recentUsers, setRecentUsers] = useState([])
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-
-
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const response = await adminService.getStatistics();
-        
-        if (response.data) {
-          setStats({
-            utilisateurs: response.data.utilisateurs || {
-              total: 0,
-              acheteurs: 0,
-              vendeurs: 0,
-              admins: 0
-            },
-            commandes: response.data.commandes || {
-              total: 0,
-              montant_total: 0,
-              en_attente: 0
-            },
-            produits: response.data.produits || {
-              total: 0
-            },
-            vendeurs: response.data.vendeurs || {
-              en_attente: 0
-            }
-          });
-
-          if (response.data.recentUsers) {
-            setRecentUsers(response.data.recentUsers);
-          }
-          
-          if (response.data.pendingVendors) {
-            setPendingVendors(response.data.pendingVendors);
-          }
-
-          if (response.data.orders) {
-            setOrders(response.data.orders);
-          }
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des données:', error);
-        toast.error('Erreur lors du chargement des statistiques');
-      } finally {
-        setLoading(false);
+const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await adminService.getUsers(currentPage, selectedRole, searchTerm);
+      
+      if (response.data && response.data.success) {
+        setUsers(response.data.data);
+        setCurrentPage(response.data.current_page);
+        setTotalPages(response.data.last_page);
+      } else {
+        setUsers([]);
+        setTotalPages(1);
+        setError('Aucun utilisateur trouvé.');
       }
-    };
+    } catch (error) {
+      console.error('Erreur lors du chargement des utilisateurs:', error);
+      setError('Impossible de charger la liste des utilisateurs.');
+      setUsers([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchDashboardData();
-  }, []);
+ useEffect(() => {
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const response = await adminService.getStatistics();
+
+      if (response.data && response.data.success) {
+        const data = response.data.data;
+
+        setStats({
+          utilisateurs: data.utilisateurs || defaultStats.utilisateurs,
+          commandes: data.commandes || defaultStats.commandes,
+          produits: data.produits || defaultStats.produits,
+          vendeurs: data.vendeurs || defaultStats.vendeurs
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      toast.error('Erreur lors du chargement des statistiques');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchDashboardData();
+}, []);
 
   
 
@@ -332,7 +333,7 @@ const AdminDashboard = () => {
               </button>
             </div>
           </div>
-
+          
           {/* Stats Cards */}
           <div className='row mb-4'>
             <div className='col-xl-3 col-md-6 mb-4'>

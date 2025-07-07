@@ -5,6 +5,7 @@ import './PromotionSection.css'
 
 const PromotionSection = ({ title, items, type }) => {
   // Définir les styles en fonction du type de promotion
+  
   const getBadgeStyle = () => {
     switch (type) {
       case 'nouveau':
@@ -25,10 +26,21 @@ const PromotionSection = ({ title, items, type }) => {
   }
 
   if (!items || items.length === 0) {
-    return null
-  }
-  if (!items) return <div>Pas de données chargées</div>
   return (
+    <Container className='promotion-section my-4'>
+      <div className='section-header d-flex justify-content-between align-items-center mb-3'>
+        <h3 className='section-title'>{title}</h3>
+        <Link to={`/promotions/${type}`} className='view-all'>
+          Voir tout <i className='bi bi-arrow-right'></i>
+        </Link>
+      </div>
+      <p>Aucune promotion disponible</p>
+    </Container>
+  );
+}
+   
+  return (
+    
     <Container fluid className='promotion-section my-4'>
       <div className='section-header d-flex justify-content-between align-items-center mb-3'>
         <h3 className='section-title'>{title}</h3>
@@ -37,7 +49,7 @@ const PromotionSection = ({ title, items, type }) => {
         </Link>
       </div>
       <Row>
-        {items.map(item => (
+       {Array.isArray(items) && items.map((item) => (
           <Col key={item.id} xs={12} sm={6} md={4} lg={3} className='mb-4'>
             <Card className='promotion-card h-100 shadow-sm'>
               <div className='badge-container'>

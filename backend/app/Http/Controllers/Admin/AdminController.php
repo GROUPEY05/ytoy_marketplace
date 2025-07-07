@@ -20,9 +20,7 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        // Cette ligne est importante : elle indique à Laravel d'utiliser la politique AdminPolicy
-        // pour autoriser les actions de ce contrôleur
-        $this->authorizeResource(Utilisateur::class, 'utilisateur');
+       
     }
 
     // Gestion des produits
@@ -374,11 +372,11 @@ class AdminController extends Controller
                 'commandes' => [
                     'total' => Commande::count(),
                     'aujourd_hui' => Commande::whereDate('created_at', Carbon::today())->count(),
-                    'en_attente' => Commande::where('status', 'en_attente')->count(),
-                    'en_cours' => Commande::where('status', 'en_cours')->count(),
-                    'expediees' => Commande::where('status', 'expedie')->count(),
-                    'livrees' => Commande::where('status', 'livre')->count(),
-                    'annulees' => Commande::where('status', 'annule')->count(),
+                    'en_attente' => Commande::where('statut', 'en_attente')->count(),
+                    'en_cours' => Commande::where('statut', 'en_cours')->count(),
+                    'expediees' => Commande::where('statut', 'expedie')->count(),
+                    'livrees' => Commande::where('statut', 'livre')->count(),
+                    'annulees' => Commande::where('statut', 'annule')->count(),
                 ]
             ];
 
@@ -403,8 +401,8 @@ class AdminController extends Controller
                 ->groupBy('month')
                 ->get();
 
-            $statusStats = Commande::selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
+            $statusStats = Commande::selectRaw('statut, COUNT(*) as count')
+                ->groupBy('statut')
                 ->get();
 
             return response()->json([
@@ -516,12 +514,12 @@ class AdminController extends Controller
                 'commandes' => [
                     'total' => Commande::count(),
                     'aujourd_hui' => Commande::whereDate('created_at', Carbon::today())->count(),
-                    'en_attente' => Commande::where('status', 'en_attente')->count(),
-                    'en_cours' => Commande::where('status', 'en_cours')->count(),
-                    'expediees' => Commande::where('status', 'expedie')->count(),
-                    'livrees' => Commande::where('status', 'livre')->count(),
-                    'annulees' => Commande::where('status', 'annule')->count(),
-                    'montant_total' => Commande::where('status', 'livre')->sum('montant_total'),
+                    'en_attente' => Commande::where('statut', 'en_attente')->count(),
+                    'en_cours' => Commande::where('statut', 'en_cours')->count(),
+                    'expediees' => Commande::where('statut', 'expedie')->count(),
+                    'livrees' => Commande::where('statut', 'livre')->count(),
+                    'annulees' => Commande::where('statut', 'annule')->count(),
+                    'montant_total' => Commande::where('statut', 'livre')->sum('montant_total'),
                     'montant_aujourd_hui' => Commande::whereDate('created_at', Carbon::today())->sum('montant_total')
                 ]
             ];
@@ -541,7 +539,7 @@ class AdminController extends Controller
                             'email' => $order->utilisateur->email
                         ] : null,
                         'montant_total' => $order->montant_total,
-                        'status' => $order->status,
+                        'statut' => $order->status,
                         'date' => $order->created_at->format('Y-m-d H:i:s'),
                         'produits' => $order->produits->map(function ($produit) {
                             return [
@@ -769,11 +767,11 @@ class AdminController extends Controller
             $total_vendors = Utilisateur::where('role', 'vendeur')->count();
             $total_products = Produit::count();
             $total_orders = Commande::count();
-            $total_revenue = Commande::where('status', 'completed')->sum('montant_total');
+            $total_revenue = Commande::where('statut', 'completed')->sum('montant_total');
 
             // Calcul des statistiques supplémentaires
             $new_users_today = Utilisateur::whereDate('created_at', Carbon::today())->count();
-            $orders_pending = Commande::where('status', 'en_attente')->count();
+            $orders_pending = Commande::where('statut', 'en_attente')->count();
 
             return response()->json([
                 'total_users' => $total_users,
@@ -803,7 +801,7 @@ class AdminController extends Controller
                         'id' => $order->id,
                         'customer' => $order->user ? ($order->user->nom ?? 'Client inconnu') : 'Client inconnu',
                         'total' => $order->montant_total ?? 0,
-                        'status' => $order->status ?? 'en_attente',
+                        'statut' => $order->statut ?? 'en_attente',
                         'date' => $order->created_at->format('Y-m-d H:i:s'),
                         'items_count' => $order->produits->count()
                     ];

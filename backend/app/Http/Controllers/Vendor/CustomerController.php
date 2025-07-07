@@ -27,7 +27,7 @@ class CustomerController extends Controller
         
         // Requête pour récupérer les clients avec leurs informations
         $query = User::whereIn('id', $customerIds)
-            ->where('role', 'client');
+            ->where('role', 'acheteur');
         
         // Recherche
         if ($request->has('search') && !empty($request->search)) {
@@ -57,16 +57,16 @@ class CustomerController extends Controller
                     $query->where('vendeur_id', Auth::id());
                 });
             })
-            ->where('user_id', $customer->id)
+            ->where('utilisateur_id', $customer->id)
             ->count();
             
             // Calculer le montant total dépensé par ce client pour les produits du vendeur
-            $totalSpent = DB::table('ligne_commandes')
-                ->join('produits', 'ligne_commandes.produit_id', '=', 'produits.id')
-                ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
+            $totalSpent = DB::table('lignes_commande')
+                ->join('produits', 'lignes_commande.produit_id', '=', 'produits.id')
+                ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
                 ->where('produits.vendeur_id', Auth::id())
-                ->where('commandes.user_id', $customer->id)
-                ->sum(DB::raw('ligne_commandes.unit_price * ligne_commandes.quantity'));
+                ->where('commandes.utilisateur_id', $customer->id)
+                ->sum(DB::raw('lignes_commande.prix_unitaire * lignes_commande.quantite'));
             
             // Ajouter ces informations au client
             $customer->total_orders = $totalOrders;
@@ -88,20 +88,20 @@ class CustomerController extends Controller
             ->unique()
             ->count(),
             'returning_customers' => DB::table('commandes')
-                ->join('ligne_commandes', 'commandes.id', '=', 'ligne_commandes.commande_id')
-                ->join('produits', 'ligne_commandes.produit_id', '=', 'produits.id')
+                ->join('lignes_commande', 'commandes.id', '=', 'lignes_commande.commande_id')
+                ->join('produits', 'lignes_commande.produit_id', '=', 'produits.id')
                 ->where('produits.vendeur_id', Auth::id())
-                ->select('commandes.user_id')
-                ->groupBy('commandes.user_id')
+                ->select('commandes.utilisateur_id')
+                ->groupBy('commandes.utilisateur_id')
                 ->havingRaw('COUNT(DISTINCT commandes.id) > 1')
                 ->count(),
-            'average_order_value' => DB::table('ligne_commandes')
-                ->join('produits', 'ligne_commandes.produit_id', '=', 'produits.id')
-                ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
+            'average_order_value' => DB::table('lignes_commande')
+                ->join('produits', 'lignes_commande.produit_id', '=', 'produits.id')
+                ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
                 ->where('produits.vendeur_id', Auth::id())
                 ->select('commandes.id')
                 ->groupBy('commandes.id')
-                ->avg(DB::raw('ligne_commandes.unit_price * ligne_commandes.quantity'))
+                ->avg(DB::raw('lignes_commande.prix_unitaire * lignes_commande.quantite'))
         ];
         
         // Ajouter les statistiques à la réponse
@@ -124,7 +124,7 @@ class CustomerController extends Controller
                 $query->where('vendeur_id', Auth::id());
             });
         })
-        ->where('user_id', $id)
+        ->where('utilisateur_id', $id)
         ->exists();
         
         if (!$hasOrders) {
@@ -142,12 +142,12 @@ class CustomerController extends Controller
         ->get();
         
         // Calculer le montant total dépensé par ce client pour les produits du vendeur
-        $totalSpent = DB::table('ligne_commandes')
-            ->join('produits', 'ligne_commandes.produit_id', '=', 'produits.id')
-            ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
+        $totalSpent = DB::table('lignes_commande')
+            ->join('produits', 'lignes_commande.produit_id', '=', 'produits.id')
+            ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
             ->where('produits.vendeur_id', Auth::id())
             ->where('commandes.user_id', $id)
-            ->sum(DB::raw('ligne_commandes.unit_price * ligne_commandes.quantity'));
+            ->sum(DB::raw('lignes_commande.prix_unitaire * lignes_commande.quantite'));
         
         // Formater les commandes pour l'affichage
         $formattedOrders = $orders->map(function ($order) {

@@ -1,6 +1,6 @@
 /* src/components/HeroSection.css */
 
-.container-fluid{
+#login  {
     height: 100vh;
     background-image: url('../../../public/image/img_connecction.jpg'); /* Chemin vers l'image de fond */
     background-size: cover;
@@ -11,7 +11,7 @@
   }
   
   /* Effet sombre (overlay noir transparent) */
-  .container-fluid::before {
+  #login::before {
     content: '';
     position: absolute;
     top: 0;

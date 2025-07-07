@@ -78,12 +78,12 @@ class AnalyticsController extends Controller
      */
     private function calculateTotalRevenue($productIds, $startDate)
     {
-        return DB::table('ligne_commandes')
-            ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
-            ->whereIn('ligne_commandes.produit_id', $productIds)
+        return DB::table('lignes_commande')
+            ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
+            ->whereIn('lignes_commande.produit_id', $productIds)
             ->where('commandes.created_at', '>=', $startDate)
             ->where('commandes.statut', '!=', 'annulee')
-            ->sum(DB::raw('ligne_commandes.unit_price * ligne_commandes.quantity'));
+            ->sum(DB::raw('lignes_commande.prix_unitaire * lignes_commande.quantite'));
     }
     
     /**
@@ -128,14 +128,14 @@ class AnalyticsController extends Controller
         }
         
         // Récupérer les données de revenus par jour/semaine/mois
-        $revenueData = DB::table('ligne_commandes')
-            ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
-            ->whereIn('ligne_commandes.produit_id', $productIds)
+        $revenueData = DB::table('lignes_commande')
+            ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
+            ->whereIn('lignes_commande.produit_id', $productIds)
             ->where('commandes.created_at', '>=', $startDate)
             ->where('commandes.statut', '!=', 'annulee')
             ->select(
                 DB::raw("DATE_FORMAT(commandes.created_at, '%Y-%m-%d') as date"),
-                DB::raw('SUM(ligne_commandes.unit_price * ligne_commandes.quantity) as revenue')
+                DB::raw('SUM(lignes_commande.prix_unitaire * lignes_commande.quantite) as revenue')
             )
             ->groupBy('date')
             ->get()
@@ -178,23 +178,23 @@ class AnalyticsController extends Controller
      */
     private function generateProductPerformance($productIds, $startDate)
     {
-        $topProducts = DB::table('ligne_commandes')
-            ->join('commandes', 'ligne_commandes.commande_id', '=', 'commandes.id')
-            ->join('produits', 'ligne_commandes.produit_id', '=', 'produits.id')
-            ->whereIn('ligne_commandes.produit_id', $productIds)
+        $topProducts = DB::table('lignes_commande')
+            ->join('commandes', 'lignes_commande.commande_id', '=', 'commandes.id')
+            ->join('produits', 'lignes_commande.produit_id', '=', 'produits.id')
+            ->whereIn('lignes_commande.produit_id', $productIds)
             ->where('commandes.created_at', '>=', $startDate)
             ->where('commandes.statut', '!=', 'annulee')
             ->select(
                 'produits.id',
-                'produits.titre',
-                DB::raw('SUM(ligne_commandes.quantity) as total_quantity')
+                'produits.nom',
+                DB::raw('SUM(lignes_commande.quantite) as total_quantity')
             )
-            ->groupBy('produits.id', 'produits.titre')
+            ->groupBy('produits.id', 'produits.nom')
             ->orderBy('total_quantity', 'desc')
             ->limit(10)
             ->get();
-        
-        $labels = $topProducts->pluck('titre')->toArray();
+
+        $labels = $topProducts->pluck('nom')->toArray();
         $sales = $topProducts->pluck('total_quantity')->toArray();
         
         return [

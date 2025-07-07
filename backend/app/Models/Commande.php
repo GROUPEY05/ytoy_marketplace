@@ -50,7 +50,7 @@ class Commande extends Model
 
     public function customer()
     {
-        return $this->belongsTo(User::class, 'utilisateur_id');
+        return $this->belongsTo(Utilisateur::class, 'utilisateur_id');
     }
 
     /**
@@ -76,8 +76,13 @@ class Commande extends Model
 
     public function produits()
     {
-        return $this->belongsToMany(Produit::class, 'ligne_commandes')
+        return $this->belongsToMany(Produit::class, 'lignes_commande')
             ->withPivot(['quantite', 'prix_unitaire'])
             ->withTimestamps();
     }
+    public function items()
+    {
+        return $this->hasMany(LigneCommande::class);
+    }
+
 }

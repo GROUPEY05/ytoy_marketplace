@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Models\Produit;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class PaiementController extends Controller
 {
@@ -22,9 +25,9 @@ class PaiementController extends Controller
             $request->validate([
                 'commande_id' => 'required|exists:commandes,id'
             ]);
-            
+
             $order = Commande::findOrFail($request->commande_id);
-            
+
             if ($order->utilisateur_id !== Auth::id()) {
                 return response()->json(['error' => 'Non autorisé'], 403);
             }
@@ -54,7 +57,7 @@ class PaiementController extends Controller
             ]);
 
             $order = Commande::findOrFail($request->commande_id);
-            
+
             if ($order->utilisateur_id !== Auth::id()) {
                 return response()->json(['error' => 'Non autorisé'], 403);
             }
@@ -90,7 +93,7 @@ class PaiementController extends Controller
             ]);
 
             $order = Commande::findOrFail($request->commande_id);
-            
+
             if ($order->utilisateur_id !== Auth::id()) {
                 return response()->json(['error' => 'Non autorisé'], 403);
             }
@@ -132,11 +135,11 @@ class PaiementController extends Controller
                 case 'payment_intent.succeeded':
                     $paymentIntent = $event->data->object;
                     $commandeId = $paymentIntent->metadata->commande_id;
-                    
+
                     $order = Commande::find($commandeId);
                     if ($order) {
                         $order->update(['statut' => 'validee']);
-                        
+
                         Paiement::create([
                             'commande_id' => $commandeId,
                             'montant' => $paymentIntent->amount / 100,
@@ -152,5 +155,36 @@ class PaiementController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+
+    public function paiementProduit(Request $request)
+    {
+        if (! $request->hasValidSignature()) {
+        return response()->json(['error' => 'Lien invalide ou expiré.'], 401);
+    }
+
+    // Rediriger vers le frontend avec le produit_id
+    $produitId = $request->produit_id;
+
+    return redirect()->away(env('FRONTEND_URL') . "/produit/$produitId?paiement=1");
+    }
+
+    public function generateInternalLink($produitId)
+    {
+        $produit = Produit::findOrFail($produitId);
+
+        // Génère un lien signé avec expiration (facultatif)
+        $paymentUrl = URL::temporarySignedRoute(
+            'paiement.produit',
+            now()->addMinutes(30),
+            ['token' => Str::uuid()]
+        );
+
+        // Tu peux aussi sauvegarder ce lien/token en BDD pour suivre l’état
+        return response()->json([
+            'success' => true,
+            'payment_link' => $paymentUrl,
+            'product_id' => $produit->id
+        ]);
     }
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Card, Badge, Pagination, Form, InputGroup, Row, Col, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import VendeurSidebar from './VendeurSidebar'
 
 const ProductManagement = () => {
   const [produits, setProduits] = useState([]);
@@ -105,6 +106,8 @@ const ProductManagement = () => {
 
   return (
     <Container className="my-4">
+       {/* Sidebar */}
+        <VendeurSidebar onLogout={handleLogout} />
       <Card className="shadow-sm">
         <Card.Header className="bg-dark text-white d-flex justify-content-between align-items-center">
           <h2>Gestion des produits</h2>

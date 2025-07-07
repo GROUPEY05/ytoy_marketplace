@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 // Configuration de l'URL de base pour les requêtes API
-const API_URL = 'http://localhost:8000';
+const API_URL =  'http://localhost:8000';
 
-// Récupération du token CSRF
+// Récupération du token CSRF   import.meta.env.VITE_API_URL || 
 async function getCsrfToken() {
   try {
     await apiClient.get('/sanctum/csrf-cookie');
@@ -377,7 +377,8 @@ const adminService = {
   // Dashboard et statistiques
   async getStatistics() {
     await getCsrfToken();
-    return apiClient.get('/api/administrateur/dashboard');
+    return apiClient.get('/api/administrateur/statGenerale');
+    
   },
 
   getRecentOrders: () => {
@@ -505,3 +506,4 @@ const adminService = {
 // Modification de l'export pour inclure adminService
 export { apiClient, adminService };
 export default authService;
+

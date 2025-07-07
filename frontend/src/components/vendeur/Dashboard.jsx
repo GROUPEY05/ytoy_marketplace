@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { apiClient } from '../../services/api'
 import { Home } from "lucide-react";
+import VendeurSidebar from './VendeurSidebar'
 
 
 const VendeurDashboard = () => {
@@ -77,7 +78,7 @@ const VendeurDashboard = () => {
         // Récupérer les commandes récentes
         try {
           console.log('Tentative de récupération des commandes récentes...');
-          const ordersResponse = await apiClient.get('/api/vendor/dashboard/recent-orders')
+          const ordersResponse = await apiClient.get('api/vendor/recent-orders?per_page=3&sort_by=created_at&sort_direction=desc')
           console.log('Réponse des commandes récentes:', ordersResponse.data);
         
           if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
@@ -133,91 +134,7 @@ const VendeurDashboard = () => {
     <div className='container-fluid4 mt-4'>
       <div className='row'>
         {/* Sidebar */}
-        <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse'>
-          <div className='position-sticky pt-3'>
-            <div className='text-center mb-4'>
-              <div
-                className='avatar  rounded-circle p-3 mx-auto mb-3'
-                style={{ width: '80px', height: '80px', background: 'green' }}
-              >
-                <span className='fs-1 text-white'>
-                  {currentUser?.vendeur?.nom_boutique?.charAt(0) ||
-                    currentUser?.nom?.charAt(0)}
-                </span>
-              </div>
-              <h5>{currentUser?.vendeur?.nom_boutique || currentUser?.nom}</h5>
-              <span className='badge bg-success'>Vendeur vérifié</span>
-            </div>
-
-            <ul className='nav flex-column'>
-              <li className='nav-item'>
-                <Link to='/' className='nav-link'>
-                  <Home className='me-2' />
-                  Accueil
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/dashboard' className='nav-link  active'>
-                  <i className='bi bi-speedometer2 me-2'></i>
-                  Tableau de bord
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/products' className='nav-link'>
-                  <i className='bi bi-box me-2'></i>
-                  Produits
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/orders' className='nav-link'>
-                  <i className='bi bi-bag me-2'></i>
-                  Commandes
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/customers' className='nav-link'>
-                  <i className='bi bi-people me-2'></i>
-                  Clients
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/reviews' className='nav-link'>
-                  <i className='bi bi-star me-2'></i>
-                  Avis clients
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/analytics' className='nav-link'>
-                  <i className='bi bi-graph-up me-2'></i>
-                  Statistiques
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/promotions' className='nav-link'>
-                  <i className='bi bi-tags me-2'></i>
-                  Promotions
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/vendeur/settings' className='nav-link'>
-                  <i className='bi bi-gear me-2'></i>
-                  Paramètres
-                </Link>
-              </li>
-              <li className='nav-item mt-4'>
-                <button
-                  onClick={handleLogout}
-                  className='nav-link text-danger border-0 bg-transparent d-flex align-items-center'
-                >
-                  <i className='bi bi-box-arrow-right me-2'></i>
-                  Déconnexion
-                </button>
-              </li>
-            </ul>
-
-            <hr />
-          </div>
-        </div>
+        <VendeurSidebar  />
 
         {/* Main content */}
         <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
@@ -290,7 +207,7 @@ const VendeurDashboard = () => {
                             Revenus (Mensuel)
                           </div>
                           <div className='h5 mb-0 font-weight-bold text-gray-800'>
-                            {(stats.revenue || 0).toFixed(2)} frcfa
+                            {(stats.revenue || 0).toFixed(2)} Francs
                           </div>
                         </div>
                         <div className='col-auto'>
@@ -369,24 +286,24 @@ const VendeurDashboard = () => {
                         {recentOrders && recentOrders.length > 0 ? recentOrders.map(order => (
                           <tr key={order.id}>
                             <td>#{order.id}</td>
-                            <td>{order.customer}</td>
-                            <td>{order.date}</td>
-                            <td>
-                              <span
-                                className={`badge ${
-                                  order.status === 'Livrée'
-                                    ? 'bg-success'
-                                    : order.status === 'Expédiée'
-                                    ? 'bg-info'
-                                    : order.status === 'En attente'
-                                    ? 'bg-warning'
-                                    : 'bg-secondary'
-                                }`}
-                              >
-                                {order.status}
-                              </span>
-                            </td>
-                            <td>{(order.total || 0).toFixed(2)} frcfa</td>
+                            <td>{order.customer_nom}</td>
+                            <td>{new Date(order.date_commande || order.created_at).toLocaleDateString()}</td>
+                             <td>
+                            <span className={`badge ${
+                              order.statut === 'livree' ? 'bg-success' : 
+                              order.statut === 'expediee' ? 'bg-primary' : 
+                              order.statut === 'validee' ? 'bg-info' : 
+                              order.statut === 'annulee' ? 'bg-danger' : 'bg-warning'
+                            }`}>
+                              {order.statut === 'en_attente' ? 'En attente' :
+                               order.statut === 'validee' ? 'Validée' :
+                               order.statut === 'en_preparation' ? 'En préparation' :
+                               order.statut === 'expediee' ? 'Expédiée' :
+                               order.statut === 'livree' ? 'Livrée' :
+                               order.statut === 'annulee' ? 'Annulée' : order.statut}
+                            </span>
+                          </td>
+                            <td>{order.montant_total} FCFA</td>
                             <td>
                               <Link
                                 to={`/vendeur/orders/${order.id}`}

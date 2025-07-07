@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import { apiClient } from '../../services/api'
+import VendeurSidebar from './VendeurSidebar'
 
 const VendorOrders = () => {
   const [orders, setOrders] = useState([])
@@ -125,7 +126,11 @@ const VendorOrders = () => {
   }
 
   return (
-    <Container fluid className='py-4'>
+    <div className=' container-fluid py-4'>
+      <div className='row'>
+         {/* Sidebar */}
+        <VendeurSidebar />
+        <main  className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
       {error && <Alert variant='danger'>{error}</Alert>}
 
       {loading ? (
@@ -165,7 +170,7 @@ const VendorOrders = () => {
                       <tr key={order.id}>
                         <td>#{order.id}</td>
                         <td>
-                          <div>{order.customer_email}</div>
+                          {order.customer_nom} {order.customer_prenom}
                         </td>
                         <td>
                           {new Date(order.created_at).toLocaleDateString()}
@@ -205,14 +210,14 @@ const VendorOrders = () => {
                           >
                             <i className='bi bi-pencil'></i>
                           </Button>
-                          <Button
+                          {/* <Button
                             variant='outline-secondary'
                             size='sm'
                             as={Link}
                             to={`/vendeur/invoices/${order.id}`}
                           >
                             <i className='bi bi-file-text'></i>
-                          </Button>
+                          </Button> */}
                         </td>
                       </tr>
                     ))
@@ -309,7 +314,9 @@ const VendorOrders = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </Container>
+      </main>
+    </div>
+    </div>
   )
 }
 

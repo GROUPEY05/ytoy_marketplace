@@ -317,10 +317,10 @@ const VendorPromotions = () => {
                       promotions.map((promotion) => (
                         <tr key={promotion.id}>
                           <td>{promotion.titre}</td>
-                          <td>
+                          <td >
                             {promotion.produit ? (
-                              <Link to={`/produits/${promotion.produit.id}`}>
-                                {promotion.produit.titre}
+                              <Link to={`/produits/${promotion.produit.id}`} style={{textDecoration:'none', color:'black'}}>
+                                {promotion.produit.nom}
                               </Link>
                             ) : 'N/A'}
                           </td>

@@ -27,10 +27,10 @@ class LigneCommande extends Model
     
     public function produit()
     {
-        return $this->belongsTo(Produit::class);
+        return $this->belongsTo(Produit::class, 'produit_id');
     }
     public function panier()
     {
-        return $this->belongsTo(Panier::class);
+        return $this->belongsTo(Panier::class, 'panier_id');
     }
 }
