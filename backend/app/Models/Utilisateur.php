@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;         
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -17,12 +17,12 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail, CanResetPa
     protected $table = 'utilisateurs';
 
     protected $fillable = [
-        'email', 
-        'nom', 
-        'prenom', 
-        'telephone', 
-        'adresse', 
-        'role', 
+        'email',
+        'nom',
+        'prenom',
+        'telephone',
+        'adresse',
+        'role',
         'mot_de_passe',
         'actif',
         'reset_token',
@@ -61,17 +61,17 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail, CanResetPa
     {
         return $this->hasOne(Administrateur::class, 'id');
     }
-    
+
     public function isAcheteur()
     {
         return $this->role === 'acheteur';
     }
-    
+
     public function isVendeur()
     {
         return $this->role === 'vendeur';
     }
-    
+
     public function isAdmin()
     {
         return $this->role === 'administrateur';
@@ -81,9 +81,15 @@ class Utilisateur extends Authenticatable implements MustVerifyEmail, CanResetPa
     {
         return $this->hasMany(Commande::class, 'utilisateur_id');
     }
-    
+
     public function produits()
     {
         return $this->hasMany(Produit::class, 'vendeur_id');
     }
+
+    public function campagnes()
+    {
+        return $this->hasMany(Campagne::class, 'vendeur_id');
+    }
+
 }
