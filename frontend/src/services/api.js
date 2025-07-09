@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuration de l'URL de base pour les requêtes API
-const API_URL = 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL ||  'http://localhost:8000';
 
 // Récupération du token CSRF   import.meta.env.VITE_API_URL || 
 async function getCsrfToken() {
