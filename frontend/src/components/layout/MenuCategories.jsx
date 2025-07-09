@@ -10,15 +10,15 @@ const MenuCategories = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-const API_URL = import.meta.env.VITE_API_URL;
+// const API_URL = import.meta.env.VITE_API_URL;
 
   // Fonction pour récupérer les catégories
   const fetchCategories = async () => {
     try {
       // Endpoint actualisé - utilisation du même endpoint que celui utilisé par l'admin
       // mais sans l'authentification
-      //const response = await axios.get('http://localhost:8000/api/categories');
-      const response = await axios.get(`${API_URL}/api/categories`);
+      const response = await axios.get('http://localhost:8000/api/categories');
+      // const response = await axios.get(`${API_URL}/api/categories`);
       console.log('Réponse brute API:', response);
       console.log('Catégories récupérées:', response.data);
       
