@@ -1,4 +1,0 @@
-{
-  "build": "cd backend && composer install && php artisan migrate --force",
-  "start": "cd backend && php artisan serve --host=0.0.0.0 --port=$PORT"
-}

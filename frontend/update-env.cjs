@@ -1,29 +1,25 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const http = require("http");
 
-// Lire le fichier backend-url.json
-const raw = fs.readFileSync('../backend/backend-url.json', 'utf8');
-const json = JSON.parse(raw);
+http.get("http://127.0.0.1:4040/api/tunnels", (res) => {
+  let data = "";
 
-// Extraire l'URL publique du backend (port 8000)
-const backendTunnel = json.tunnels.find(t => t.config.addr.includes('8000'));
-const backendUrl = backendTunnel ? backendTunnel.public_url : null;
+  res.on("data", (chunk) => data += chunk);
+  res.on("end", () => {
+    const tunnels = JSON.parse(data).tunnels;
+    const backendTunnel = tunnels.find(t => t.name === 'command_line');
 
-if (!backendUrl) {
-  console.error("❌ Impossible de trouver l'URL du backend.");
-  process.exit(1);
-}
+    if (!backendTunnel) {
+      console.error("❌ Tunnel non trouvé");
+      return;
+    }
 
-// Mettre à jour .env
-const envPath = path.join(__dirname, '.env');
-let env = fs.readFileSync(envPath, 'utf8');
+    const apiUrl = backendTunnel.public_url;
+    const envPath = "./.env";
 
-// Remplace ou ajoute VITE_API_URL
-if (env.includes('VITE_API_URL=')) {
-  env = env.replace(/VITE_API_URL=.*/g, `VITE_API_URL=${backendUrl}`);
-} else {
-  env += `\nVITE_API_URL=${backendUrl}`;
-}
-
-fs.writeFileSync(envPath, env);
-console.log(`✅ .env mis à jour avec : VITE_API_URL=${backendUrl}`);
+    let envContent = fs.readFileSync(envPath, "utf-8");
+    envContent = envContent.replace(/VITE_API_URL=.*/, `VITE_API_URL=${apiUrl}`);
+    fs.writeFileSync(envPath, envContent);
+    console.log(`✅ API URL mise à jour : ${apiUrl}`);
+  });
+});

@@ -11,7 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-
+../divers
+divers/YIMGA TCHOUTA*Douala le 08 mai 2025.docx
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
