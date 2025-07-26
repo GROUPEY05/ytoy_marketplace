@@ -24,7 +24,7 @@ class ProductController extends Controller
             }
 
             // Pagination
-            $products = $query->orderBy('created_at', 'desc')->get();
+            $products = $query->latest()->paginate(10);
             return response()->json($products);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la récupération des produits: ' . $e->getMessage());

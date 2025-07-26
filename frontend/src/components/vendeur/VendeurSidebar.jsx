@@ -28,11 +28,11 @@ const VendeurSidebar = ({ onLogout }) => {
   }
 
   return (
-    <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse mt-0'>
-      <div className='position-sticky pt-3'>
-        <div className='text-center mb-4'>
+    <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse '>
+      <div className='position-sticky '>
+        <div className='text-center '>
           <div
-            className='avatar rounded-circle p-3 mx-auto mb-3'
+            className='avatar rounded-circle p-3 mx-auto '
             style={{ width: '80px', height: '80px', background: 'green' }}
           >
             <span className='fs-1 text-white'>
@@ -81,7 +81,20 @@ const VendeurSidebar = ({ onLogout }) => {
               Statistiques
             </Link>
           </li>
+        
           <li className='nav-item'>
+            <Link to='/vendeur/campaigns_form' className='nav-link'>
+              <i className="bi bi-megaphone me-2"></i>
+             Creer une campagne
+            </Link>
+          </li>
+          <li className='nav-item'>
+            <Link to='/vendeur/campaigns_list' className='nav-link'>
+              <i className="bi bi-megaphone me-2"></i>
+             Voir ses campagnes
+            </Link>
+          </li>
+            <li className='nav-item'>
             <Link to='/vendeur/promotions' className='nav-link'>
               <i className='bi bi-tags me-2'></i>
               Promotions

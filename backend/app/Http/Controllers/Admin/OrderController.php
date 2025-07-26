@@ -13,9 +13,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Commande::where('utilisateur_id', Auth::id())
-            ->with(['items.produit']);
-
+        $query = Commande::with(['utilisateur', 'items.produit']);
         // Filtrage par statut
         if ($request->has('status')) {
             $query->where('status', $request->status);
@@ -29,10 +27,10 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $request->date_fin);
         }
 
-        $orders = $query->orderBy('created_at', 'desc')->get();
+        $orders = $query->orderBy('created_at', 'desc')->paginate(10);
         return response()->json($orders);
     }
-    
+
     public function show($id)
     {
         $order = Commande::where('utilisateur_id', Auth::id())
@@ -68,9 +66,7 @@ class OrderController extends Controller
                 'status' => 'en_attente',
                 'adresse_livraison' => $request->adresse_livraison,
                 'methode_paiement' => $request->methode_paiement,
-                'total' => $cart->produits->sum(function ($produit) {
-                    return $produit->prix * $produit->pivot->quantite;
-                })
+                'total' => $cart->produits()->get()->sum(fn($produit) => $produit->prix * $produit->pivot->quantite),
             ]);
 
             // Ajouter les produits à la commande
@@ -169,23 +165,24 @@ class OrderController extends Controller
         }
 
         $order->update(['status' => $request->status]);
+        $order->load('items.produit');
 
         return response()->json([
             'message' => 'Statut de la commande mis à jour',
-            'commande' => $order->load('items.produit')
+            'commande' => $order
         ]);
     }
-    
+
     public function update(Request $request, $id)
     {
         $order = Commande::findOrFail($id);
-        
+
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,shipped,delivered,cancelled,refunded'
         ]);
-        
+
         $order->update($validated);
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Statut de commande mis à jour avec succès',

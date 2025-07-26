@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategorieController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\StatisticsController;
 
 use App\Http\Controllers\Acheteur\OrderController as AcheteurOrderController;
 
@@ -142,7 +143,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // campagnes coté admin 
         Route::get('/admin/campagnes', [CampagneController::class, 'adminIndex']);
         Route::put('/admin/campagnes/{campagne}/status', [CampagneController::class, 'updateStatus']);
-       
+
         // Gestion des utilisateurs
         Route::get('/utilisateurs', [UtilisateurController::class, 'index']);
         Route::get('/utilisateurs/{id}', [UtilisateurController::class, 'show']);
@@ -155,6 +156,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/vendeurs/pending', [AdminVendorController::class, 'getPendingVendors']);
         Route::put('/vendeurs/{id}/approve', [AdminVendorController::class, 'approveVendor']);
         Route::put('/vendeurs/{id}/reject', [AdminVendorController::class, 'rejectVendor']);
+        Route::get('/vendors', [AdminVendorController::class, 'index']);
 
         // Gestion des commandes
         Route::get('/commandes', [AdminOrderController::class, 'index']);
@@ -171,7 +173,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/categories/{id}', [CategorieController::class, 'update']);
         Route::delete('/categories/{id}', [CategorieController::class, 'destroy']);
         Route::get('/categories/{id}', [CategorieController::class, 'show']);
-
+        
+        //statistiques
+        Route::get('/statistics', [StatisticsController::class, 'index']); 
 
         // Gestion des produits
         Route::get('/produits', [ProductController::class, 'index']);

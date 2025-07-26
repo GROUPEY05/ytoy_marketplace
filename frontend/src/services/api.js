@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Configuration de l'URL de base pour les requêtes API
-const API_URL =  import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = 'http://localhost:8000';
 
 // Récupération du token CSRF   import.meta.env.VITE_API_URL || 
 async function getCsrfToken() {
@@ -377,7 +377,7 @@ const adminService = {
   // Dashboard et statistiques
   async getStatistics() {
     await getCsrfToken();
-    return apiClient.get('/api/administrateur/statGenerale');
+    return apiClient.get('/api/administrateur/stats');
     
   },
 
@@ -425,10 +425,13 @@ const adminService = {
   rejectVendor: (vendorId) => {
     return apiClient.post(`/api/administrateur/vendeurs/${vendorId}/reject`);
   },
+  getAllVendors: () => {
+    return apiClient.get('/api/administrateur/vendors');
+  },
 
   // Gestion des produits
-  getProducts: () => {
-    return apiClient.get('/api/administrateur/produits');
+  getProducts: (page = 1) => {
+    return apiClient.get(`/api/administrateur/produits?page=${page}`);
   },
 
   getProduct: (id) => {
@@ -483,11 +486,11 @@ const adminService = {
 
   // Gestion des commandes
   getOrders: (page = 1) => {
-    return apiClient.get(`/api/administrateur/orders?page=${page}`);
+    return apiClient.get(`/api/administrateur/commandes?page=${page}`);
   },
 
   getOrderDetails: (orderId) => {
-    return apiClient.get(`/api/administrateur/orders/${orderId}`);
+    return apiClient.get(`/api/administrateur/commandes/${orderId}`);
   },
 
   createOrder: (orderData) => {

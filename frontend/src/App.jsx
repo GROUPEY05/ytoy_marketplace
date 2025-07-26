@@ -57,6 +57,8 @@ import VendorReviews from './components/vendeur/VendorReviews';
 import VendorAnalytics from './components/vendeur/VendorAnalytics';
 import VendorSettings from './components/vendeur/VendorSettings';
 import VendorPromotions from './components/vendeur/VendorPromotions';
+import CampaignCreatePage from './components/vendeur/CampaignCreatePage';
+import VendorCampaignsPage from './components/vendeur/VendorCampaignsPage';
 
 // Composants admin
 import AdminDashboard from './components/admin/Dashboard';
@@ -67,6 +69,7 @@ import UserList from './components/admin/UserList';
 import ProductManagement from './components/admin/ProductManagement';
 import AdminProductList from './components/admin/AdminProductList';
 import VendorManagement from './components/admin/VendorManagement';
+import AdminStatistics from './components/admin/AdminStatistics';
 
 const App = () => {
   return (
@@ -119,6 +122,8 @@ const App = () => {
               <Route path="/vendeur/reviews" element={<VendorReviews />} />
               <Route path="/vendeur/analytics" element={<VendorAnalytics />} />
               <Route path="/vendeur/settings" element={<VendorSettings />} />
+              <Route path="/vendeur/campaigns_form" element={<CampaignCreatePage />} />
+              <Route path="/vendeur/campaigns_list" element={<VendorCampaignsPage />} />
               <Route path="/vendeur/promotions" element={<VendorPromotions />} />
             </Route>
 
@@ -132,6 +137,7 @@ const App = () => {
               <Route path="/admin/products" element={<AdminProductList />} />
               <Route path="/admin/products-management" element={<ProductManagement />} />
               <Route path="/admin/vendors" element={<VendorManagement />} />
+              <Route path="/admin/statistics" element={<AdminStatistics />} />
             </Route>
 
             {/* Route 404 */}

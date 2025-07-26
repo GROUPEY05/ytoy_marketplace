@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { toast } from 'react-hot-toast'
 import { adminService } from '../../services/api'
 import { Home } from "lucide-react"
+import AdminSidebar from './AdminSidebar'
 
 const AdminDashboard = () => {
   const { currentUser, logout } = useAuth()
@@ -47,25 +48,8 @@ const AdminDashboard = () => {
     }
   }
 
-  const [stats, setStats] = useState({
-    utilisateurs: {
-      total: 0,
-      acheteurs: 0,
-      vendeurs: 0,
-      admins: 0
-    },
-    commandes: {
-      total: 0,
-      montant_total: 0,
-      en_attente: 0
-    },
-    produits: {
-      total: 0
-    },
-    vendeurs: {
-      en_attente: 0
-    }
-  })
+  const [stats, setStats] = useState(defaultStats);
+
   const [pendingVendors, setPendingVendors] = useState([])
   const [recentUsers, setRecentUsers] = useState([])
   const [orders, setOrders] = useState([])
@@ -96,33 +80,34 @@ const fetchUsers = async () => {
     }
   };
 
- useEffect(() => {
-  const fetchDashboardData = async () => {
-    try {
+  useEffect(() => {
+    const fetchStats = async () => {
       setLoading(true);
-      const response = await adminService.getStatistics();
-
-      if (response.data && response.data.success) {
-        const data = response.data.data;
-
-        setStats({
-          utilisateurs: data.utilisateurs || defaultStats.utilisateurs,
-          commandes: data.commandes || defaultStats.commandes,
-          produits: data.produits || defaultStats.produits,
-          vendeurs: data.vendeurs || defaultStats.vendeurs
-        });
+      try {
+        const response = await adminService.getStatistics();
+  
+        if (response.data && response.data.success) {
+          const data = response.data.data;
+          setStats({
+            utilisateurs: data.utilisateurs || defaultStats.utilisateurs,
+            vendeurs: data.vendeurs || defaultStats.vendeurs,
+            produits: data.produits || defaultStats.produits,
+            commandes: data.commandes || defaultStats.commandes,
+          });
+        } else {
+          toast.error('Erreur lors de la récupération des statistiques');
+        }
+      } catch (error) {
+        console.error('Erreur getStatistics:', error);
+        toast.error('Erreur lors de la récupération des statistiques');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement des données:', error);
-      toast.error('Erreur lors du chargement des statistiques');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchDashboardData();
-}, []);
-
+    };
+  
+    fetchStats();
+  }, []);
+  
   
 
   const handleVendorApproval = async (vendorId, approved) => {
@@ -172,16 +157,7 @@ const fetchUsers = async () => {
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      await logout()
-      navigate('/login')
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error)
-      toast.error('Erreur lors de la déconnexion')
-    }
-  }
-
+ 
   const getStatusBadgeClass = (status) => {
     switch (status.toLowerCase()) {
       case 'completed':
@@ -209,102 +185,10 @@ const fetchUsers = async () => {
   }
 
   return (
-    <div className='container-fluid4'>
+    <div className='container-fluid4 '>
       <div className='row'>
-        {/* Sidebar */}
-        <nav
-          id='sidebarMenu'
-          className='col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse'
-        >
-          <div className='position-sticky pt-3'>
-            <div className='d-flex align-items-center pb-3 mb-3 text-white text-decoration-none border-bottom'>
-              <span className='fs-5 fw-semibold'>Administration</span>
-            </div>
-            <div className="sidebar-sticky">
-              <ul className="nav flex-column">
-
-              <li className='nav-item'>
-                <Link
-                  to='/'
-                  className='nav-link text-white'
-                >
-                  <Home className='me-2' style={{ fontSize: '10px'}} />
-                  Accueil
-                </Link>
-              </li>
-                <li className="nav-item">
-
-                
-                  <Link to="/admin" className="nav-link text-white active">
-                    <i className="bi bi-speedometer2 me-2"></i>
-                    Dashboard
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/admin/products-management" className="nav-link text-white">
-                    <i className="bi bi-box me-2"></i>
-                    Produits
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/admin/users" className="nav-link text-white">
-                    <i className="bi bi-people me-2"></i>
-                    Utilisateurs
-                  </Link>
-                </li>
-                <li className='nav-item'>
-                <Link to='/admin/categories' className='nav-link text-white'>
-                  <i className='bi bi-list-check me-2'></i>
-                  Catégories
-                </Link>
-              </li>
-                <li className="nav-item">
-                  <Link to="/admin/vendors" className="nav-link text-white">
-                    <i className="bi bi-shop me-2"></i>
-                    Vendeurs
-                  </Link>
-                </li>
-                
-                <li className="nav-item">
-                  <Link to="/admin/orders" className="nav-link text-white">
-                    <i className="bi bi-cart me-2"></i>
-                    Commandes
-                  </Link>
-                </li>
-                
-
-               
-              <li className='nav-item'>
-                <Link to='/admin/reviews' className='nav-link text-white'>
-                  <i className='bi bi-star me-2'></i>
-                  Avis
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/admin/statistics' className='nav-link text-white'>
-                  <i className='bi bi-graph-up me-2'></i>
-                  Statistiques
-                </Link>
-              </li>
-              <li className='nav-item'>
-                <Link to='/admin/settings' className='nav-link text-white'>
-                  <i className='bi bi-gear me-2'></i>
-                  Paramètres
-                </Link>
-              </li>
-              <div className='nav-item mt-4'>
-                <button
-                  onClick={handleLogout}
-                  className='nav-link text-danger border-0 bg-transparent d-flex align-items-center'
-                >
-                  <i className='bi bi-box-arrow-right me-2'></i>
-                  Déconnexion
-                </button>
-              </div>
-              </ul>
-            </div>
-          </div>
-        </nav>
+       {/* Sidebar */}
+        <AdminSidebar/>
 
         {/* Main content */}
         <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>

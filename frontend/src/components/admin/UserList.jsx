@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Card, Container, Row, Col, Badge, Form, InputGroup, Spinner, Alert } from 'react-bootstrap';
 import { adminService } from '../../services/api';  // Importez adminService
 import { Link } from 'react-router-dom';
-import Header from '../layout/Header';
-import Footer from '../layout/Footer';
+import AdminSidebar from './AdminSidebar'
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -24,9 +23,9 @@ const UserList = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       const response = await adminService.getUsers(currentPage, selectedRole, searchTerm);
-      
+
       if (response.data && response.data.success) {
         setUsers(response.data.data);
         setCurrentPage(response.data.current_page);
@@ -60,10 +59,10 @@ const UserList = () => {
   const handleBanUser = async (userId, currentStatus) => {
     try {
       const response = await adminService.banUser(userId);
-      
+
       if (response.data && response.data.success) {
         // Mettre à jour l'état local avec la nouvelle valeur de actif
-        setUsers(users.map(user => 
+        setUsers(users.map(user =>
           user.id === userId ? { ...user, actif: response.data.data.actif } : user
         ));
 
@@ -86,7 +85,7 @@ const UserList = () => {
   };
 
   const renderRoleBadge = (role) => {
-    switch(role) {
+    switch (role) {
       case 'administrateur':
         return <Badge bg="danger">Admin</Badge>;
       case 'vendeur':
@@ -99,137 +98,143 @@ const UserList = () => {
   };
   return (
     <>
-      <Header />
-      <Container className="py-4">
-        <Card>
-          <Card.Header className="bg-primary text-white">
-            <div className="d-flex justify-content-between align-items-center">
-              <h2 className="mb-0">Gestion des utilisateurs</h2>
-              <Link to="/admin/dashboard" className="btn btn-light">
-                Retour au tableau de bord
-              </Link>
-            </div>
-          </Card.Header>
-          <Card.Body>
-            {error && <Alert variant="danger">{error}</Alert>}
-            
-            <Row className="mb-3">
-              <Col md={6}>
-                <Form onSubmit={handleSearch}>
-                  <InputGroup>
-                    <Form.Control
-                      type="text"
-                      placeholder="Rechercher un utilisateur..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <Button variant="outline-primary" type="submit">
-                      <i className="bi bi-search"></i>
-                    </Button>
-                  </InputGroup>
-                </Form>
-              </Col>
-              <Col md={6}>
-                <Form.Select 
-                  value={selectedRole}
-                  onChange={handleRoleFilter}
-                  className="w-auto float-md-end"
-                >
-                  <option value="all">Tous les rôles</option>
-                  <option value="acheteur">Acheteurs</option>
-                  <option value="vendeur">Vendeurs</option>
-                  <option value="administrateur">Administrateurs</option>
-                </Form.Select>
-              </Col>
-            </Row>
-            
-            {loading ? (
-              <div className="text-center py-4">
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-2">Chargement des utilisateurs...</p>
-              </div>
-            ) : (
-              <>
-                <div className="table-responsive">
-                  <Table striped hover>
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>État</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.length > 0 ? (
-                        users.map(user => (
-                          <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.prenom} {user.nom}</td>
-                            <td>{user.email}</td>
-                            <td>{renderRoleBadge(user.role)}</td>
-                            <td>{renderStatusBadge(user.actif)}</td>
-                            <td>{new Date(user.created_at).toLocaleDateString()}</td>
-                            <td>
-                              <Button
-                                variant={!user.actif ? 'outline-success' : 'outline-danger'}
-                                size="sm"
-                                onClick={() => handleBanUser(user.id, user.actif)}
-                                className="me-2"
-                              >
-                                {!user.actif ? 'Réactiver' : 'Bannir'}
-                              </Button>
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                as={Link}
-                                to={`/admin/users/${user.id}`}
-                              >
-                                Détails
-                              </Button>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="7" className="text-center">Aucun utilisateur trouvé</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </Table>
-                </div>
-                
-                {totalPages > 1 && (
-                  <div className="d-flex justify-content-center mt-4">
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                      className="me-2"
-                    >
-                      Précédent
-                    </Button>
-                    <span className="mx-3 align-self-center">
-                      Page {currentPage} sur {totalPages}
-                    </span>
-                    <Button
-                      variant="outline-primary"
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    >
-                      Suivant
-                    </Button>
+      <div className='container-fluid4 '>
+        <div className='row'>
+          {/* Sidebar */}
+          <AdminSidebar />
+          <main className='col-md-9 ms-sm-auto col-lg-10 px-md-4'>
+            <Container className="py-4">
+              <Card>
+                <Card.Header className="bg-primary text-white">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h2 className="mb-0">Gestion des utilisateurs</h2>
+                    <Link to="/admin/dashboard" className="btn btn-light">
+                      Retour au tableau de bord
+                    </Link>
                   </div>
-                )}
-              </>
-            )}
-          </Card.Body>
-        </Card>
-      </Container>
-      <Footer />
+                </Card.Header>
+                <Card.Body>
+                  {error && <Alert variant="danger">{error}</Alert>}
+
+                  <Row className="mb-3">
+                    <Col md={6}>
+                      <Form onSubmit={handleSearch}>
+                        <InputGroup>
+                          <Form.Control
+                            type="text"
+                            placeholder="Rechercher un utilisateur..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                          <Button variant="outline-primary" type="submit">
+                            <i className="bi bi-search"></i>
+                          </Button>
+                        </InputGroup>
+                      </Form>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Select
+                        value={selectedRole}
+                        onChange={handleRoleFilter}
+                        className="w-auto float-md-end"
+                      >
+                        <option value="all">Tous les rôles</option>
+                        <option value="acheteur">Acheteurs</option>
+                        <option value="vendeur">Vendeurs</option>
+                        <option value="administrateur">Administrateurs</option>
+                      </Form.Select>
+                    </Col>
+                  </Row>
+
+                  {loading ? (
+                    <div className="text-center py-4">
+                      <Spinner animation="border" variant="primary" />
+                      <p className="mt-2">Chargement des utilisateurs...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="table-responsive">
+                        <Table striped hover>
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Nom</th>
+                              <th>Email</th>
+                              <th>Rôle</th>
+                              <th>État</th>
+                              <th>Date d'inscription</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {users.length > 0 ? (
+                              users.map(user => (
+                                <tr key={user.id}>
+                                  <td>{user.id}</td>
+                                  <td>{user.prenom} {user.nom}</td>
+                                  <td>{user.email}</td>
+                                  <td>{renderRoleBadge(user.role)}</td>
+                                  <td>{renderStatusBadge(user.actif)}</td>
+                                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                                  <td>
+                                    <Button
+                                      variant={!user.actif ? 'outline-success' : 'outline-danger'}
+                                      size="sm"
+                                      onClick={() => handleBanUser(user.id, user.actif)}
+                                      className="me-2"
+                                    >
+                                      {!user.actif ? 'Réactiver' : 'Bannir'}
+                                    </Button>
+                                    <Button
+                                      variant="outline-primary"
+                                      size="sm"
+                                      as={Link}
+                                      to={`/admin/users/${user.id}`}
+                                    >
+                                      Détails
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="7" className="text-center">Aucun utilisateur trouvé</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </Table>
+                      </div>
+
+                      {totalPages > 1 && (
+                        <div className="d-flex justify-content-center mt-4">
+                          <Button
+                            variant="outline-primary"
+                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                            disabled={currentPage === 1}
+                            className="me-2"
+                          >
+                            Précédent
+                          </Button>
+                          <span className="mx-3 align-self-center">
+                            Page {currentPage} sur {totalPages}
+                          </span>
+                          <Button
+                            variant="outline-primary"
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                          >
+                            Suivant
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Card.Body>
+              </Card>
+            </Container>
+          </main>
+        </div>
+      </div>
     </>
   );
 };
