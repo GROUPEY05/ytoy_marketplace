@@ -56,7 +56,7 @@ export default function Footer() {
         <div className="d-flex flex-wrap justify-content-between align-items-center">
           <div className="d-flex align-items-center mb-3 mb-md-0">
             <div className="bg-white rounded-circle p-2 me-2">
-             <img className="rounded-circle" src=' http://149.202.43.206/image/logo_ytoy.png' alt="" style={{ maxWidth: '30px' }} />
+             <img className="rounded-circle" src='http://149.202.43.206/image/logo_ytoy.png' alt="" style={{ maxWidth: '30px' }} />
             </div>
             <div>
               <h5 className="">Ytoy</h5>

@@ -141,7 +141,7 @@ const Header = () => {
             className="logo-container"
           >
             <img
-              src=' http://149.202.43.206/image/logo_ytoy.png'
+              src='http://149.202.43.206/image/logo_ytoy.png'
               alt='Logo'
               className="logo-image"
             />

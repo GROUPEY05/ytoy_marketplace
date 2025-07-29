@@ -81,7 +81,7 @@ const Register = () => {
             </h4>
             <div style={{ paddingRight: '60px' }}>
               <img
-                src=' http://149.202.43.206/image/logo_ytoy.png'
+                src='http://149.202.43.206/image/logo_ytoy.png'
                 alt='Logo'
                 style={{ maxWidth: '100px' }}
               />

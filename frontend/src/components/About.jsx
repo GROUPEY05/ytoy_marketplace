@@ -10,19 +10,19 @@ const AboutPage = () => {
     {
       name: 'Ornella Yimga',
       role: 'Fondatrice & CEO',
-      image: ' http://149.202.43.206/image/ornella.jpg',
+      image: 'http://149.202.43.206/image/ornella.jpg',
       bio: 'Passionnée par le commerce électronique  et le développement web depuis 3 ans, Ornella a créé cette marketplace pour connecter vendeurs et acheteurs dans tout le cameroun et avec le temps dans toute l\'Afrique.'
     },
     {
       name: 'Ndouho Wilfried',
       role: 'Directeur Technique',
-      image: ' http://149.202.43.206/image/wilfried.jpg',
+      image: 'http://149.202.43.206/image/wilfried.jpg',
       bio: 'Expert en développement web avec une vision claire pour offrir une expérience utilisateur fluide et sécurisée.'
     },
     {
       name: 'Kouatchou Maurice',
       role: 'Responsable Marketing',
-      image: ' http://149.202.43.206/image/papa.jpg',
+      image: 'http://149.202.43.206/image/papa.jpg',
       bio: 'Spécialiste en stratégies digitales, Fatou assure la croissance et la visibilité de notre marketplace.'
     }
   ];

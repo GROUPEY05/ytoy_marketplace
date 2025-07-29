@@ -19,7 +19,7 @@ const NotFound = () => {
           
           <div className="mb-5">
             <img 
-              src="/api/placeholder/400/300" 
+              src="/placeholder/400/300" 
               alt="Page non trouvée" 
               className="img-fluid"
             />

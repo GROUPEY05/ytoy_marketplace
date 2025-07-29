@@ -116,7 +116,7 @@ const ProductDetail = () => {
                     ? produit.images[0].url.startsWith('http')
                       ? produit.images[0].url
                       : `http://149.202.43.206${produit.images[0].url}`
-                    : ' http://149.202.43.206/image/placeholder.png'
+                    : 'http://149.202.43.206/image/placeholder.png'
                 }
                 alt={produit.nom}
                 fluid

@@ -134,28 +134,28 @@ const Home = () => {
           <div className='carousel-inner'>
             <div className='carousel-item active'>
               <img
-                src=' http://149.202.43.206/image/xiaomi.webp'
+                src='http://149.202.43.206/image/xiaomi.webp'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item ' style={{ height: '500px' }}>
               <img
-                src=' http://149.202.43.206/image/sale.jpg'
+                src='http://149.202.43.206/image/sale.jpg'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item'>
               <img
-                src=' http://149.202.43.206/image/tvsmart.webp'
+                src='http://149.202.43.206/image/tvsmart.webp'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item'>
               <img
-                src=' http://149.202.43.206/image/ramadan.webp'
+                src='http://149.202.43.206/image/ramadan.webp'
                 className='d-block w-100'
                 alt='...'
               />
@@ -298,7 +298,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src=' http://149.202.43.206/image/perruques_metisse1.jpeg'
+              src='http://149.202.43.206/image/perruques_metisse1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -339,7 +339,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src=' http://149.202.43.206/image/habits1.jpeg'
+              src='http://149.202.43.206/image/habits1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3 '
               style={{
@@ -380,7 +380,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src=' http://149.202.43.206/image/high_tech1.jpeg'
+              src='http://149.202.43.206/image/high_tech1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -421,7 +421,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src=' http://149.202.43.206/image/all_shop1.jpeg'
+              src='http://149.202.43.206/image/all_shop1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -785,7 +785,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/phone2.jpg'
+              src='http://149.202.43.206/image/phone2.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -851,7 +851,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/ordi2.jpeg'
+              src='http://149.202.43.206/image/ordi2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -919,7 +919,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/imprimante1.jpeg'
+              src='http://149.202.43.206/image/imprimante1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -986,7 +986,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/tablette1.jpeg'
+              src='http://149.202.43.206/image/tablette1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1063,7 +1063,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/perruques_metisse1.jpeg'
+              src='http://149.202.43.206/image/perruques_metisse1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1129,7 +1129,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/perruque_vietnamienne.webp'
+              src='http://149.202.43.206/image/perruque_vietnamienne.webp'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1195,7 +1195,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/bob1.jpg'
+              src='http://149.202.43.206/image/bob1.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1261,7 +1261,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/curly.jpg'
+              src='http://149.202.43.206/image/curly.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1338,7 +1338,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/jeans.jpg'
+              src='http://149.202.43.206/image/jeans.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1402,7 +1402,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/Pull1.jpeg'
+              src='http://149.202.43.206/image/Pull1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1466,7 +1466,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/jupe2.jpeg'
+              src='http://149.202.43.206/image/jupe2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1530,7 +1530,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/chic_robe2.jpeg'
+              src='http://149.202.43.206/image/chic_robe2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1607,7 +1607,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/fer2.jpg'
+              src='http://149.202.43.206/image/fer2.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1673,7 +1673,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/sofa1.jpg'
+              src='http://149.202.43.206/image/sofa1.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1739,7 +1739,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/fruit1.jpeg'
+              src='http://149.202.43.206/image/fruit1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1805,7 +1805,7 @@ const Home = () => {
             }}
           >
             <img
-              src=' http://149.202.43.206/image/salle_manger.jpeg'
+              src='http://149.202.43.206/image/salle_manger.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
