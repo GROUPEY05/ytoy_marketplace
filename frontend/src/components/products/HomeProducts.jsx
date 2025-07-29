@@ -10,7 +10,7 @@ import {
   Modal
 } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { apiClient } from '../../services/api'
+import { apiClient, apiClient_auth } from '../../services/api'
 import { useAuth } from '../../contexts/AuthContext'
 import useCartStore from '../../store/cartStore'
 import CartModal from '../cart/CartModal'
@@ -30,7 +30,7 @@ const HomeProducts = () => {
     try {
       setLoading(true)
       // Get CSRF token first if needed
-      await apiClient.get('/sanctum/csrf-cookie')
+      await apiClient_auth.get('/sanctum/csrf-cookie')
       const response = await apiClient.get('/produits/getFeatured', {
         withCredentials: true
       })

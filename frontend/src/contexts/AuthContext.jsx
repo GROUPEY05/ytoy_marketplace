@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const fetchCurrentUser = async () => {
     try {
       // L'URL correcte selon les routes définies dans api.php
-      const response = await apiClient.get('api/user')
+      const response = await apiClient.get('/user')
       setCurrentUser(response.data)
       setIsAuthenticated(true)
     } catch (error) {
