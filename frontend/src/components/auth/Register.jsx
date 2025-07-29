@@ -68,7 +68,7 @@ const Register = () => {
         </div>
 
         <div style={{ width: '100%' }}>
-            <img src="http://localhost:5173/image/img_register.svg" alt="" className="" />
+            <img src=" http://149.202.43.206/image/img_register.svg" alt="" className="" />
         </div>
       </div>
       <div className=''>
@@ -81,7 +81,7 @@ const Register = () => {
             </h4>
             <div style={{ paddingRight: '60px' }}>
               <img
-                src='http://localhost:5173/image/logo_ytoy.png'
+                src=' http://149.202.43.206/image/logo_ytoy.png'
                 alt='Logo'
                 style={{ maxWidth: '100px' }}
               />

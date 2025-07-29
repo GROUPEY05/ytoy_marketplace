@@ -30,7 +30,7 @@ const Orders = () => {
       let ordersData = []
       try {
         // Essayer d'abord avec la route acheteur/orders
-        const response = await apiClient.get('/api/acheteur/orders')
+        const response = await apiClient.get('/acheteur/orders')
         if (response.data && Array.isArray(response.data)) {
           ordersData = response.data
         }
@@ -38,7 +38,7 @@ const Orders = () => {
         console.log('Erreur avec la première route, essai avec une autre route')
         try {
           // Essayer ensuite avec la route panier/orders
-          const response = await apiClient.get('/api/panier/orders')
+          const response = await apiClient.get('/panier/orders')
           if (response.data && Array.isArray(response.data)) {
             ordersData = response.data
           }
@@ -46,7 +46,7 @@ const Orders = () => {
           console.log('Erreur avec la deuxième route aussi')
           try {
             // Essayer une troisième route
-            const response = await apiClient.get('/api/orders')
+            const response = await apiClient.get('/orders')
             if (response.data && Array.isArray(response.data)) {
               ordersData = response.data
             }

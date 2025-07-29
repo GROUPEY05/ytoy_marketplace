@@ -14,7 +14,7 @@ const MobileMoneyPayment = ({ orderId, onSuccess }) => {
     setError(null);
 
     try {
-      const { data } = await apiClient.post('/api/payments/mobile-money', {
+      const { data } = await apiClient.post('/payments/mobile-money', {
         order_id: orderId,
         phone_number: phoneNumber,
         operator: operator

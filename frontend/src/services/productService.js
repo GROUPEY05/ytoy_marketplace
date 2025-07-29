@@ -14,7 +14,7 @@ const productService = {
     const params = new URLSearchParams();
     if (page) params.append('page', page);
     if (search) params.append('search', search);
-    return apiClient.get(`/api/admin/produits?${params.toString()}`);
+    return apiClient.get(`/admin/produits?${params.toString()}`);
   },
 
   getProductsByCategory: async (categoryId, page = 1) => {

@@ -35,7 +35,7 @@ const VendorOrders = () => {
   const fetchOrders = async (page = 1) => {
     try {
       setLoading(true)
-      const response = await apiClient.get('/api/vendor/orders')
+      const response = await apiClient.get('/vendor/orders')
 
       if (response.data && response.data.data) {
         setOrders(response.data.data) 

@@ -15,7 +15,7 @@ const VendeurDashboard = () => {
   const fetchProduits = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/api/vendor/produits', {
+      const response = await axios.get('http://149.202.43.206/api/vendor/produits', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProduits(response.data);
@@ -34,7 +34,7 @@ const VendeurDashboard = () => {
   const handleDelete = async (produitId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8000/api/vendor/produits/${produitId}`, {
+      await axios.delete(`http://149.202.43.206/api/vendor/produits/${produitId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchProduits(); // Rafraîchir la liste
@@ -70,7 +70,7 @@ const VendeurDashboard = () => {
                 <Card.Img
                   variant="top"
                   src={produit.images && produit.images.length > 0
-                    ? `http://localhost:8000/storage/${produit.images[0].url}`
+                    ? `http://149.202.43.206/storage/${produit.images[0].url}`
                     : '/image/placeholder.jpg'}
                   style={{ height: '100%', objectFit: 'cover' }}
                 />

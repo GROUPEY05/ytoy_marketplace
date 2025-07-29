@@ -40,7 +40,7 @@ const ProduitsByCategorie = () => {
   const fetchCategorie = async (page = 1, search = '') => {
     setLoading(true)
     try {
-      let url = `http://localhost:8000/api/categories/nom/${encodeURIComponent(
+      let url = `http://149.202.43.206/api/categories/nom/${encodeURIComponent(
         nom
       )}/produits`
       if (search) url += `?search=${encodeURIComponent(search)}&page=${page}`
@@ -82,7 +82,7 @@ const ProduitsByCategorie = () => {
     try {
       const token = localStorage.getItem('token')
       await axios.delete(
-        `http://localhost:8000/api/produits/${selectedProduct.id}`,
+        `http://149.202.43.206/api/produits/${selectedProduct.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -108,7 +108,7 @@ const ProduitsByCategorie = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:8000/api/cart/add',
+        'http://149.202.43.206/api/cart/add',
         {
           produit_id: produit.id,
           quantite: 1
@@ -213,7 +213,7 @@ const ProduitsByCategorie = () => {
                   ) {
                     imageUrl = produit.thumbnail
                   } else {
-                    imageUrl = `http://localhost:8000${produit.thumbnail}`
+                    imageUrl = `http://149.202.43.206${produit.thumbnail}`
                   }
                 } else if (produit.images && produit.images.length > 0) {
                   // Si tu veux aussi gérer l'image via images[0], par exemple :
@@ -222,7 +222,7 @@ const ProduitsByCategorie = () => {
                     // selon la structure exacte
                     imageUrl = imageData.url.startsWith('http')
                       ? imageData.url
-                      : `http://localhost:8000${imageData.url}`
+                      : `http://149.202.43.206${imageData.url}`
                   }
                 }
                 console.log('URL image pour', produit.nom, imageUrl)

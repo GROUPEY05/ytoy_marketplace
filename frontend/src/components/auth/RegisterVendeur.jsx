@@ -73,7 +73,7 @@ const RegisterVendeur = () => {
   //         </p>
   //       </div>
   //       <div style={{ width: '100%' }}>
-  //           <img src="http://localhost:5173/image/img_register.svg" alt="" class="img-fluid" />
+  //           <img src=" http://149.202.43.206/image/img_register.svg" alt="" class="img-fluid" />
   //       </div>
   //     </div>
 
@@ -405,7 +405,7 @@ const RegisterVendeur = () => {
           </p>
           <div className='text-center mt-4'>
             <img
-              src='http://localhost:5173/image/img_register.svg'
+              src=' http://149.202.43.206/image/img_register.svg'
               className='img-fluid'
               style={{ maxHeight: '300px' }}
             />
@@ -424,7 +424,7 @@ const RegisterVendeur = () => {
             </h4>
             <div style={{ paddingRight: '60px' }}>
               <img
-                src='http://localhost:5173/image/logo_ytoy.png'
+                src=' http://149.202.43.206/image/logo_ytoy.png'
                 alt='Logo'
                 style={{ maxWidth: '100px' }}
               />

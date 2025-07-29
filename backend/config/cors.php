@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'], // Autorise toutes les méthodes (GET, POST, etc.)
 
-    'allowed_origins' => ['*'], // Origines autorisées 'http://localhost:5173', 'http://127.0.0.1:5173'
+    'allowed_origins' => ['*'], // Origines autorisées ' http://149.202.43.206', 'http://127.0.0.1:5173'
 
     'allowed_origins_patterns' => [],
 

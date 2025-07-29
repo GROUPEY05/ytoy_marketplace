@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriePublicController;
-
+use Illuminate\Http\Request; 
 use App\Http\Controllers\Admin\UtilisateurController;
 use App\Http\Controllers\Admin\VendorController as AdminVendorController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -46,9 +46,10 @@ Route::get('/paiement-produit', [PaiementController::class, 'paiementProduit'])
     ->name('paiement.produit');
 
 Route::get('/search/produits', [ProduitController::class, 'search']);
-Route::get('/api/user', function () {
-    return request()->user();
-})->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    $user = $request->user(); // OK, méthode user() sur instance Request
+    return $user;
+});
 
 
 // Routes publiques

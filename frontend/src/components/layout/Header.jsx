@@ -35,7 +35,7 @@ const Header = () => {
     try {
       const token = localStorage.getItem('token')
       if (token && user) {
-        const response = await apiClient.get('/api/cart/count')
+        const response = await apiClient.get('/cart/count')
         setCartCount(response.data.count)
       }
     } catch (error) {
@@ -64,7 +64,7 @@ const Header = () => {
 
     setIsSearching(true)
     try {
-      const response = await apiClient.get(`/api/search/produits?query=${encodeURIComponent(query)}`)
+      const response = await apiClient.get(`/search/produits?query=${encodeURIComponent(query)}`)
       setSearchResults(response.data)
       setShowResults(true)
     } catch (error) {
@@ -141,7 +141,7 @@ const Header = () => {
             className="logo-container"
           >
             <img
-              src='http://localhost:5173/image/logo_ytoy.png'
+              src=' http://149.202.43.206/image/logo_ytoy.png'
               alt='Logo'
               className="logo-image"
             />

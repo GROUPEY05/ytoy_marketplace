@@ -173,7 +173,7 @@ const Invoice = () => {
         let orderData = null;
         
         try {
-          const response = await apiClient.get(`/api/acheteur/orders/${id}`);
+          const response = await apiClient.get(`/acheteur/orders/${id}`);
           console.log('Réponse de la première route:', response);
           if (response.data) {
             orderData = response.data;
@@ -182,7 +182,7 @@ const Invoice = () => {
           console.log('Erreur avec la première route, essai avec une autre route', firstError);
           
           try {
-            const response = await apiClient.get(`/api/orders/${id}`);
+            const response = await apiClient.get(`/orders/${id}`);
             console.log('Réponse de la deuxième route:', response);
             if (response.data) {
               orderData = response.data;
@@ -191,7 +191,7 @@ const Invoice = () => {
             console.log('Erreur avec la deuxième route aussi', secondError);
             
             try {
-              const response = await apiClient.get(`/api/panier/orders/${id}`);
+              const response = await apiClient.get(`/panier/orders/${id}`);
               console.log('Réponse de la troisième route:', response);
               if (response.data) {
                 orderData = response.data;

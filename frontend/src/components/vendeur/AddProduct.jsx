@@ -27,7 +27,7 @@ const ProductForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/categories')
+        const response = await axios.get('http://149.202.43.206/api/categories')
         if (Array.isArray(response.data)) {
           setCategories(response.data)
         }
@@ -45,13 +45,13 @@ const ProductForm = () => {
       try {
         setIsLoading(true)
         // Récupération des catégories
-        const categoriesResponse = await apiClient.get('/api/categories')
+        const categoriesResponse = await apiClient.get('/categories')
         setCategories(categoriesResponse.data)
 
         // Si on est en mode édition, récupérer les détails du produit
         if (productId) {
           const produitResponse = await apiClient.get(
-            `/api/vendor/produits/${productId}`
+            `/vendor/produits/${productId}`
           )
           const produitData = produitResponse.data
 
@@ -66,7 +66,7 @@ const ProductForm = () => {
           if (produitData.images) {
             setImagePreview(
               produitData.images.map(img => ({
-                url: `http://localhost:8000${img.url}`,
+                url: `http://149.202.43.206${img.url}`,
                 id: img.id
               }))
             )
@@ -294,14 +294,14 @@ const ProductForm = () => {
       if (productId) {
         // Mise à jour
         response = await axios.post(
-          `http://localhost:8000/api/vendor/produits/${productId}`,
+          `http://149.202.43.206/api/vendor/produits/${productId}`,
           formData,
           { headers }
         )
       } else {
         // Création
         response = await axios.post(
-          'http://localhost:8000/api/vendor/produits',
+          'http://149.202.43.206/api/vendor/produits',
           formData,
           { headers }
         )

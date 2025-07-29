@@ -28,7 +28,7 @@ const OrderManagement = () => {
   const fetchOrders = async (page = 1, search = searchTerm, status = filterStatus) => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/vendor/orders', {
+      const response = await axios.get('/vendor/orders', {
         params: {
           page,
           search,
@@ -93,7 +93,7 @@ const OrderManagement = () => {
     try {
       setStatusUpdateLoading(true);
       
-      await axios.put(`/api/vendor/orders/${selectedOrder.id}/status`, {
+      await axios.put(`/vendor/orders/${selectedOrder.id}/status`, {
         status: newStatus
       });
       

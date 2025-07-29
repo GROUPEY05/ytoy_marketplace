@@ -69,7 +69,7 @@ const VendorSettings = () => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/api/vendor/settings');
+      const response = await apiClient.get('/vendor/settings');
       
       if (response.data) {
         // Mettre à jour les paramètres de paiement
@@ -164,7 +164,7 @@ const VendorSettings = () => {
       formData.append('notifications', JSON.stringify(notificationData));
       
       // Envoyer les données
-      const response = await apiClient.post('/api/vendor/settings', formData, {
+      const response = await apiClient.post('/vendor/settings', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

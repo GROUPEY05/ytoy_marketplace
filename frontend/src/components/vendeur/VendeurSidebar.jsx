@@ -3,29 +3,27 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Home } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const VendeurSidebar = ({ onLogout }) => {
-  const { currentUser, logout } = useAuth()
-   const handleLogout = async () => {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
     try {
-      setLoading(true)
-      await logout()
-      navigate('/login')
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error)
-      alert('Erreur lors de la déconnexion. Veuillez réessayer.')
-    }  finally {
-      // Nettoyer complètement le localStorage
+      await logout();
+      // Nettoyage localStorage si vous ne le faites pas déjà dans logout()
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userRole');
-      
-      // Réinitialiser l'état
-      setCurrentUser(null);
-      setIsAuthenticated(false);
-      
+
+      // Redirection vers la page de login
+      navigate('/login');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      alert('Erreur lors de la déconnexion. Veuillez réessayer.');
     }
-  }
+  };
 
   return (
     <div className='col-md-3 col-lg-2 d-md-block bg-light sidebar collapse '>

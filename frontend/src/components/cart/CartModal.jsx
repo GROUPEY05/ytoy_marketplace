@@ -18,7 +18,7 @@ const CartModal = () => {
   const [showCheckoutForm, setShowCheckoutForm] = useState(false)
   // Utiliser une image locale pour l'image par défaut
   const [defaultImage, setDefaultImage] = useState(
-    'http://localhost:8000/assets/placeholder.png'
+    'http://149.202.43.206/assets/placeholder.png'
   )
   const logoMap = {
     mobile_money: mobileMoneyLogo,
@@ -38,7 +38,7 @@ const CartModal = () => {
   const fetchCartItems = async () => {
     try {
       setLoading(true)
-      const response = await apiClient.get('/api/panier')
+      const response = await apiClient.get('/panier')
       console.log('Réponse du panier:', response.data) // Pour le débogage
 
       // Si le backend renvoie un format différent, adapter cette partie
@@ -53,28 +53,28 @@ const CartModal = () => {
 
           if (typeof firstImage === 'string') {
             if (firstImage.startsWith('/storage/')) {
-              imageUrl = `http://localhost:8000${firstImage}`
+              imageUrl = `http://149.202.43.206${firstImage}`
             } else {
-              imageUrl = `http://localhost:8000/storage/${firstImage}`
+              imageUrl = `http://149.202.43.206/storage/${firstImage}`
             }
           } else if (firstImage.url) {
             if (firstImage.url.startsWith('/storage/')) {
-              imageUrl = `http://localhost:8000${firstImage.url}`
+              imageUrl = `http://149.202.43.206${firstImage.url}`
             } else {
-              imageUrl = `http://localhost:8000/storage/${firstImage.url}`
+              imageUrl = `http://149.202.43.206/storage/${firstImage.url}`
             }
           }
         } else if (produit.image_principale) {
           if (produit.image_principale.startsWith('/storage/')) {
-            imageUrl = `http://localhost:8000${produit.image_principale}`
+            imageUrl = `http://149.202.43.206${produit.image_principale}`
           } else {
-            imageUrl = `http://localhost:8000/storage/${produit.image_principale}`
+            imageUrl = `http://149.202.43.206/storage/${produit.image_principale}`
           }
         } else if (produit.image_url) {
           if (produit.image_url.startsWith('/storage/')) {
-            imageUrl = `http://localhost:8000${produit.image_url}`
+            imageUrl = `http://149.202.43.206${produit.image_url}`
           } else {
-            imageUrl = `http://localhost:8000/storage/${produit.image_url}`
+            imageUrl = `http://149.202.43.206/storage/${produit.image_url}`
           }
         }
 
@@ -116,7 +116,7 @@ const CartModal = () => {
 
     try {
       setLoading(true)
-      const response = await apiClient.put('/api/panier/update', {
+      const response = await apiClient.put('/panier/update', {
         produit_id: productId,
         quantite: newQuantity
       })
@@ -137,7 +137,7 @@ const CartModal = () => {
 
   const handleRemoveItem = async productId => {
     try {
-      await apiClient.delete(`/api/panier/remove/${productId}`)
+      await apiClient.delete(`/panier/remove/${productId}`)
       window.dispatchEvent(new Event('cartUpdated'))
       fetchCartItems()
     } catch (error) {
@@ -173,7 +173,7 @@ const CartModal = () => {
       console.log('Données de commande:', orderData)
 
       // Utiliser une route plus simple qui ne nécessite pas de middleware complexe
-      const response = await apiClient.post('/api/panier/checkout', orderData)
+      const response = await apiClient.post('/panier/checkout', orderData)
 
       console.log('Réponse création commande:', response.data)
 

@@ -6,8 +6,8 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 // Simulons des articles dans le panier (à remplacer par les données réelles du panier)
 const dummyCartItems = [
-  { id: 1, name: 'Produit 1', price: 19.99, quantity: 2, image: '/api/placeholder/100/100' },
-  { id: 3, name: 'Produit 3', price: 39.99, quantity: 1, image: '/api/placeholder/100/100' },
+  { id: 1, name: 'Produit 1', price: 19.99, quantity: 2, image: '/placeholder/100/100' },
+  { id: 3, name: 'Produit 3', price: 39.99, quantity: 1, image: '/placeholder/100/100' },
 ];
 
 const Checkout = () => {

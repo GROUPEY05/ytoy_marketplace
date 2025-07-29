@@ -42,7 +42,7 @@ const VendorAnalytics = () => {
     try {
       setLoading(true)
       const response = await apiClient.get(
-        `/api/vendor/analytics?period=${period}`
+        `/vendor/analytics?period=${period}`
       )
 
       if (response.data) {

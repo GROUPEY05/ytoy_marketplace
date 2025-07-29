@@ -16,7 +16,7 @@ const ProductList = () => {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
       const queryString = params.toString() ? `?${params.toString()}` : '';
-      const response = await apiClient.get(`/api/produits${queryString}`);
+      const response = await apiClient.get(`/produits${queryString}`);
       setProducts(response.data.data);
       setError('');
     } catch (err) {
@@ -75,7 +75,7 @@ const ProductList = () => {
                 {product.images && product.images[0] && (
                   <Card.Img
                     variant="top"
-                    src={`http://localhost:8000/storage/${product.images[0].url}`}
+                    src={`http://149.202.43.206/storage/${product.images[0].url}`}
                     alt={product.nom}
                     style={{ height: '200px', objectFit: 'cover' }}
                   />

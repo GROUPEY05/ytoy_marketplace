@@ -113,7 +113,7 @@ const fetchUsers = async () => {
   const handleVendorApproval = async (vendorId, approved) => {
     try {
       const endpoint = approved ? 'approuver' : 'rejeter';
-      const response = await apiClient.post(`/api/admin/vendeurs/${vendorId}/${endpoint}`)
+      const response = await apiClient.post(`/admin/vendeurs/${vendorId}/${endpoint}`)
       
       if (response.data.success) {
         toast.success(response.data.message)
@@ -136,7 +136,7 @@ const fetchUsers = async () => {
 
   const handleStatusChange = async (orderId, status) => {
     try {
-      const response = await apiClient.put(`/api/admin/commandes/${orderId}/status`, { status })
+      const response = await apiClient.put(`/admin/commandes/${orderId}/status`, { status })
       
       if (response.data.success) {
         toast.success(response.data.message || 'Statut de la commande mis à jour avec succès')

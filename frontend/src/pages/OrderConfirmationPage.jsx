@@ -13,7 +13,7 @@ const OrderConfirmationPage = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const { data } = await apiClient.get(`/api/orders/${orderId}`);
+        const { data } = await apiClient.get(`/orders/${orderId}`);
         setOrder(data);
       } catch (err) {
         setError('Impossible de charger les détails de la commande');

@@ -17,7 +17,7 @@ const MenuCategories = () => {
     try {
       // Endpoint actualisé - utilisation du même endpoint que celui utilisé par l'admin
       // mais sans l'authentification
-      const response = await axios.get('http://localhost:8000/api/categories');
+      const response = await axios.get('http://149.202.43.206/api/categories');
       // const response = await axios.get(`${API_URL}/api/categories`);
       console.log('Réponse brute API:', response);
       console.log('Catégories récupérées:', response.data);

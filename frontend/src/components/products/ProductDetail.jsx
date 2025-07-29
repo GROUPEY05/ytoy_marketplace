@@ -29,7 +29,7 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/api/produits/${id}`)
+        const res = await axios.get(`http://149.202.43.206/api/produits/${id}`)
         setProduit(res.data)
         console.log('Produit chargé:', res.data)
         setLoading(false)
@@ -60,7 +60,7 @@ const ProductDetail = () => {
         return
       }
 
-      await apiClient.post('/api/panier/add', {
+      await apiClient.post('/panier/add', {
         produit_id: produit.id,
         quantite: quantity
       })
@@ -115,8 +115,8 @@ const ProductDetail = () => {
                   produit.images && produit.images.length > 0
                     ? produit.images[0].url.startsWith('http')
                       ? produit.images[0].url
-                      : `http://localhost:8000${produit.images[0].url}`
-                    : 'http://localhost:5173/image/placeholder.png'
+                      : `http://149.202.43.206${produit.images[0].url}`
+                    : ' http://149.202.43.206/image/placeholder.png'
                 }
                 alt={produit.nom}
                 fluid

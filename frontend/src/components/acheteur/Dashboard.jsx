@@ -54,7 +54,7 @@ const Dashboard = () => {
         let ordersData = [];
         try {
           // Essayer d'abord avec la route acheteur/orders
-          const ordersResponse = await apiClient.get('/api/acheteur/orders');
+          const ordersResponse = await apiClient.get('/acheteur/orders');
           if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
             ordersData = ordersResponse.data;
           }
@@ -62,7 +62,7 @@ const Dashboard = () => {
           console.log('Erreur avec la première route, essai avec une autre route');
           try {
             // Essayer ensuite avec la route panier/orders
-            const ordersResponse = await apiClient.get('/api/panier/orders');
+            const ordersResponse = await apiClient.get('/panier/orders');
             if (ordersResponse.data && Array.isArray(ordersResponse.data)) {
               ordersData = ordersResponse.data;
             }

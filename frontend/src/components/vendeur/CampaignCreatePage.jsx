@@ -126,7 +126,7 @@ const platforms = [
         formDataToSend.append('product_prices[]', price)
       })
 
-      const response = await fetch('/api/campaigns', {
+      const response = await fetch('/campaigns', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`

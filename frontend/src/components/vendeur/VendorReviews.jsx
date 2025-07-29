@@ -42,7 +42,7 @@ const VendorReviews = () => {
   const fetchReviews = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await apiClient.get(`/api/vendor/reviews?page=${page}&per_page=${perPage}&filter=${filter}`);
+      const response = await apiClient.get(`/vendor/reviews?page=${page}&per_page=${perPage}&filter=${filter}`);
       
       if (response.data) {
         setReviews(response.data.data || []);
@@ -92,7 +92,7 @@ const VendorReviews = () => {
     
     try {
       setSubmitting(true);
-      await apiClient.post(`/api/vendor/reviews/${reviewId}/reply`, { 
+      await apiClient.post(`/vendor/reviews/${reviewId}/reply`, { 
         reply: replyText[reviewId] 
       });
       

@@ -27,7 +27,7 @@ const Addresses = () => {
       setLoading(true);
       setError('');
       
-      const response = await apiClient.get('/api/addresses');
+      const response = await apiClient.get('/addresses');
       
       if (response.data) {
         setAddresses(response.data);
@@ -91,7 +91,7 @@ const Addresses = () => {
     setLoading(true);
     
     try {
-      const response = await apiClient.post('/api/addresses', formData);
+      const response = await apiClient.post('/addresses', formData);
       
       if (response.data) {
         setAddresses([...addresses, response.data]);
@@ -111,7 +111,7 @@ const Addresses = () => {
     setLoading(true);
     
     try {
-      const response = await apiClient.put(`/api/addresses/${currentAddress.id}`, formData);
+      const response = await apiClient.put(`/addresses/${currentAddress.id}`, formData);
       
       if (response.data) {
         setAddresses(addresses.map(addr => 
@@ -134,7 +134,7 @@ const Addresses = () => {
     }
     
     try {
-      await apiClient.delete(`/api/addresses/${addressId}`);
+      await apiClient.delete(`/addresses/${addressId}`);
       setAddresses(addresses.filter(addr => addr.id !== addressId));
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'adresse:', error);
@@ -144,7 +144,7 @@ const Addresses = () => {
 
   const handleSetDefault = async (addressId) => {
     try {
-      await apiClient.put(`/api/addresses/${addressId}/default`);
+      await apiClient.put(`/addresses/${addressId}/default`);
       
       // Mettre à jour l'état local
       setAddresses(addresses.map(addr => ({

@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     setStatus({ submitted: false, error: false, message: "" });
 
     try {
-      const response = await axiosInstance.post('/api/reset-password', { email });
+      const response = await axiosInstance.post('/reset-password', { email });
       setStatus({
         submitted: true,
         error: false,

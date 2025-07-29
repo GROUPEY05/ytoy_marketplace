@@ -31,7 +31,7 @@ const HomeProducts = () => {
       setLoading(true)
       // Get CSRF token first if needed
       await apiClient.get('/sanctum/csrf-cookie')
-      const response = await apiClient.get('/api/produits/getFeatured', {
+      const response = await apiClient.get('/produits/getFeatured', {
         withCredentials: true
       })
       setProducts(response.data)
@@ -61,7 +61,7 @@ const HomeProducts = () => {
     }
 
     try {
-      await apiClient.post('/api/panier/add', {
+      await apiClient.post('/panier/add', {
         produit_id: productId,
         quantite: 1
       })
@@ -134,7 +134,7 @@ const HomeProducts = () => {
                       {product.thumbnail && product.thumbnail[0] && (
                         <Card.Img
                           variant='top'
-                          src={`http://localhost:8000${product.thumbnail.startsWith('/storage/') ? product.thumbnail : '/storage/' + product.thumbnail}`}
+                          src={`http://149.202.43.206${product.thumbnail.startsWith('/storage/') ? product.thumbnail : '/storage/' + product.thumbnail}`}
                           alt={product.nom}
                           className="product-image"
                         />

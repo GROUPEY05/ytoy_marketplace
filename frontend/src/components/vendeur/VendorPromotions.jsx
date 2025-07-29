@@ -59,7 +59,7 @@ const VendorPromotions = () => {
         params.append('actif', filterStatus === 'actif' ? 'true' : 'false');
       }
       
-      const response = await apiClient.get(`/api/vendor/promotions?${params.toString()}`);
+      const response = await apiClient.get(`/vendor/promotions?${params.toString()}`);
       
       if (response.data) {
         setPromotions(response.data.data || []);
@@ -78,7 +78,7 @@ const VendorPromotions = () => {
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
-      const response = await apiClient.get('/api/vendor/produits');
+      const response = await apiClient.get('/vendor/produits');
       
       if (response.data && response.data.data) {
         setProducts(response.data.data);
@@ -171,11 +171,11 @@ const VendorPromotions = () => {
       
       if (isEditing) {
         // Mettre à jour une promotion existante
-        await apiClient.put(`/api/vendor/promotions/${currentPromotionId}`, formData);
+        await apiClient.put(`/vendor/promotions/${currentPromotionId}`, formData);
         setSuccessMessage('Promotion mise à jour avec succès');
       } else {
         // Créer une nouvelle promotion
-        await apiClient.post('/api/vendor/promotions', formData);
+        await apiClient.post('/vendor/promotions', formData);
         setSuccessMessage('Promotion créée avec succès');
       }
       
@@ -202,7 +202,7 @@ const VendorPromotions = () => {
     }
     
     try {
-      await apiClient.delete(`/api/vendor/promotions/${id}`);
+      await apiClient.delete(`/vendor/promotions/${id}`);
       setSuccessMessage('Promotion supprimée avec succès');
       fetchPromotions(currentPage);
       
@@ -219,7 +219,7 @@ const VendorPromotions = () => {
   // Activer/désactiver une promotion
   const toggleStatus = async (id) => {
     try {
-      await apiClient.put(`/api/vendor/promotions/${id}/toggle-status`);
+      await apiClient.put(`/vendor/promotions/${id}/toggle-status`);
       fetchPromotions(currentPage);
     } catch (err) {
       console.error('Erreur lors du changement de statut:', err);

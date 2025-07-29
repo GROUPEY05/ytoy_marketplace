@@ -20,7 +20,7 @@ const ProductManagement = () => {
   const fetchProduits = async (page = 1, search = searchTerm) => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/vendor/products', {
+      const response = await axios.get('/vendor/products', {
         params: {
           page,
           search,
@@ -70,7 +70,7 @@ const ProductManagement = () => {
     if (!confirmDelete) return;
     
     try {
-      await axios.delete(`/api/products/${confirmDelete}`);
+      await axios.delete(`/products/${confirmDelete}`);
       setProduits(produits.filter(produit => produit.id !== confirmDelete));
       setConfirmDelete(null);
       

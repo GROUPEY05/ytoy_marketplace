@@ -29,7 +29,7 @@ const PaymentForm = () => {
           numero_telephone: phoneNumber,
           operator: operator
         });
-        response = await apiClient.post('/api/payment/mobile-money', {
+        response = await apiClient.post('/payment/mobile-money', {
           commande_id: orderId,
           numero_telephone: phoneNumber,
           operator: operator
@@ -39,7 +39,7 @@ const PaymentForm = () => {
           commande_id: orderId,
           numero_telephone: phoneNumber
         });
-        response = await apiClient.post('/api/payment/orange-money', {
+        response = await apiClient.post('/payment/orange-money', {
           commande_id: orderId,
           numero_telephone: phoneNumber
         });

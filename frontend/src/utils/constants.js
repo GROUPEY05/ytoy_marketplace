@@ -1,5 +1,5 @@
 // src/utils/constants.js
-export const API_URL = 'http://localhost:8000';
+export const API_URL = 'http://149.202.43.206';
 
 export const ORDER_STATUS = {
   'pending': { label: 'En attente', color: 'bg-yellow-100 text-yellow-800' },

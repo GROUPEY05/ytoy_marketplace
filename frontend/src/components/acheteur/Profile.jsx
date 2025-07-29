@@ -61,7 +61,7 @@ const Profile = () => {
     setSuccess('');
 
     try {
-      const response = await apiClient.put('/api/profile', formData);
+      const response = await apiClient.put('/profile', formData);
       
       if (response.data) {
         setSuccess('Profil mis à jour avec succès!');
@@ -91,7 +91,7 @@ const Profile = () => {
     setSuccess('');
 
     try {
-      const response = await apiClient.put('/api/profile/password', {
+      const response = await apiClient.put('/profile/password', {
         current_password: passwordData.current_password,
         password: passwordData.new_password,
         password_confirmation: passwordData.confirm_password

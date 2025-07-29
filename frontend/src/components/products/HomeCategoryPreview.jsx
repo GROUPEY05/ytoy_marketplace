@@ -18,7 +18,7 @@ const HomeCategoryPreview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await apiClient.get('/api/categories-avec-produits');
+        const res = await apiClient.get('/categories-avec-produits');
         setCategories(res.data);
       } catch (err) {
         setError("Erreur lors du chargement !");
@@ -36,13 +36,13 @@ const HomeCategoryPreview = () => {
     if (produit.thumbnail && produit.thumbnail.url) {
       imageUrl = produit.thumbnail.url.startsWith('http')
         ? produit.thumbnail.url
-        : `http://localhost:8000${produit.thumbnail.url}`;
+        : `http://149.202.43.206${produit.thumbnail.url}`;
     } else if (produit.images && produit.images.length > 0) {
       const imageData = produit.images[0];
       if (imageData.url) {
         imageUrl = imageData.url.startsWith('http')
           ? imageData.url
-          : `http://localhost:8000${imageData.url}`;
+          : `http://149.202.43.206${imageData.url}`;
       }
     }
     return imageUrl;
@@ -54,7 +54,7 @@ const HomeCategoryPreview = () => {
       return;
     }
     try {
-      await apiClient.post('/api/panier/add', {
+      await apiClient.post('/panier/add', {
         produit_id: productId,
         quantite: 1,
       });

@@ -17,7 +17,7 @@ const OrderPayment = () => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get(`/api/acheteur/orders/${orderId}`);
+        const response = await apiClient.get(`/acheteur/orders/${orderId}`);
         setOrder(response.data);
         setError('');
       } catch (err) {

@@ -10,19 +10,19 @@ const AboutPage = () => {
     {
       name: 'Ornella Yimga',
       role: 'Fondatrice & CEO',
-      image: 'http://localhost:5173/image/ornella.jpg',
+      image: ' http://149.202.43.206/image/ornella.jpg',
       bio: 'Passionnée par le commerce électronique  et le développement web depuis 3 ans, Ornella a créé cette marketplace pour connecter vendeurs et acheteurs dans tout le cameroun et avec le temps dans toute l\'Afrique.'
     },
     {
       name: 'Ndouho Wilfried',
       role: 'Directeur Technique',
-      image: 'http://localhost:5173/image/wilfried.jpg',
+      image: ' http://149.202.43.206/image/wilfried.jpg',
       bio: 'Expert en développement web avec une vision claire pour offrir une expérience utilisateur fluide et sécurisée.'
     },
     {
       name: 'Kouatchou Maurice',
       role: 'Responsable Marketing',
-      image: 'http://localhost:5173/image/papa.jpg',
+      image: ' http://149.202.43.206/image/papa.jpg',
       bio: 'Spécialiste en stratégies digitales, Fatou assure la croissance et la visibilité de notre marketplace.'
     }
   ];
@@ -48,7 +48,7 @@ const AboutPage = () => {
             </Col>
             <Col lg={6} className="d-none d-lg-block">
               <img
-                src="http://localhost:5173/image/pexels-timmossholder-942320.jpg"
+                src=" http://149.202.43.206/image/pexels-timmossholder-942320.jpg"
                 alt="Marketplace Illustration"
                 className="img-fluid rounded-3 shadow" />
             </Col>
@@ -127,7 +127,7 @@ const AboutPage = () => {
             <Col lg={6} className="mb-4 mb-lg-0">
               <img
               
-                src="http://localhost:5173/image/pexels-kelly-1179532-17290985.jpg"
+                src=" http://149.202.43.206/image/pexels-kelly-1179532-17290985.jpg"
                 alt="Notre histoire"
                 className="img-fluid rounded-3 shadow" />
             </Col>

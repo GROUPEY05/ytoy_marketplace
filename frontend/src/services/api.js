@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Configuration de l'URL de base pour les requêtes API
-const API_URL = 'http://localhost:8000';
-
+const API_URL = import.meta.env.VITE_API_URL ;
+console.log('API_URL:', API_URL);
 // Récupération du token CSRF   import.meta.env.VITE_API_URL || 
 async function getCsrfToken() {
   try {
@@ -74,7 +74,7 @@ const authService = {
   // Inscription d'un nouvel utilisateur
   register: async (userData) => {
     try {
-      const response = await apiClient.post('/api/register', userData);
+      const response = await apiClient.post('/register', userData);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.utilisateur));
@@ -87,7 +87,7 @@ const authService = {
 
   registervendeur: async (userData) => {
     try {
-      const response = await apiClient.post('/api/registervendeur', userData);
+      const response = await apiClient.post('/registervendeur', userData);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.utilisateur));
@@ -101,7 +101,7 @@ const authService = {
   // Connexion d'un utilisateur
   login: async (credentials) => {
     try {
-      const response = await apiClient.post('/api/login', credentials);
+      const response = await apiClient.post('/login', credentials);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.utilisateur));
@@ -118,7 +118,7 @@ const authService = {
     const token = localStorage.getItem('token');  // Récupérer le jeton pour la déconnexion
 
     try {
-      const response = await apiClient.post('/api/logout', {}, {
+      const response = await apiClient.post('/logout', {}, {
         headers: {
           'Authorization': `Bearer ${token}`  // Ajouter le jeton dans l'en-tête Authorization
         }
@@ -139,7 +139,7 @@ const authService = {
   // Vérification d'email
   verifyEmail: async (utilisateurId, token) => {
     try {
-      const response = await apiClient.get(`/api/verify-email/${utilisateurId}/${token}`);
+      const response = await apiClient.get(`/verify-email/${utilisateurId}/${token}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la vérification de l\'email' };
@@ -149,7 +149,7 @@ const authService = {
   // Vérification du numéro de téléphone
   verifyPhone: async (code) => {
     try {
-      const response = await apiClient.post('/api/verify-phone', { code });
+      const response = await apiClient.post('/verify-phone', { code });
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la vérification du téléphone' };
@@ -159,7 +159,7 @@ const authService = {
   // Demande de réinitialisation de mot de passe
   requestPasswordReset: async (email) => {
     try {
-      const response = await apiClient.post('/api/reset-password', { email });
+      const response = await apiClient.post('/reset-password', { email });
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la demande de réinitialisation' };
@@ -186,78 +186,78 @@ const authService = {
   
   // Dashboard
   getDashboardData: () => {
-    return apiClient.get('/api/admin/dashboard');
+    return apiClient.get('/admin/dashboard');
   },
   
   // Utilisateurs
   getUsers: (page = 1) => {
-    return apiClient.get(`/api/admin/utilisateurs?page=${page}`);
+    return apiClient.get(`/admin/utilisateurs?page=${page}`);
   },
   
   getUserById: (utilisateurId) => {
-    return apiClient.get(`/api/admin/utilisateurs/${utilisateurId}`);
+    return apiClient.get(`/admin/utilisateurs/${utilisateurId}`);
   },
   
   updateUser: (utilisateurId, data) => {
-    return apiClient.put(`/api/admin/utilisateurs/${utilisateurId}`, data);
+    return apiClient.put(`/admin/utilisateurs/${utilisateurId}`, data);
   },
   
   banUser: (utilisateurId) => {
-    return apiClient.post(`/api/admin/utilisateurs/${utilisateurId}/ban`);
+    return apiClient.post(`/admin/utilisateurs/${utilisateurId}/ban`);
   },
   
   deleteUser: (utilisateurId) => {
-    return apiClient.delete(`/api/admin/utilisateurs/${utilisateurId}`);
+    return apiClient.delete(`/admin/utilisateurs/${utilisateurId}`);
   },
   
   // Vendeurs
   getPendingVendors: () => {
-    return apiClient.get('/api/admin/vendeurs/en-attente');
+    return apiClient.get('/admin/vendeurs/en-attente');
   },
   
   approveVendor: (vendorId) => {
-    return apiClient.post(`/api/admin/vendeurs/${vendorId}/approuver`);
+    return apiClient.post(`/admin/vendeurs/${vendorId}/approuver`);
   },
   
   rejectVendor: (vendorId) => {
-    return apiClient.post(`/api/admin/vendeurs/${vendorId}/rejeter`);
+    return apiClient.post(`/admin/vendeurs/${vendorId}/rejeter`);
   },
   
   // Avis
   getReviews: (page = 1) => {
-    return apiClient.get(`/api/admin/reviews?page=${page}`);
+    return apiClient.get(`/admin/reviews?page=${page}`);
   },
   
   approveReview: (reviewId) => {
-    return apiClient.post(`/api/admin/reviews/${reviewId}/approve`);
+    return apiClient.post(`/admin/reviews/${reviewId}/approve`);
   },
   
   deleteReview: (reviewId) => {
-    return apiClient.delete(`/api/admin/reviews/${reviewId}`);
+    return apiClient.delete(`/admin/reviews/${reviewId}`);
   },
   
   // Commandes
   getOrders: (page = 1) => {
-    return apiClient.get(`/api/admin/commandes?page=${page}`);
+    return apiClient.get(`/admin/commandes?page=${page}`);
   },
   
   getOrderDetails: (orderId) => {
-    return apiClient.get(`/api/admin/commandes/${orderId}`);
+    return apiClient.get(`/admin/commandes/${orderId}`);
   },
   
   updateOrderStatus: (orderId, status) => {
-    return apiClient.put(`/api/admin/commandes/${orderId}`, { status });
+    return apiClient.put(`/admin/commandes/${orderId}`, { status });
   },
   
   // Statistiques
   getStatistics: (period = 'month') => {
-    return apiClient.get(`/api/admin/statistics?period=${period}`);
+    return apiClient.get(`/admin/statistics?period=${period}`);
   },
 
   // Service de paiement
   processPaiement: async (orderData) => {
     try {
-      const response = await apiClient.post('/api/payment/process', orderData);
+      const response = await apiClient.post('/payment/process', orderData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors du traitement du paiement' };
@@ -266,7 +266,7 @@ const authService = {
 
   verifyPaiement: async (paymentId) => {
     try {
-      const response = await apiClient.post('/api/payment/verify', { paymentId });
+      const response = await apiClient.post('/payment/verify', { paymentId });
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la vérification du paiement' };
@@ -275,7 +275,7 @@ const authService = {
 
   getPaiementStatus: async (orderId) => {
     try {
-      const response = await apiClient.get(`/api/payment/status/${orderId}`);
+      const response = await apiClient.get(`/payment/status/${orderId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la récupération du statut du paiement' };
@@ -285,7 +285,7 @@ const authService = {
   // Service de recherche
   searchProduits: async (query) => {
     try {
-      const response = await apiClient.get(`/api/search/produits?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(`/search/produits?q=${encodeURIComponent(query)}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la recherche de produits' };
@@ -294,7 +294,7 @@ const authService = {
 
   searchCategories: async (query) => {
     try {
-      const response = await apiClient.get(`/api/search/categories?q=${encodeURIComponent(query)}`);
+      const response = await apiClient.get(`/search/categories?q=${encodeURIComponent(query)}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la recherche de catégories' };
@@ -304,7 +304,7 @@ const authService = {
   // Service des avis
   createReview: async (productId, reviewData) => {
     try {
-      const response = await apiClient.post(`/api/reviews/${productId}`, reviewData);
+      const response = await apiClient.post(`/reviews/${productId}`, reviewData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la création de l\'avis' };
@@ -313,7 +313,7 @@ const authService = {
 
   updateReview: async (reviewId, reviewData) => {
     try {
-      const response = await apiClient.put(`/api/reviews/${reviewId}`, reviewData);
+      const response = await apiClient.put(`/reviews/${reviewId}`, reviewData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la mise à jour de l\'avis' };
@@ -322,7 +322,7 @@ const authService = {
 
   deleteReview: async (reviewId) => {
     try {
-      const response = await apiClient.delete(`/api/reviews/${reviewId}`);
+      const response = await apiClient.delete(`/reviews/${reviewId}`);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la suppression de l\'avis' };
@@ -332,7 +332,7 @@ const authService = {
   // Service du profil utilisateur
   getProfile: async () => {
     try {
-      const response = await apiClient.get('/api/profile');
+      const response = await apiClient.get('/profile');
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la récupération du profil' };
@@ -341,7 +341,7 @@ const authService = {
 
   updateProfile: async (profileData) => {
     try {
-      const response = await apiClient.put('/api/profile', profileData);
+      const response = await apiClient.put('/profile', profileData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la mise à jour du profil' };
@@ -350,7 +350,7 @@ const authService = {
 
   updatePassword: async (passwordData) => {
     try {
-      const response = await apiClient.put('/api/profile/password', passwordData);
+      const response = await apiClient.put('/profile/password', passwordData);
       return response.data;
     } catch (error) {
       throw error.response?.data || { message: 'Erreur lors de la mise à jour du mot de passe' };
@@ -361,7 +361,7 @@ const authService = {
     try {
       const formData = new FormData();
       formData.append('avatar', avatarFile);
-      const response = await apiClient.post('/api/profile/avatar', formData, {
+      const response = await apiClient.post('/profile/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -377,17 +377,17 @@ const adminService = {
   // Dashboard et statistiques
   async getStatistics() {
     await getCsrfToken();
-    return apiClient.get('/api/administrateur/stats');
+    return apiClient.get('/administrateur/stats');
     
   },
 
   getRecentOrders: () => {
-    return apiClient.get('/api/administrateur/recent-orders');
+    return apiClient.get('/administrateur/recent-orders');
   },
 
   // Gestion des utilisateurs
   getUsers: (page = 1, role = 'all', search = '') => {
-    let url = `/api/administrateur/utilisateurs?page=${page}`;
+    let url = `/administrateur/utilisateurs?page=${page}`;
     if (role !== 'all') {
       url += `&role=${role}`;
     }
@@ -398,61 +398,61 @@ const adminService = {
   },
 
   getUserById: (id) => {
-    return apiClient.get(`/api/administrateur/utilisateurs/${id}`);
+    return apiClient.get(`/administrateur/utilisateurs/${id}`);
   },
 
   updateUser: (id, data) => {
-    return apiClient.put(`/api/administrateur/utilisateurs/${id}`, data);
+    return apiClient.put(`/administrateur/utilisateurs/${id}`, data);
   },
 
   deleteUser: (id) => {
-    return apiClient.delete(`/api/administrateur/utilisateurs/${id}`);
+    return apiClient.delete(`/administrateur/utilisateurs/${id}`);
   },
 
   banUser: (id) => {
-    return apiClient.post(`/api/administrateur/utilisateurs/${id}/ban`);
+    return apiClient.post(`/administrateur/utilisateurs/${id}/ban`);
   },
 
   // Gestion des vendeurs
   getPendingVendors: () => {
-    return apiClient.get('/api/administrateur/vendeurs/pending');
+    return apiClient.get('/administrateur/vendeurs/pending');
   },
 
   approveVendor: (vendorId) => {
-    return apiClient.post(`/api/administrateur/vendeurs/${vendorId}/approve`);
+    return apiClient.post(`/administrateur/vendeurs/${vendorId}/approve`);
   },
 
   rejectVendor: (vendorId) => {
-    return apiClient.post(`/api/administrateur/vendeurs/${vendorId}/reject`);
+    return apiClient.post(`/administrateur/vendeurs/${vendorId}/reject`);
   },
   getAllVendors: () => {
-    return apiClient.get('/api/administrateur/vendors');
+    return apiClient.get('/administrateur/vendors');
   },
 
   // Gestion des produits
   getProducts: (page = 1) => {
-    return apiClient.get(`/api/administrateur/produits?page=${page}`);
+    return apiClient.get(`/administrateur/produits?page=${page}`);
   },
 
   getProduct: (id) => {
-    return apiClient.get(`/api/administrateur/produits/${id}`);
+    return apiClient.get(`/administrateur/produits/${id}`);
   },
 
   updateProduct: (id, data) => {
-    return apiClient.put(`/api/administrateur/produits/${id}`, data);
+    return apiClient.put(`/administrateur/produits/${id}`, data);
   },
 
   deleteProduct: (id) => {
-    return apiClient.delete(`/api/administrateur/produits/${id}`);
+    return apiClient.delete(`/administrateur/produits/${id}`);
   },
 
   // Gestion des catégories
   getCategories: () => {
-    return apiClient.get('/api/administrateur/categories');
+    return apiClient.get('/administrateur/categories');
   },
 
   getCategoryById: (id) => {
-    return apiClient.get(`/api/administrateur/categories/${id}`);
+    return apiClient.get(`/administrateur/categories/${id}`);
   },
 
   createCategory: (data) => {
@@ -460,7 +460,7 @@ const adminService = {
       nom: data.nom,
       description: data.description,
     };
-    return apiClient.post('/api/administrateur/categories', categoryData);
+    return apiClient.post('/administrateur/categories', categoryData);
   },
 
   updateCategory: (id, data) => {
@@ -468,41 +468,41 @@ const adminService = {
       nom: data.nom,
       description: data.description,
     };
-    return apiClient.put(`/api/administrateur/categories/${id}`, categoryData);
+    return apiClient.put(`/administrateur/categories/${id}`, categoryData);
   },
 
   deleteCategory: (id) => {
-    return apiClient.delete(`/api/administrateur/categories/${id}`);
+    return apiClient.delete(`/administrateur/categories/${id}`);
   },
 
   // Gestion des avis
   getReviews: () => {
-    return apiClient.get('/api/administrateur/reviews');
+    return apiClient.get('/administrateur/reviews');
   },
 
   approveReview: (reviewId) => {
-    return apiClient.post(`/api/administrateur/reviews/${reviewId}/approve`);
+    return apiClient.post(`/administrateur/reviews/${reviewId}/approve`);
   },
 
   // Gestion des commandes
   getOrders: (page = 1) => {
-    return apiClient.get(`/api/administrateur/commandes?page=${page}`);
+    return apiClient.get(`/administrateur/commandes?page=${page}`);
   },
 
   getOrderDetails: (orderId) => {
-    return apiClient.get(`/api/administrateur/commandes/${orderId}`);
+    return apiClient.get(`/administrateur/commandes/${orderId}`);
   },
 
   createOrder: (orderData) => {
-    return apiClient.post('/api/administrateur/orders', orderData);
+    return apiClient.post('/administrateur/orders', orderData);
   },
 
   cancelOrder: (orderId) => {
-    return apiClient.delete(`/api/administrateur/orders/${orderId}`);
+    return apiClient.delete(`/administrateur/orders/${orderId}`);
   },
 
   updateOrderStatus: (orderId, status) => {
-    return apiClient.put(`/api/administrateur/orders/${orderId}/status`, { status });
+    return apiClient.put(`/administrateur/orders/${orderId}/status`, { status });
   }
 };
 

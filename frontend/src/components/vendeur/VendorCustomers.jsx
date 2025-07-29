@@ -31,7 +31,7 @@ const VendorCustomers = () => {
   const fetchCustomers = async (page = 1) => {
     try {
       setLoading(true)
-      const response = await apiClient.get(`/api/vendor/customers`)
+      const response = await apiClient.get(`/vendor/customers`)
 
       if (response.data) {
         setCustomers(response.data.data || [])

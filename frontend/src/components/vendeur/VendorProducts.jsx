@@ -37,11 +37,11 @@ const VendorProducts = () => {
 
       // Utiliser la route correcte avec le préfixe api
       const response = await apiClient.get(
-        `/api/vendor/produits?page=${page}&per_page=${perPage}`
+        `/vendor/produits?page=${page}&per_page=${perPage}`
       )
       console.log(
         'Requête envoyée à:',
-        `/api/vendor/produits?page=${page}&per_page=${perPage}`
+        `/vendor/produits?page=${page}&per_page=${perPage}`
       )
       console.log('API Response:', response.data)
       const { data, current_page, last_page } = response.data
@@ -114,7 +114,7 @@ const VendorProducts = () => {
 
     try {
       const response = await apiClient.patch(
-        `/api/vendor/produits/${produit.id}`,
+        `/vendor/produits/${produit.id}`,
         {
           [field]: editValue
         }
@@ -137,7 +137,7 @@ const VendorProducts = () => {
 
   const handleDelete = async productId => {
     try {
-      await apiClient.delete(`/api/vendor/produits/${productId}`)
+      await apiClient.delete(`/vendor/produits/${productId}`)
       setProducts(products.filter(p => p.id !== productId))
       setShowDeleteModal(false)
       setProductToDelete(null)
@@ -207,7 +207,7 @@ const VendorProducts = () => {
                         )}
                         <Card.Img
                           variant='top'
-                          src={`http://localhost:8000${product.images[0].url}`}
+                          src={`http://149.202.43.206${product.images[0].url}`}
                           alt={product.nom}
                           style={{
                             height: '200px',

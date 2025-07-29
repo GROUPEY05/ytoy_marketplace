@@ -50,7 +50,7 @@ const VendeurDashboard = () => {
         // Récupérer les statistiques du vendeur
         try {
           console.log('Tentative de récupération des statistiques du vendeur...');
-          const statsResponse = await apiClient.get('/api/vendor/stats')
+          const statsResponse = await apiClient.get('/vendor/stats')
           console.log('Réponse des statistiques:', statsResponse.data);
           
           // Si la réponse contient les statistiques, les utiliser
@@ -123,7 +123,7 @@ const VendeurDashboard = () => {
   // Marque une commande comme expédiée
   const handleShip = async (orderId) => {
     try {
-      await apiClient.put(`/api/vendor/orders/${orderId}/status`, { status: 'expediee' });
+      await apiClient.put(`/vendor/orders/${orderId}/status`, { status: 'expediee' });
       setRecentOrders(recentOrders.map(o => o.id === orderId ? { ...o, status: 'Expédiée' } : o));
     } catch (error) {
       console.error('Erreur lors du changement de statut de la commande', error);

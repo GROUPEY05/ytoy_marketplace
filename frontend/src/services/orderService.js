@@ -6,9 +6,9 @@ import { apiClient } from './api';
 
 // Dictionnaire des chemins selon le rôle
 const roleBasePaths = {
-  acheteur: '/api/acheteur/commandes',
-  vendeur: '/api/vendor/orders',
-  admin: '/api/administrateur/orders'
+  acheteur: '/acheteur/commandes',
+  vendeur: '/vendor/orders',
+  admin: '/administrateur/orders'
 };
 
 export const orderService = {

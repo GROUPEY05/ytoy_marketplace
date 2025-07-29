@@ -18,7 +18,7 @@ const Products = () => {
       setError('');
       
       // Construire l'URL avec les paramètres de recherche et pagination
-      let url = `http://localhost:8000/api/produits?page=${page}`;
+      let url = `http://149.202.43.206/api/produits?page=${page}`;
       if (searchTerm) {
         url += `&search=${encodeURIComponent(searchTerm)}`;
       }

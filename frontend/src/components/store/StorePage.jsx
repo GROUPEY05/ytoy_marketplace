@@ -17,8 +17,8 @@ const StorePage = () => {
       try {
         setLoading(true);
         const [storeResponse, productsResponse] = await Promise.all([
-          apiClient.get(`/api/vendors/${vendorId}`),
-          apiClient.get(`/api/vendors/${vendorId}/products`)
+          apiClient.get(`/vendors/${vendorId}`),
+          apiClient.get(`/vendors/${vendorId}/products`)
         ]);
 
         setStore(storeResponse.data);

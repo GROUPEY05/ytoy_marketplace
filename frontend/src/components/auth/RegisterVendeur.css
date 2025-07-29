@@ -23,7 +23,7 @@
   /* ImageFormLayout.css */
 .image-container {
   position: relative;
-  background-image: url('http://localhost:5173/image/img1.jpg');
+  background-image: url(' http://149.202.43.206/image/img1.jpg');
   background-size: cover;
   background-position: center;
   min-height: 100%;

@@ -13,7 +13,7 @@ const OrangeMoneyPayment = ({ orderId, onSuccess }) => {
     setError(null);
 
     try {
-      const { data } = await apiClient.post('/api/payments/orange-money', {
+      const { data } = await apiClient.post('/payments/orange-money', {
         order_id: orderId,
         phone_number: phoneNumber
       });

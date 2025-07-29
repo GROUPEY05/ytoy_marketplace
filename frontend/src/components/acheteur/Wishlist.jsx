@@ -15,7 +15,7 @@ const Wishlist = () => {
       setLoading(true);
       setError('');
       
-      const response = await apiClient.get('/api/wishlist');
+      const response = await apiClient.get('/wishlist');
       
       if (response.data) {
         setWishlistItems(response.data);
@@ -37,7 +37,7 @@ const Wishlist = () => {
 
   const removeFromWishlist = async (productId) => {
     try {
-      await apiClient.delete(`/api/wishlist/${productId}`);
+      await apiClient.delete(`/wishlist/${productId}`);
       
       // Mettre à jour la liste après suppression
       setWishlistItems(wishlistItems.filter(item => item.produit_id !== productId));
@@ -49,7 +49,7 @@ const Wishlist = () => {
 
   const addToCart = async (productId) => {
     try {
-      await apiClient.post('/api/panier/add', {
+      await apiClient.post('/panier/add', {
         produit_id: productId,
         quantite: 1
       });

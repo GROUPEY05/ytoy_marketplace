@@ -38,7 +38,7 @@ const Home = () => {
       try {
         setLoading(true)
         const response = await apiClient.get(
-          'http://localhost:8000/api/categories'
+          'http://149.202.43.206/api/categories'
         )
         setCategories(response.data)
         setError('')
@@ -55,7 +55,7 @@ const Home = () => {
 
   const fetchPromotions = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/promotions'); // adapte l'URL selon ton API
+      const response = await fetch('http://149.202.43.206/api/promotions'); // adapte l'URL selon ton API
       if (!response.ok) {
         throw new Error('Erreur réseau');
       }
@@ -134,28 +134,28 @@ const Home = () => {
           <div className='carousel-inner'>
             <div className='carousel-item active'>
               <img
-                src='http://localhost:5173/image/xiaomi.webp'
+                src=' http://149.202.43.206/image/xiaomi.webp'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item ' style={{ height: '500px' }}>
               <img
-                src='http://localhost:5173/image/sale.jpg'
+                src=' http://149.202.43.206/image/sale.jpg'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item'>
               <img
-                src='http://localhost:5173/image/tvsmart.webp'
+                src=' http://149.202.43.206/image/tvsmart.webp'
                 className='d-block w-100'
                 alt='...'
               />
             </div>
             <div className='carousel-item'>
               <img
-                src='http://localhost:5173/image/ramadan.webp'
+                src=' http://149.202.43.206/image/ramadan.webp'
                 className='d-block w-100'
                 alt='...'
               />
@@ -298,7 +298,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src='http://localhost:5173/image/perruques_metisse1.jpeg'
+              src=' http://149.202.43.206/image/perruques_metisse1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -339,7 +339,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src='http://localhost:5173/image/habits1.jpeg'
+              src=' http://149.202.43.206/image/habits1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3 '
               style={{
@@ -380,7 +380,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src='http://localhost:5173/image/high_tech1.jpeg'
+              src=' http://149.202.43.206/image/high_tech1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -421,7 +421,7 @@ const Home = () => {
             style={{ width: '272.32px' }}
           >
             <img
-              src='http://localhost:5173/image/all_shop1.jpeg'
+              src=' http://149.202.43.206/image/all_shop1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -469,361 +469,8 @@ const Home = () => {
         items={promotions}
         type='promotion'
       /> */}
-      {/* card offres */}
-      <div className='mt-5' style={{ background: ' rgba(217, 217, 217, 0.4)' }}>
-        {' '}
-        <br />
-        <div className='container h3'>
-          {' '}
-          <strong>Nos Offres</strong>
-        </div>
-        <br />
-        {/* bloc1 */}
-        <div className='container d-flex justify-content-between'>
-          {/* card1 bloc1 */}
-          <div
-            className='my-card'
-            style={{ marginLeft: '10px', backgroundColor: '#FFFFFF' }}
-          >
-            <h4 className='mt-3 text-center' style={{ marginLeft: '10px' }}>
-              <strong>Cuisine et maison</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/electromenager.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Petit électroménager </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/refrigerateur2.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Réfrigérateur </strong>
-                </p>
-              </div>
-            </div>
 
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/meubles.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong>Meubles</strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/ustensile.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Ustensile </strong>
-                </p>
-              </div>
-            </div>
-          </div>
 
-          {/* card2 bloc1 */}
-          <div className='my-card' style={{ backgroundColor: '#FFFFFF' }}>
-            <h4 className='mt-3 text-center'>
-              <strong>Bureau</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/tablette1.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Tablettes tactiles </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/laptop1.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Ordinateurs portables </strong>
-                </p>
-              </div>
-            </div>
-
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/ordi.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Ordinateurs de bureau </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/fourniture.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Fournitures de bureau </strong>
-                </p>
-              </div>
-            </div>
-          </div>
-          {/* card3 bloc1 */}
-          <div className='my-card' style={{ backgroundColor: '#FFFFFF' }}>
-            <h4 className='mt-3 text-center'>
-              <strong>Maison</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/chambre.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Chambre </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/salon.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Salon</strong>
-                </p>
-              </div>
-            </div>
-
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/bain.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Salle De Bain </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/cuisine1.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Cuisine </strong>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        {/* bloc2 */}
-        <div className='container justify-content-between d-flex gap-2 mt-5 '>
-          {/* card1 bloc2 */}
-          <div
-            className='my-card'
-            style={{ marginLeft: '10px', backgroundColor: '#FFFFFF' }}
-          >
-            <h4 className='mt-3 text-center' style={{ marginLeft: '10px' }}>
-              <strong>Accessoires</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/casque.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Casque JBL </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/chargeur_oraimo_1.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Chargeur ORAIMO </strong>
-                </p>
-              </div>
-            </div>
-
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/aiport.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong>Ecouteur sans fil</strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/montre_connecte.jpeg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Montre connectée </strong>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* card2 bloc2 */}
-          <div className='my-card' style={{ backgroundColor: '#FFFFFF' }}>
-            <h4 className='mt-3 text-center'>
-              <strong>Perruque</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/fumy.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Fumy </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/curly.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Pixie curly </strong>
-                </p>
-              </div>
-            </div>
-
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/metisse.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Métissé </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/wave.jpg'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Body Wave </strong>
-                </p>
-              </div>
-            </div>
-          </div>
-          {/* card3 bloc3 */}
-          <div className='my-card' style={{ backgroundColor: '#FFFFFF' }}>
-            <h4 className='mt-3 text-center'>
-              <strong>vêtements</strong>
-            </h4>
-            <div className='d-flex gap-3 p-4 justify-content-center'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/dim.webp'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Soutien Dim </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/puma.webp'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Puma </strong>
-                </p>
-              </div>
-            </div>
-
-            <div className='d-flex gap-3 p-4 justify-content-center mt-0'>
-              <div>
-                <img
-                  src='http://localhost:5173/image/qixui.webp'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Chemise Qixui </strong>
-                </p>
-              </div>
-              <div>
-                <img
-                  src='http://localhost:5173/image/pull.webp'
-                  style={{ width: '100px', height: '80px' }}
-                  alt='...'
-                />
-                <p className='mt-2 text-center' style={{ fontSize: '10px' }}>
-                  {' '}
-                  <strong> Pull Levis </strong>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <br /> <br />
-      </div>
       {/* card super deals */}
       <div
         className='container   mt-5'
@@ -1138,7 +785,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/phone2.jpg'
+              src=' http://149.202.43.206/image/phone2.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1204,7 +851,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/ordi2.jpeg'
+              src=' http://149.202.43.206/image/ordi2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1272,7 +919,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/imprimante1.jpeg'
+              src=' http://149.202.43.206/image/imprimante1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1339,7 +986,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/tablette1.jpeg'
+              src=' http://149.202.43.206/image/tablette1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1416,7 +1063,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/perruques_metisse1.jpeg'
+              src=' http://149.202.43.206/image/perruques_metisse1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1482,7 +1129,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/perruque_vietnamienne.webp'
+              src=' http://149.202.43.206/image/perruque_vietnamienne.webp'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1548,7 +1195,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/bob1.jpg'
+              src=' http://149.202.43.206/image/bob1.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1614,7 +1261,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/curly.jpg'
+              src=' http://149.202.43.206/image/curly.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1691,7 +1338,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/jeans.jpg'
+              src=' http://149.202.43.206/image/jeans.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1755,7 +1402,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/Pull1.jpeg'
+              src=' http://149.202.43.206/image/Pull1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1819,7 +1466,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/jupe2.jpeg'
+              src=' http://149.202.43.206/image/jupe2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1883,7 +1530,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/chic_robe2.jpeg'
+              src=' http://149.202.43.206/image/chic_robe2.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -1960,7 +1607,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/fer2.jpg'
+              src=' http://149.202.43.206/image/fer2.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -2026,7 +1673,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/sofa1.jpg'
+              src=' http://149.202.43.206/image/sofa1.jpg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -2092,7 +1739,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/fruit1.jpeg'
+              src=' http://149.202.43.206/image/fruit1.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{
@@ -2158,7 +1805,7 @@ const Home = () => {
             }}
           >
             <img
-              src='http://localhost:5173/image/salle_manger.jpeg'
+              src=' http://149.202.43.206/image/salle_manger.jpeg'
               alt='Beauty Corporate'
               className='card-img-top img-fluid rounded-3'
               style={{

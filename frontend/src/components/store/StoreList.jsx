@@ -12,7 +12,7 @@ const StoreList = () => {
     const fetchStores = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get('/api/stores');
+        const response = await apiClient.get('/stores');
         setStores(response.data);
         setError('');
       } catch (err) {

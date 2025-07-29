@@ -29,7 +29,7 @@ const OrderHistory = () => {
       
       try {
         // Première tentative avec la route pour les acheteurs
-        const response = await apiClient.get('/api/acheteur/orders');
+        const response = await apiClient.get('/acheteur/orders');
         setOrders(response.data);
         success = true;
       } catch (firstError) {
@@ -37,13 +37,13 @@ const OrderHistory = () => {
         
         try {
           // Deuxième tentative avec une autre route
-          const response = await apiClient.get('/api/orders');
+          const response = await apiClient.get('/orders');
           setOrders(response.data);
           success = true;
         } catch (secondError) {
           try {
             // Si les deux tentatives échouent, essayer une troisième route
-            const response = await apiClient.get('/api/panier/orders');
+            const response = await apiClient.get('/panier/orders');
             setOrders(response.data);
             success = true;
           } catch (thirdError) {

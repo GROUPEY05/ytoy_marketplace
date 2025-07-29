@@ -3,7 +3,7 @@ import { apiClient } from './api';
 // Services pour les promotions publiques
 const fetchPromotions = async () => {
   try {
-    const response = await apiClient.get('/api/promotions');
+    const response = await apiClient.get('/promotions');
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des promotions:', error);
@@ -13,7 +13,7 @@ const fetchPromotions = async () => {
 
 const fetchPromotionsByType = async (type) => {
   try {
-    const response = await apiClient.get(`/api/promotions/type/${type}`);
+    const response = await apiClient.get(`/promotions/type/${type}`);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors de la récupération des promotions de type ${type}:`, error);
@@ -23,7 +23,7 @@ const fetchPromotionsByType = async (type) => {
 
 const fetchPromotionDetails = async (id) => {
   try {
-    const response = await apiClient.get(`/api/promotions/${id}`);
+    const response = await apiClient.get(`/promotions/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors de la récupération des détails de la promotion ${id}:`, error);
@@ -34,7 +34,7 @@ const fetchPromotionDetails = async (id) => {
 // Services pour la gestion des promotions (vendeur)
 const fetchVendorPromotions = async (params = {}) => {
   try {
-    const response = await apiClient.get('/api/vendor/promotions', { params });
+    const response = await apiClient.get('/vendor/promotions', { params });
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la récupération des promotions du vendeur:', error);
@@ -44,7 +44,7 @@ const fetchVendorPromotions = async (params = {}) => {
 
 const createPromotion = async (promotionData) => {
   try {
-    const response = await apiClient.post('/api/vendor/promotions', promotionData);
+    const response = await apiClient.post('/vendor/promotions', promotionData);
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la création de la promotion:', error);
@@ -54,7 +54,7 @@ const createPromotion = async (promotionData) => {
 
 const updatePromotion = async (id, promotionData) => {
   try {
-    const response = await apiClient.put(`/api/vendor/promotions/${id}`, promotionData);
+    const response = await apiClient.put(`/vendor/promotions/${id}`, promotionData);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors de la mise à jour de la promotion ${id}:`, error);
@@ -64,7 +64,7 @@ const updatePromotion = async (id, promotionData) => {
 
 const deletePromotion = async (id) => {
   try {
-    const response = await apiClient.delete(`/api/vendor/promotions/${id}`);
+    const response = await apiClient.delete(`/vendor/promotions/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors de la suppression de la promotion ${id}:`, error);
@@ -74,7 +74,7 @@ const deletePromotion = async (id) => {
 
 const togglePromotionStatus = async (id) => {
   try {
-    const response = await apiClient.put(`/api/vendor/promotions/${id}/toggle-status`);
+    const response = await apiClient.put(`/vendor/promotions/${id}/toggle-status`);
     return response.data;
   } catch (error) {
     console.error(`Erreur lors du changement de statut de la promotion ${id}:`, error);

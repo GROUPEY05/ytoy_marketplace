@@ -24,7 +24,7 @@ const AdminProductList = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await apiClient.get('/api/categories');
+      const response = await apiClient.get('/categories');
       if (response.data) {
         setCategories(response.data);
       }
@@ -46,7 +46,7 @@ const AdminProductList = () => {
       setLoading(true);
       setError('');
       
-      let url = '/api/produits?';
+      let url = '/produits?';
       if (selectedCategory) {
         url += `categorie=${selectedCategory}&`;
       }
@@ -109,7 +109,7 @@ const AdminProductList = () => {
     if (!productToDelete) return;
     
     try {
-      await apiClient.delete(`/api/admin/produits/${productToDelete.id}`);  
+      await apiClient.delete(`/admin/produits/${productToDelete.id}`);  
       
       // Mettre à jour l'état local
       setProducts(products.filter(p => p.id !== productToDelete.id));

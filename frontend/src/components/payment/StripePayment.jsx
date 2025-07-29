@@ -26,7 +26,7 @@ const CheckoutForm = ({ orderId, onSuccess }) => {
     }
 
     try {
-      const { data } = await apiClient.post('/api/payments/create-payment-intent', {
+      const { data } = await apiClient.post('/payments/create-payment-intent', {
         order_id: orderId,
       });
 
